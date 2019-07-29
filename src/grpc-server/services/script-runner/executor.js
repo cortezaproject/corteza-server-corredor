@@ -3,12 +3,9 @@ import {ComposeObject} from '../../../types/common'
 import Record from '../../../types/record'
 import Module from '../../../types/module'
 import Namespace from '../../../types/namespace'
+import { services as svcConfig } from '../../../config'
 
-const maxScriptTimeout = 30 * 1000 // 30s
-const minScriptTimeout = 100 // 0.1s
-const defScriptTimeout = 2 * 1000 // 2s
-
-const DEBUG = false
+const timeouts = svcConfig.scriptRunner.timeout
 
 export class AuthError extends Error {}
 
@@ -58,17 +55,15 @@ const castResult = (rval, sandbox) => {
   return false
 }
 
-export default async (vmScript, sandbox = {}, { timeout = defScriptTimeout, debug = DEBUG, async = false } = {}) => {
+export default async (vmScript, sandbox = {}, { timeout = timeouts.def, async = false } = {}) => {
   if (!(vmScript instanceof VMScript)) {
     throw new ReferenceError(`Expecting VMScript object (got ${typeof vmScrpt})`)
   }
 
-  if (debug) console.count('executor')
-
-  if (timeout > maxScriptTimeout) {
-    timeout = maxScriptTimeout
-  } else if (timeout < minScriptTimeout) {
-    timeout = minScriptTimeout
+  if (timeout > timeouts.max) {
+    timeout = timeouts.max
+  } else if (timeout < timeouts.min) {
+    timeout = timeouts.min
   }
 
   return new Promise((resolve) => {
@@ -89,6 +84,7 @@ export default async (vmScript, sandbox = {}, { timeout = defScriptTimeout, debu
       // Allow console use
       // @todo how can we capture console output and
       //       serve it back with gRPC response?
+      //       https://stackoverflow.com/a/50333959
       console: 'inherit',
 
       // No wrapper - we need the result

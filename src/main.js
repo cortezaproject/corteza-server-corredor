@@ -1,3 +1,6 @@
-import startServer from './grpc-server'
+import gRPCserver from './grpc-server'
+import { server } from './config'
 
-startServer()
+
+gRPCserver(server)
+
