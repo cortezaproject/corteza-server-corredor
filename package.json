@@ -1,0 +1,36 @@
+{
+  "name": "corteza-server-corredor",
+  "description": "Corteza Automation Script Runner",
+  "version": "2019.6.0",
+  "license": "Apache-2.0",
+  "type": "module",
+  "contributors": [
+    "Denis Arh <denis.arh@gmail.com>"
+  ],
+  "private": true,
+  "main": "src/main.js",
+  "scripts": {
+    "serve": "nodemon --ext js,proto --exec node -r esm src/main.js",
+    "server": "node -r esm src/main.js",
+    "test:unit": "mocha -r esm",
+    "cdeps": "yarn upgrade corteza-webapp-common"
+  },
+  "dependencies": {
+    "@grpc/proto-loader": "^0.5.1",
+    "corteza-webapp-common": "cortezaproject/corteza-webapp-common.git#esm",
+    "esm": "^3.2.25",
+    "grpc": "^1.22.2",
+    "moment": "^2.24.0",
+    "vm2": "^3.8.2"
+  },
+  "devDependencies": {
+    "sinon": "^7.3.2",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "mocha": "^6.2.0",
+    "nodemon": "^1.19.1"
+  },
+  "engines": {
+    "node": ">=12.7.0"
+  }
+}
