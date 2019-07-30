@@ -1,8 +1,7 @@
-import chai, {expect, assert } from 'chai'
+import chai, {expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import sinon from 'sinon'
-import grpc from "grpc"
-import executor, {AuthError} from '../src/grpc-server/services/script-runner/executor'
+import executor from '../src/grpc-server/services/script-runner/executor'
 import {VMScript} from 'vm2'
 import context from '../src/grpc-server/services/script-runner/context'
 import Record from '../src/types/record'

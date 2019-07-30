@@ -2,7 +2,6 @@ import Record from '../../../types/record'
 import Module from '../../../types/module'
 import Namespace from '../../../types/namespace'
 
-
 export class Abort extends Error {}
 
 export default (request, restAPI) => {
@@ -22,12 +21,15 @@ export default (request, restAPI) => {
   }
 
   const ctx = {
+    // Types
     Record,
     Module,
     Namespace,
 
+    // Errors
     Abort,
 
+    // caller's input
     $namespace,
     $module,
     $record,

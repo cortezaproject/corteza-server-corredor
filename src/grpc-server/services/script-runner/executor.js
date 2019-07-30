@@ -7,8 +7,6 @@ import { services as svcConfig } from '../../../config'
 
 const timeouts = svcConfig.scriptRunner.timeout
 
-export class AuthError extends Error {}
-
 const castResult = (rval, sandbox) => {
   if (rval !== false) {
     // Script was not explicitly aborted
