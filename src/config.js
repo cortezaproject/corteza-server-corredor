@@ -53,5 +53,17 @@ export const services = {
       min: 100, // 0.1s
       def: 2 * 1000, // 2s
     },
+
+    apiClients: {
+      compose: {
+        baseURL: process.env.SCRIPT_RUNNER_API_COMPOSE_BASE_URL,
+      },
+      messaging: {
+        baseURL: process.env.SCRIPT_RUNNER_API_MESSAGING_BASE_URL,
+      },
+      system: {
+        baseURL: process.env.SCRIPT_RUNNER_API_SYSTEM_BASE_URL,
+      },
+    },
   },
 }

@@ -4,11 +4,12 @@ import context, {Abort} from './context'
 import grpc from "grpc"
 import {Compose, Messaging, System} from './rest-clients'
 import logger from '../../../logger'
+import {services as servicesConfig} from '../../../config'
 
 let apiClients = {
-  compose: Compose({ baseURL: 'http://localhost:3001' }),
-  messaging: Messaging({ baseURL: 'http://localhost:3000' }),
-  system: System({ baseURL: 'http://localhost:3002' }),
+  compose: Compose(servicesConfig.scriptRunner.apiClients.compose),
+  messaging: Messaging(servicesConfig.scriptRunner.apiClients.messaging),
+  system: System(servicesConfig.scriptRunner.apiClients.system),
 }
 
 const setupScriptRunner = async (elog, request = {}) => {
