@@ -1,0 +1,15 @@
+kind: pipeline
+name: Build & Pack
+
+steps:
+  - name: build image
+    image: plugins/docker
+    settings:
+      repo: ${DRONE_REPO_NAMESPACE}/${DRONE_REPO_NAME}
+      auto_tag: true # generate tag names automatically based on git branch and git tag
+      username:
+        from_secret: docker_hub_username
+      password:
+        from_secret: docker_hub_password
+
+trigger:
