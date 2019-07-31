@@ -131,8 +131,13 @@ export default () => {
           done(null, {})
         }
 
-        elog.debug({record}, 'returning record')
-        done(null, {record: {...record, values: record.serializeValues()}})
+        // remove module obj before logging
+        elog.debug({ ...record, module: undefined }, 'returning record')
+
+        // remove module obj & serialize values before sending back to caller
+        record = {...record, module: undefined, values: record.serializeValues()}
+
+        done(null, {record})
       }).catch(handleError(elog, done)).finally(logCall(elog))
     },
   }

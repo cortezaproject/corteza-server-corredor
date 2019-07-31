@@ -1,11 +1,11 @@
 import chai, {expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import sinon from 'sinon'
-import executor from '../src/grpc-server/services/script-runner/executor'
+import executor from '../../../../src/grpc-server/services/script-runner/executor'
 import {VMScript} from 'vm2'
-import context from '../src/grpc-server/services/script-runner/context'
-import Record from '../src/types/record'
-import Module from '../src/types/module'
+import context from '../../../../src/grpc-server/services/script-runner/context'
+import Record from '../../../../src/types/record'
+import Module from '../../../../src/types/module'
 
 chai.use(chaiAsPromised)
 

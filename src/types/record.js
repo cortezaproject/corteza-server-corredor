@@ -22,7 +22,7 @@ export default class Record extends ComposeObject {
     if (m === undefined) {
       throw new Error('invalid module (undefined)')
     } else if (!(m instanceof Module)) {
-      throw new Error(`invalid module type (${typeof m === 'object' && m.constructor ? m.constructor.name : typeof m})`)
+      throw new Error(`invalid module type (${typeof m === 'object' && m && m.constructor ? m.constructor.name : typeof m})`)
     }
 
     this.module = m
@@ -102,9 +102,9 @@ export default class Record extends ComposeObject {
     return arr
   }
 
-  setValues (arr = []) {
-    if (Array.isArray(arr)) {
-      arr.filter(({name}) => this[fields][name] !== undefined).forEach(({name, value}) => {
+  setValues (input = []) {
+    if (Array.isArray(input)) {
+      input.filter(({name}) => this[fields][name] !== undefined).forEach(({name, value}) => {
         const {isMulti = false} = this[fields][name]
         if (isMulti) {
           this.values[name].push(value)
@@ -112,6 +112,12 @@ export default class Record extends ComposeObject {
           this.values[name] = value
         }
       })
+    } else if (typeof input === 'object') {
+      const values = (input instanceof Record) ? input.values : input
+
+      for (let p in input) {
+        this.values[p] = values[p]
+      }
     } else {
       throw Error('expecting array of values')
     }

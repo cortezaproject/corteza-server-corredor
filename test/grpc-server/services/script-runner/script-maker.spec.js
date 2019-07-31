@@ -4,7 +4,7 @@
 import { expect, assert } from 'chai'
 import sinon from 'sinon'
 import grpc from "grpc"
-import scriptMaker from '../src/grpc-server/services/script-runner/script-maker'
+import scriptMaker from '../../../../src/grpc-server/services/script-runner/script-maker'
 import {VMScript} from 'vm2'
 
 const makeRq = (source = '', ctx = {}) => {
