@@ -539,9 +539,13 @@ core-util-is@~1.0.0:
   resolved "https://registry.yarnpkg.com/core-util-is/-/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
   integrity sha1-tf1UIgqivFq1eqtxQMlAdUUDwac=
 
-corteza-webapp-common@cortezaproject/corteza-webapp-common.git#esm:
-  version "2019.3.14"
-  resolved "https://codeload.github.com/cortezaproject/corteza-webapp-common/tar.gz/26496a472ce55da69e9dae849e837aabf3acfca9"
+corteza-protobuf@cortezaproject/corteza-protobuf.git#master:
+  version "0.0.0"
+  resolved "https://codeload.github.com/cortezaproject/corteza-protobuf/tar.gz/dd3f580f423d4a63f47f84c60db2694b9695e9fe"
+
+corteza-webapp-common@cortezaproject/corteza-webapp-common.git#master:
+  version "2019.3.17"
+  resolved "https://codeload.github.com/cortezaproject/corteza-webapp-common/tar.gz/33e1f963b1e0b7b27afbd878f1e66ea1ad251c91"
   dependencies:
     axios "^0.18.1"
     mime-types "^2.1.24"
@@ -1470,7 +1474,7 @@ lodash.clone@^4.5.0:
   resolved "https://registry.yarnpkg.com/lodash.clone/-/lodash.clone-4.5.0.tgz#195870450f5a13192478df4bc3d23d2dea1907b6"
   integrity sha1-GVhwRQ9aExkkeN9Lw9I9LeoZB7Y=
 
-lodash@^4.17.11:
+lodash@^4.17.11, lodash@^4.17.15:
   version "4.17.15"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
   integrity sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A==

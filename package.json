@@ -17,10 +17,12 @@
   },
   "dependencies": {
     "@grpc/proto-loader": "^0.5.1",
-    "corteza-webapp-common": "cortezaproject/corteza-webapp-common.git#esm",
+    "corteza-webapp-common": "cortezaproject/corteza-webapp-common.git#master",
+    "corteza-protobuf": "cortezaproject/corteza-protobuf.git#master",
     "dotenv": "^8.0.0",
     "esm": "^3.2.25",
     "grpc": "^1.22.2",
+    "lodash": "^4.17.15",
     "moment": "^2.24.0",
     "pino": "^5.13.1",
     "vm2": "^3.8.2"
