@@ -4,8 +4,8 @@ import sinon from 'sinon'
 import executor from '../../../../src/grpc-server/services/script-runner/executor'
 import {VMScript} from 'vm2'
 import context from '../../../../src/grpc-server/services/script-runner/context'
-import Record from '../../../../src/types/record'
-import Module from '../../../../src/types/module'
+import Record from 'corteza-webapp-common/src/lib/types/compose/record'
+import Module from 'corteza-webapp-common/src/lib/types/compose/module'
 
 chai.use(chaiAsPromised)
 
@@ -21,6 +21,9 @@ describe('executor.js', () => {
   })
 
   describe('simple operations', () => {
+    // we need to keep UA & corredor scripts as compatible as possible
+    // keep in sync with ui-script-runner test!
+
     ctx = { $record: new Record(new Module()) }
 
     it('void/undefined return', async () => {

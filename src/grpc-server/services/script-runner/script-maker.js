@@ -1,4 +1,4 @@
-import {VMScript} from "vm2"
+import { VMScript } from "vm2"
 import _ from 'lodash'
 
 export default ({  name = 'unnamed-automation-script', source = '' } = {}) => {

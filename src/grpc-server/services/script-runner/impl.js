@@ -1,10 +1,11 @@
 import scriptMaker from './script-maker'
 import executor from './executor'
-import context, {Abort} from './context'
+import context from './context'
 import grpc from "grpc"
 import {Compose, Messaging, System} from './rest-clients'
 import logger from '../../../logger'
 import {services as servicesConfig} from '../../../config'
+import { Abort } from 'corteza-webapp-common/src/lib/corredor/errors'
 
 let apiClients = {
   compose: Compose(servicesConfig.scriptRunner.apiClients.compose),

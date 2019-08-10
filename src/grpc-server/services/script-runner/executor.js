@@ -1,8 +1,8 @@
-import {NodeVM, VMScript} from "vm2"
-import {ComposeObject} from '../../../types/common'
-import Record from '../../../types/record'
-import Module from '../../../types/module'
-import Namespace from '../../../types/namespace'
+import { NodeVM, VMScript } from "vm2"
+import { ComposeObject } from 'corteza-webapp-common/src/lib/types/compose/common'
+import Record from 'corteza-webapp-common/src/lib/types/compose/record'
+import Module from 'corteza-webapp-common/src/lib/types/compose/module'
+import Namespace from 'corteza-webapp-common/src/lib/types/compose/namespace'
 import { services as svcConfig } from '../../../config'
 
 const timeouts = svcConfig.scriptRunner.timeout

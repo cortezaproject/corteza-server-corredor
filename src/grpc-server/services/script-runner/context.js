@@ -1,9 +1,8 @@
-import Record from '../../../types/record'
-import Module from '../../../types/module'
-import Namespace from '../../../types/namespace'
-import helpers from './helpers'
-
-export class Abort extends Error {}
+import Record from 'corteza-webapp-common/src/lib/types/compose/record'
+import Module from 'corteza-webapp-common/src/lib/types/compose/module'
+import Namespace from 'corteza-webapp-common/src/lib/types/compose/namespace'
+import helpers from 'corteza-webapp-common/src/lib/corredor/api-helpers'
+import { Abort } from 'corteza-webapp-common/src/lib/corredor/errors'
 
 export default (request, restAPI) => {
   let $namespace, $module, $record
