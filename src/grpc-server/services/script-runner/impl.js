@@ -32,7 +32,7 @@ const handleError = (logger, done) => (e) => {
     // SyntaxError
     //
     // when something is wrong in the automatino script
-    done({ message: e.message + '\n\n' + e.stack, code: grpc.status.INVALID_ARGUMENT })
+    done({ message: e.message + '\n\n' + e.stack, code: grpc.status.FAILED_PRECONDITION })
     logger.error({ stack: e.stack }, e.message)
   } else if (e instanceof Abort) {
     // Abort
