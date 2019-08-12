@@ -65,10 +65,10 @@ const enrichLogger = (logger, request = {}) =>  {
   } = request
 
   return logger.child({
-    triggerID: script.ref ? String(script.ref) : undefined,
-    namespaceID: namespace.namespaceID ? String(namespace.namespaceID) : undefined,
-    moduleID: module.moduleID ? String(module.moduleID) : undefined,
-    recordID: record.recordID ? String(record.recordID) : undefined,
+    triggerID: script && script.ref ? String(script.ref) : undefined,
+    namespaceID: namespace && namespace.namespaceID ? String(namespace.namespaceID) : undefined,
+    moduleID: module && module.moduleID ? String(module.moduleID) : undefined,
+    recordID: record && record.recordID ? String(record.recordID) : undefined,
   })
 }
 
