@@ -1,30 +1,51 @@
-import scriptMaker from './script-maker'
-import executor from './executor'
-import context from './context'
 import grpc from "grpc"
+import { sharedContext } from 'corteza-webapp-common/src/lib/automation-scripts/context'
+import executor from 'corteza-webapp-common/src/lib/automation-scripts/exec-in-vm'
+import { Abort } from 'corteza-webapp-common/src/lib/automation-scripts/context/errors'
 import {Compose, Messaging, System} from './rest-clients'
 import logger from '../../../logger'
-import {services as servicesConfig} from '../../../config'
-import { Abort } from 'corteza-webapp-common/src/lib/corredor/errors'
+import {services as servicesConfig, debug} from '../../../config'
+
+const timeouts = servicesConfig.scriptRunner.timeout
 
 let apiClients = {
-  compose: Compose(servicesConfig.scriptRunner.apiClients.compose),
-  messaging: Messaging(servicesConfig.scriptRunner.apiClients.messaging),
-  system: System(servicesConfig.scriptRunner.apiClients.system),
+  ComposeAPI: Compose(servicesConfig.scriptRunner.apiClients.compose),
+  MessagingAPI: Messaging(servicesConfig.scriptRunner.apiClients.messaging),
+  SystemAPI: System(servicesConfig.scriptRunner.apiClients.system),
 }
 
 const setupScriptRunner = async (elog, request = {}) => {
-  let vmScript
-    , { script = '' } = request
+  let { script = {} } = request
 
-  try {
-    vmScript = scriptMaker(script)
-  } catch(e) {
-    return Promise.reject(e)
+  let { timeout } = script
+
+  if (timeout > timeouts.max) {
+    timeout = timeouts.max
+  } else if (timeout < timeouts.min) {
+    timeout = timeouts.min
+  }
+
+
+
+  const ctx = {
+    ...request,
+    ...apiClients,
   }
 
   elog.debug({ source: script.source },'executing the script')
-  return executor(vmScript, context(request, apiClients))
+  return executor(
+    script.source,
+    sharedContext(ctx),
+    {
+      timeout,
+      // For now, debug is the only thing that controls how we handle console.*
+      // calls.
+      // @todo how can we capture console output and
+      //       serve it back with gRPC response?
+      //       https://stackoverflow.com/a/50333959
+      console: debug ? 'inherit' : 'off',
+
+    })
 }
 
 const handleError = (logger, done) => (e) => {
@@ -86,7 +107,7 @@ export default () => {
     Test ({request}, done) {
       let elog = enrichLogger(logger, request)
       try {
-        scriptMaker(request).compile()
+        // @todo
         done(null, {})
       } catch (e) {
         handleError(elog, done)(e)

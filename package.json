@@ -1,7 +1,7 @@
 {
   "name": "corteza-server-corredor",
   "description": "Corteza Automation Script Runner",
-  "version": "2019.6.0",
+  "version": "2019.8.1",
   "license": "Apache-2.0",
   "type": "module",
   "contributors": [
@@ -17,23 +17,23 @@
   },
   "dependencies": {
     "@grpc/proto-loader": "^0.5.1",
-    "corteza-webapp-common": "cortezaproject/corteza-webapp-common.git#master",
     "corteza-protobuf": "cortezaproject/corteza-protobuf.git#master",
+    "corteza-webapp-common": "cortezaproject/corteza-webapp-common.git#automation",
     "dotenv": "^8.0.0",
     "esm": "^3.2.25",
     "grpc": "^1.22.2",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
-    "pino": "^5.13.1",
-    "vm2": "^3.8.2"
+    "pino": "5.13.2",
+    "vm2": "3.8.3"
   },
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "mocha": "^6.2.0",
     "nodemon": "^1.19.1",
-    "pino-pretty": "^3.2.0",
-    "sinon": "^7.3.2"
+    "pino-pretty": "3.2.1",
+    "sinon": "7.4.1"
   },
   "engines": {
     "node": ">=12.7.0"
