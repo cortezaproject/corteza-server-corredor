@@ -2,6 +2,7 @@ import grpc from "grpc"
 import { sharedContext } from 'corteza-webapp-common/src/lib/automation-scripts/context'
 import executor from 'corteza-webapp-common/src/lib/automation-scripts/exec-in-vm'
 import { Abort } from 'corteza-webapp-common/src/lib/automation-scripts/context/errors'
+import Record from 'corteza-webapp-common/src/lib/types/compose/record'
 import {Compose, Messaging, System} from './rest-clients'
 import logger from '../../../logger'
 import {services as servicesConfig, debug} from '../../../config'
@@ -26,13 +27,16 @@ const setupScriptRunner = async (elog, request = {}) => {
   }
 
 
-
   const ctx = {
     ...request,
-    ...apiClients,
+
+    ComposeAPI: apiClients.ComposeAPI.setJWT(request.JWT),
+    MessagingAPI: apiClients.MessagingAPI.setJWT(request.JWT),
+    SystemAPI: apiClients.SystemAPI.setJWT(request.JWT),
   }
 
   elog.debug({ source: script.source },'executing the script')
+
   return executor(
     script.source,
     sharedContext(ctx),
@@ -157,7 +161,11 @@ export default () => {
         elog.debug({ ...record, module: undefined }, 'returning record')
 
         // remove module obj & serialize values before sending back to caller
-        record = {...record, module: undefined, values: record.serializeValues()}
+        if (record && record instanceof Record) {
+          record = {...record, module: undefined, values: record.serializeValues()}
+        } else {
+          record = {}
+        }
 
         done(null, {record})
       }).catch(handleError(elog, done)).finally(logCall(elog))
