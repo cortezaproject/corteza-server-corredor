@@ -543,7 +543,7 @@ corteza-protobuf@cortezaproject/corteza-protobuf.git#master:
   version "0.0.0"
   resolved "https://codeload.github.com/cortezaproject/corteza-protobuf/tar.gz/dd3f580f423d4a63f47f84c60db2694b9695e9fe"
 
-corteza-webapp-common@cortezaproject/corteza-webapp-common.git#automation:
+corteza-webapp-common@cortezaproject/corteza-webapp-common.git#master:
   version "2019.3.18"
   resolved "https://codeload.github.com/cortezaproject/corteza-webapp-common/tar.gz/10f6d5a39a583e2d34af7ebffe77d07557374042"
   dependencies:
@@ -684,10 +684,10 @@ dot-prop@^4.1.0:
   dependencies:
     is-obj "^1.0.0"
 
-dotenv@^8.0.0:
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-8.0.0.tgz#ed310c165b4e8a97bb745b0a9d99c31bda566440"
-  integrity sha512-30xVGqjLjiUOArT4+M5q9sYdvuR4riM6yK9wMcas9Vbp6zZa+ocC9dp6QoftuhTPhFAiLK/0C5Ni2nou/Bk8lg==
+dotenv@8.1.0:
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-8.1.0.tgz#d811e178652bfb8a1e593c6dd704ec7e90d85ea2"
+  integrity sha512-GUE3gqcDCaMltj2++g6bRQ5rBJWtkWTmqmD0fo1RnnMuUqHNCt2oTPeDnS9n6fKYvlhn7AeBkb38lymBtWBQdA==
 
 duplexer3@^0.1.4:
   version "0.1.4"
@@ -1020,10 +1020,10 @@ growl@1.10.5:
   resolved "https://registry.yarnpkg.com/growl/-/growl-1.10.5.tgz#f2735dc2283674fa67478b10181059355c369e5e"
   integrity sha512-qBr4OuELkhPenW6goKVXiv47US3clb3/IbuWF9KNKEijAy9oeHxU9IgzjvJhHkUzhaj7rOUD7+YGWqUjLp5oSA==
 
-grpc@^1.22.2:
-  version "1.22.2"
-  resolved "https://registry.yarnpkg.com/grpc/-/grpc-1.22.2.tgz#1a60c728c692a93a85e855e35c2e0216654f0198"
-  integrity sha512-gaK59oAA5/mlOIn+hQO5JROPoAzsaGRpEMcrAayW5WGETS8QScpBoQ+XBxEWAAF0kbeGIELuGRCVEObKS1SLmw==
+grpc@1.23.2:
+  version "1.23.2"
+  resolved "https://registry.yarnpkg.com/grpc/-/grpc-1.23.2.tgz#e6d3ccb335ac423f94d844832f6ef0036d241774"
+  integrity sha512-HT6rADjdORTz7ZQ7Ti3LCZ0ijtaIRXzcK406LHVEgRa0MF5wQjHLz3UdRWugJGkf5hLlAXs0RKPdtwLbedoruw==
   dependencies:
     lodash.camelcase "^4.3.0"
     lodash.clone "^4.5.0"

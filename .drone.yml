@@ -11,5 +11,12 @@ steps:
         from_secret: docker_hub_username
       password:
         from_secret: docker_hub_password
+    when:
+      ref:
+        - refs/heads/master
+        - refs/heads/beta
+        - refs/heads/feature-*
+        - refs/tags/20??.*.*
+      events: [ tag, push ]
 
 trigger:
