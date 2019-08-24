@@ -3,17 +3,15 @@ import { sharedContext } from 'corteza-webapp-common/src/lib/automation-scripts/
 import executor from 'corteza-webapp-common/src/lib/automation-scripts/exec-in-vm'
 import { Abort } from 'corteza-webapp-common/src/lib/automation-scripts/context/errors'
 import Record from 'corteza-webapp-common/src/lib/types/compose/record'
-import {Compose, Messaging, System} from './rest-clients'
+import ComposeApiClient from 'corteza-webapp-common/src/lib/corteza-server/rest-api-client/compose'
+import MessagingApiClient from 'corteza-webapp-common/src/lib/corteza-server/rest-api-client/messaging'
+import SystemApiClient from 'corteza-webapp-common/src/lib/corteza-server/rest-api-client/system'
+
 import logger from '../../../logger'
 import {services as servicesConfig, debug} from '../../../config'
 
 const timeouts = servicesConfig.scriptRunner.timeout
 
-let apiClients = {
-  ComposeAPI: Compose(servicesConfig.scriptRunner.apiClients.compose),
-  MessagingAPI: Messaging(servicesConfig.scriptRunner.apiClients.messaging),
-  SystemAPI: System(servicesConfig.scriptRunner.apiClients.system),
-}
 
 const setupScriptRunner = async (elog, request = {}) => {
   let { script = {} } = request
@@ -26,13 +24,26 @@ const setupScriptRunner = async (elog, request = {}) => {
     timeout = timeouts.min
   }
 
+  const ctx = { ...request }
 
-  const ctx = {
-    ...request,
+  // Scan config map and try to configure API clients
+  const cfg = (request.config || {})
+  const jwt = cfg['api.jwt']
 
-    ComposeAPI: apiClients.ComposeAPI.setJWT(request.JWT),
-    MessagingAPI: apiClients.MessagingAPI.setJWT(request.JWT),
-    SystemAPI: apiClients.SystemAPI.setJWT(request.JWT),
+  // If we got the JWT and we know the base URL for each
+  // client/service we can configure the API client
+  if (jwt) {
+    if (cfg['api.baseURL.compose']) {
+      ctx.ComposeAPI = new ComposeApiClient({ baseURL: cfg['api.baseURL.compose'], jwt })
+    }
+
+    if (cfg['api.baseURL.messaging']) {
+      ctx.MessagingAPI = new MessagingApiClient({ baseURL: cfg['api.baseURL.messaging'], jwt })
+    }
+
+    if (cfg['api.baseURL.system']) {
+      ctx.SystemAPI = new SystemApiClient({ baseURL: cfg['api.baseURL.system'], jwt })
+    }
   }
 
   elog.debug({ source: script.source },'executing the script')
@@ -47,6 +58,7 @@ const setupScriptRunner = async (elog, request = {}) => {
       // @todo how can we capture console output and
       //       serve it back with gRPC response?
       //       https://stackoverflow.com/a/50333959
+      //       https://www.oipapio.com/question-4759570
       console: debug ? 'inherit' : 'off',
 
     })

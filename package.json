@@ -13,7 +13,7 @@
     "serve": "nodemon --ext js,proto --exec node -r esm src/main.js",
     "server": "node -r esm src/main.js",
     "test:unit": "mocha -r esm --recursive",
-    "cdeps": "yarn upgrade corteza-webapp-common"
+    "cdeps": "yarn upgrade corteza-webapp-common corteza-protobuf"
   },
   "dependencies": {
     "@grpc/proto-loader": "^0.5.1",
