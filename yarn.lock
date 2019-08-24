@@ -540,8 +540,8 @@ core-util-is@~1.0.0:
   integrity sha1-tf1UIgqivFq1eqtxQMlAdUUDwac=
 
 corteza-protobuf@cortezaproject/corteza-protobuf.git#master:
-  version "0.0.0"
-  resolved "https://codeload.github.com/cortezaproject/corteza-protobuf/tar.gz/9f2db76c6162cef2b8d6ecb1a2eaee0680889965"
+  version "2019.9.0-rc.1"
+  resolved "https://codeload.github.com/cortezaproject/corteza-protobuf/tar.gz/d8aef1c58ae1cf026489fb5783cd9ed0cb4660a8"
 
 corteza-webapp-common@cortezaproject/corteza-webapp-common.git#master:
   version "2019.9.0-rc.1"
