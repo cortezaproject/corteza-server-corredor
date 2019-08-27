@@ -1,6 +1,5 @@
 import grpc from "grpc"
-import { sharedContext } from 'corteza-webapp-common/src/lib/automation-scripts/context'
-import executor from 'corteza-webapp-common/src/lib/automation-scripts/exec-in-vm'
+import execInVM from 'corteza-webapp-common/src/lib/automation-scripts/exec-in-vm'
 import { Abort } from 'corteza-webapp-common/src/lib/automation-scripts/context/errors'
 import Record from 'corteza-webapp-common/src/lib/types/compose/record'
 import ComposeApiClient from 'corteza-webapp-common/src/lib/corteza-server/rest-api-client/compose'
@@ -11,7 +10,6 @@ import logger from '../../../logger'
 import {services as servicesConfig, debug} from '../../../config'
 
 const timeouts = servicesConfig.scriptRunner.timeout
-
 
 const setupScriptRunner = async (elog, request = {}) => {
   let { script = {} } = request
@@ -46,22 +44,25 @@ const setupScriptRunner = async (elog, request = {}) => {
     }
   }
 
-  elog.debug({ source: script.source },'executing the script')
+  ctx.SystemAPI.authCheck().then(({ user }) => {
+    ctx.authUser = user
 
-  return executor(
-    script.source,
-    sharedContext(ctx),
-    {
-      timeout,
-      // For now, debug is the only thing that controls how we handle console.*
-      // calls.
-      // @todo how can we capture console output and
-      //       serve it back with gRPC response?
-      //       https://stackoverflow.com/a/50333959
-      //       https://www.oipapio.com/question-4759570
-      console: debug ? 'inherit' : 'off',
+    elog.debug({ source: script.source },'executing the script')
 
-    })
+    return execInVM(
+      script.source,
+      ctx,
+      {
+        timeout,
+        // For now, debug is the only thing that controls how we handle console.*
+        // calls.
+        // @todo how can we capture console output and
+        //       serve it back with gRPC response?
+        //       https://stackoverflow.com/a/50333959
+        //       https://www.oipapio.com/question-4759570
+        console: debug ? 'inherit' : 'off',
+      })
+  })
 }
 
 const handleError = (logger, done) => (e) => {
