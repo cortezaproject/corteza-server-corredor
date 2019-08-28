@@ -1,6 +1,8 @@
 import grpc from "grpc"
 import execInVM from 'corteza-webapp-common/src/lib/automation-scripts/exec-in-vm'
 import { Abort } from 'corteza-webapp-common/src/lib/automation-scripts/context/errors'
+import Namespace from 'corteza-webapp-common/src/lib/types/compose/namespace'
+import Module from 'corteza-webapp-common/src/lib/types/compose/module'
 import Record from 'corteza-webapp-common/src/lib/types/compose/record'
 import ComposeApiClient from 'corteza-webapp-common/src/lib/corteza-server/rest-api-client/compose'
 import MessagingApiClient from 'corteza-webapp-common/src/lib/corteza-server/rest-api-client/messaging'
@@ -11,21 +13,13 @@ import {services as servicesConfig, debug} from '../../../config'
 
 const timeouts = servicesConfig.scriptRunner.timeout
 
-const setupScriptRunner = async (elog, request = {}) => {
-  let { script = {} } = request
-
-  let { timeout } = script
-
-  if (timeout > timeouts.max) {
-    timeout = timeouts.max
-  } else if (timeout < timeouts.min) {
-    timeout = timeouts.min
+const initApiClients = (cfg) => {
+  const ctx = {
+    ComposeAPI: null,
+    MessagingAPI: null,
+    SystemAPI: null,
   }
-
-  const ctx = { ...request }
-
   // Scan config map and try to configure API clients
-  const cfg = (request.config || {})
   const jwt = cfg['api.jwt']
 
   // If we got the JWT and we know the base URL for each
@@ -44,10 +38,24 @@ const setupScriptRunner = async (elog, request = {}) => {
     }
   }
 
-  return ctx.SystemAPI.authCheck().then(({ user }) => {
-    ctx.authUser = user
+  return ctx
+}
 
-    elog.debug({ source: script.source },'executing the script')
+const setupScriptRunner = async (elog, script, ctx = {}) => {
+  let { timeout } = script
+
+  if (timeout > timeouts.max) {
+    timeout = timeouts.max
+  } else if (timeout < timeouts.min) {
+    timeout = timeouts.min
+  }
+
+  return ctx.SystemAPI.authCheck().then(({ user }) => {
+    ctx.$authUser = user
+
+    elog.debug({
+      source: script.source,
+    },'executing the script')
 
     return execInVM(
       script.source,
@@ -148,46 +156,91 @@ export default () => {
     // Namespace automation scripts
     Namespace ({request}, done) {
       let elog = enrichLogger(logger, request)
-      setupScriptRunner(elog, request).then(namespace => {
-        if (!namespace) {
+
+      let {
+        config,
+        script,
+        namespace,
+      } = request
+
+      let ctx = {
+        ...initApiClients(config),
+        $namespace: new Namespace(namespace),
+      }
+
+      setupScriptRunner(elog, script, ctx).then(ok => {
+        if (!ok) {
           elog.info('namespace value not set, aborting')
           done(null, {})
         }
 
-        elog.debug({namespace}, 'returning namespace')
-        done(null, {namespace: namespace})
+        elog.debug({ namespace }, 'returning namespace')
+        done(null, { namespace: ctx.$namespace })
       }).catch(handleError(elog, done)).finally(logCall(elog))
     },
 
     // Module automation scripts
     Module ({request}, done) {
       let elog = enrichLogger(logger, request)
-      setupScriptRunner(elog, request).then(module => {
-        if (!module) {
+
+      let {
+        config,
+        script,
+        namespace,
+        module,
+      } = request
+
+      let ctx = {
+        ...initApiClients(config),
+        $namespace: new Namespace(namespace),
+        $module: new Module(module),
+      }
+
+      setupScriptRunner(elog, script, ctx).then(ok => {
+        if (!ok) {
           elog.info('module value not set, aborting')
           done(null, {})
         }
 
-        elog.debug({module}, 'returning module')
-        done(null, {module: module})
+        elog.debug({ module }, 'returning module')
+        done(null, { module: ctx.$module })
       }).catch(handleError(elog, done)).finally(logCall(elog))
     },
 
     // Record automation script execution
     Record ({request}, done) {
       let elog = enrichLogger(logger, request)
-      setupScriptRunner(elog, request).then(record => {
-        if (!record) {
+
+      let {
+        config,
+        script,
+        namespace,
+        module,
+        record,
+      } = request
+
+      let ctx = {
+        ...initApiClients(config),
+        $namespace: new Namespace(namespace),
+        $module: new Module(module),
+        $record: new Record(module, record),
+      }
+
+
+      setupScriptRunner(elog, script, ctx).then(ok => {
+        if (!ok) {
           elog.info('record value not set, aborting')
           done(null, {})
         }
+
+        let record = ctx.$record
 
         // remove module obj before logging
         elog.debug({ ...record, module: undefined }, 'returning record')
 
         // remove module obj & serialize values before sending back to caller
         if (record && record instanceof Record) {
-          record = {...record, module: undefined, values: record.serializeValues()}
+          record = { ...record, module: undefined, values: record.serializeValues() }
         } else {
           record = {}
         }
