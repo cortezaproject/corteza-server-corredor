@@ -44,7 +44,7 @@ const setupScriptRunner = async (elog, request = {}) => {
     }
   }
 
-  ctx.SystemAPI.authCheck().then(({ user }) => {
+  return ctx.SystemAPI.authCheck().then(({ user }) => {
     ctx.authUser = user
 
     elog.debug({ source: script.source },'executing the script')
@@ -70,27 +70,39 @@ const handleError = (logger, done) => (e) => {
     // SyntaxError
     //
     // when something is wrong in the automatino script
-    done({ message: e.message + '\n\n' + e.stack, code: grpc.status.FAILED_PRECONDITION })
     logger.error({ stack: e.stack }, e.message)
+    done({
+      code: grpc.status.FAILED_PRECONDITION,
+      message: e.message + '\n\n' + e.stack,
+    })
   } else if (e instanceof Abort) {
     // Abort
     //
     // Custom error provided to automation scripts to
     // allow more control over script execution flow
-    done({ message: e.message || 'Aborted', code: grpc.status.ABORTED })
     logger.error({ stack: e.stack }, e.message)
+    done({
+      code: grpc.status.ABORTED,
+      message: e.message || 'Aborted',
+    })
   } else if (e instanceof Error) {
     // Error
     //
     // General error handling
-    done({ message: e.message + '\n\n' + e.stack, code: grpc.status.INTERNAL })
     logger.error({ stack: e.stack }, e.message)
+    done({
+      code: grpc.status.INTERNAL,
+      message: e.message + '\n\n' + e.stack,
+    })
   } else if (typeof e === 'string') {
     // (string)
     //
     // Properly handle code that does `throw 'foo'`
-    done({ message: e, code: grpc.status.ABORTED })
     logger.error(e)
+    done({
+      code: grpc.status.ABORTED,
+      message: e,
+    })
   }
 }
 
