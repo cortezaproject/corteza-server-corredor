@@ -219,11 +219,15 @@ export default () => {
         record,
       } = request
 
+      const $namespace= namespace ? new Namespace(namespace) : undefined
+      const $module = module ? new Module(module) : undefined
+      const $record = $module && record ? new Record($module, record) : undefined
+
       let ctx = {
         ...initApiClients(config),
-        $namespace: new Namespace(namespace),
-        $module: new Module(module),
-        $record: new Record(module, record),
+        $namespace,
+        $module,
+        $record,
       }
 
 
