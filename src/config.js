@@ -1,6 +1,6 @@
-// Read .env into process.ENV.*
 import path from "path"
 
+// Read .env into process.ENV.*
 require('dotenv').config()
 
 function undef () {

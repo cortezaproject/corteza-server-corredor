@@ -544,13 +544,14 @@ corteza-protobuf@cortezaproject/corteza-protobuf.git#master:
   resolved "https://codeload.github.com/cortezaproject/corteza-protobuf/tar.gz/d8aef1c58ae1cf026489fb5783cd9ed0cb4660a8"
 
 corteza-webapp-common@cortezaproject/corteza-webapp-common.git#master:
-  version "2019.9.0-rc.1"
-  resolved "https://codeload.github.com/cortezaproject/corteza-webapp-common/tar.gz/c00ad6c265b667cdfdfc9df210d1051918171248"
+  version "2019.9.0-rc.5"
+  resolved "https://codeload.github.com/cortezaproject/corteza-webapp-common/tar.gz/088d36ab4b223d9256457cdda1eb96023fd3e595"
   dependencies:
     axios "0.19.0"
     diff "4.0.1"
     mime-types "2.1.24"
     pdfjs-dist "2.1.266"
+    qs "^6.8.0"
     v-photoswipe "https://github.com/tjerman/v-photoswipe#master"
     vm2 "^3.8.2"
 
@@ -2168,6 +2169,11 @@ punycode@^2.1.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.1.1.tgz#b58b010ac40c22c5657616c8d2c2c02c7bf479ec"
   integrity sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A==
+
+qs@^6.8.0:
+  version "6.8.0"
+  resolved "https://registry.yarnpkg.com/qs/-/qs-6.8.0.tgz#87b763f0d37ca54200334cd57bb2ef8f68a1d081"
+  integrity sha512-tPSkj8y92PfZVbinY1n84i1Qdx75lZjMQYx9WZhnkofyxzw2r7Ho39G3/aEvSUdebxpnnM4LZJCtvE/Aq3+s9w==
 
 quick-format-unescaped@^3.0.2:
   version "3.0.2"
