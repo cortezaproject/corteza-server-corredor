@@ -587,11 +587,11 @@ core-util-is@1.0.2, core-util-is@~1.0.0:
 
 corteza-protobuf@cortezaproject/corteza-protobuf.git#master:
   version "2019.9.0-rc.1"
-  resolved "https://codeload.github.com/cortezaproject/corteza-protobuf/tar.gz/d8aef1c58ae1cf026489fb5783cd9ed0cb4660a8"
+  resolved "https://codeload.github.com/cortezaproject/corteza-protobuf/tar.gz/814df3fd218934adc8285086dc13050bf7acf8cb"
 
 corteza-webapp-common@cortezaproject/corteza-webapp-common.git#master:
   version "2019.9.0-rc.5"
-  resolved "https://codeload.github.com/cortezaproject/corteza-webapp-common/tar.gz/088d36ab4b223d9256457cdda1eb96023fd3e595"
+  resolved "https://codeload.github.com/cortezaproject/corteza-webapp-common/tar.gz/be82719b5c261305a6cf3f7169dad56e55ebd57c"
   dependencies:
     axios "0.19.0"
     diff "4.0.1"

@@ -3,6 +3,12 @@ import path from 'path'
 import impl from './impl'
 import {protobuf} from '../../../config'
 
+// Making sure we have these where we need them
+// might not be neceserry
+require('request')
+require('axios')
+require('lodash')
+
 const protoLoader = require('@grpc/proto-loader')
 
 const base = path.join(protobuf.path, '/service-corredor.proto')

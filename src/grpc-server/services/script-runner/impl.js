@@ -141,7 +141,7 @@ const logCall = (logger) => {
 // Testing the script
 export default () => {
   return {
-    Test ({request}, done) {
+    Test({request}, done) {
       let elog = enrichLogger(logger, request)
       try {
         // @todo
@@ -154,7 +154,7 @@ export default () => {
     },
 
     // Namespace automation scripts
-    Namespace ({request}, done) {
+    Namespace({request}, done) {
       let elog = enrichLogger(logger, request)
 
       let {
@@ -174,13 +174,13 @@ export default () => {
           done(null, {})
         }
 
-        elog.debug({ namespace }, 'returning namespace')
-        done(null, { namespace: ctx.$namespace })
+        elog.debug({namespace}, 'returning namespace')
+        done(null, {namespace: ctx.$namespace})
       }).catch(handleError(elog, done)).finally(logCall(elog))
     },
 
     // Module automation scripts
-    Module ({request}, done) {
+    Module({request}, done) {
       let elog = enrichLogger(logger, request)
 
       let {
@@ -202,13 +202,13 @@ export default () => {
           done(null, {})
         }
 
-        elog.debug({ module }, 'returning module')
-        done(null, { module: ctx.$module })
+        elog.debug({module}, 'returning module')
+        done(null, {module: ctx.$module})
       }).catch(handleError(elog, done)).finally(logCall(elog))
     },
 
     // Record automation script execution
-    Record ({request}, done) {
+    Record({request}, done) {
       let elog = enrichLogger(logger, request)
 
       let {
@@ -219,7 +219,7 @@ export default () => {
         record,
       } = request
 
-      const $namespace= namespace ? new Namespace(namespace) : undefined
+      const $namespace = namespace ? new Namespace(namespace) : undefined
       const $module = module ? new Module(module) : undefined
       const $record = $module && record ? new Record($module, record) : undefined
 
@@ -230,7 +230,6 @@ export default () => {
         $record,
       }
 
-
       setupScriptRunner(elog, script, ctx).then(ok => {
         if (!ok) {
           elog.info('record value not set, aborting')
@@ -240,17 +239,52 @@ export default () => {
         let record = ctx.$record
 
         // remove module obj before logging
-        elog.debug({ ...record, module: undefined }, 'returning record')
+        elog.debug({...record, module: undefined}, 'returning record')
 
         // remove module obj & serialize values before sending back to caller
         if (record && record instanceof Record) {
-          record = { ...record, module: undefined, values: record.serializeValues() }
+          record = {...record, module: undefined, values: record.serializeValues()}
         } else {
           record = {}
         }
 
         done(null, {record})
       }).catch(handleError(elog, done)).finally(logCall(elog))
+    },
+
+    MailMessage({request}, done) {
+      let elog = enrichLogger(logger, request)
+
+      let {
+        config,
+        script,
+        mailMessage,
+      } = request
+
+      // Normalize mail message header & body
+      let header = mailMessage.header
+      for (var name of Object.keys(header.raw)) {
+        header.raw[name] = header.raw[name].values
+      }
+
+      let [ from ] = header.raw.From || [ undefined ]
+      let [ to ] = header.raw.To || [ undefined ]
+      let [ subject ] = header.raw.Subject || [ undefined ]
+      let [ messageID ] = header.raw['Message-Id'] || [ undefined ]
+      let rawBody = mailMessage.rawBody.toString()
+      let $mailMessage = Object.seal({ header, rawBody, subject, to, from, messageID })
+
+      let ctx = { ...initApiClients(config), $mailMessage }
+
+      setupScriptRunner(elog, script, ctx).then(ok => {
+        if (!ok) {
+          elog.info('aborted')
+        }
+
+        elog.info('done')
+        done(null, {})
+      }).catch(handleError(elog, done)).finally(logCall(elog))
+
     },
   }
 }
