@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@grpc/proto-loader": "^0.5.1",
+    "axios": "^0.18.0",
     "corteza-protobuf": "cortezaproject/corteza-protobuf.git#master",
     "corteza-webapp-common": "cortezaproject/corteza-webapp-common.git#master",
     "dotenv": "8.1.0",
@@ -26,8 +27,7 @@
     "moment": "^2.24.0",
     "pino": "5.13.2",
     "request": "^2.88.0",
-    "vm2": "3.8.3",
-    "axios": "^0.18.0"
+    "vm2": "3.8.3"
   },
   "devDependencies": {
     "chai": "^4.2.0",
