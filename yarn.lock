@@ -590,8 +590,8 @@ corteza-protobuf@cortezaproject/corteza-protobuf.git#master:
   resolved "https://codeload.github.com/cortezaproject/corteza-protobuf/tar.gz/6d0c2b5eac7ba2c46462c585312127a2576eec1f"
 
 corteza-webapp-common@cortezaproject/corteza-webapp-common.git#master:
-  version "2019.9.0-rc.45"
-  resolved "https://codeload.github.com/cortezaproject/corteza-webapp-common/tar.gz/afc536cd2952673de0568b5a21ffb6bc7d712218"
+  version "2019.9.0-rc.46"
+  resolved "https://codeload.github.com/cortezaproject/corteza-webapp-common/tar.gz/1179703cd42182de2419a64a4c271a6be645786e"
   dependencies:
     diff "4.0.1"
     mime-types "2.1.24"
