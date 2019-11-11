@@ -138,9 +138,42 @@ const logCall = (logger) => {
   }
 }
 
-// Testing the script
+/**
+ * Converts input to protobuf `google.protobuf.Timestamp` type
+ * @param input {Date|string|number}
+ * @returns {Object}
+ */
+const convTimestamp = (input) => {
+  let ms = 0
+  if (input instanceof Date) {
+    ms = input.getTime()
+  } else if (typeof input === 'string') {
+    ms = Date.parse(input)
+  } else if (typeof input === 'number') {
+    ms = input
+  }
+
+  return {
+    seconds: Math.floor(ms / 1000),
+    nanos: (ms % 1000) * 1e6
+  }
+}
+
+/**
+ * Convets obj props (std. set) that hold datetime-like values
+ * @param obj {Object}
+ */
+const convTimestampSet = (obj) => {
+  ['createdAt', 'updatedAt', 'deletedAt'].forEach(prop => {
+    if (obj[prop]) {
+      obj[prop] = convTimestamp(obj[prop])
+    }
+  })
+}
+
 export default () => {
   return {
+    // Testing the script
     Test({request}, done) {
       let elog = enrichLogger(logger, request)
       try {
@@ -248,6 +281,8 @@ export default () => {
           record = {}
         }
 
+        convTimestampSet(record)
+
         done(null, {record})
       }).catch(handleError(elog, done)).finally(logCall(elog))
     },
@@ -284,7 +319,6 @@ export default () => {
         elog.info('done')
         done(null, {})
       }).catch(handleError(elog, done)).finally(logCall(elog))
-
     },
   }
 }
