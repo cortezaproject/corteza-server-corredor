@@ -3,8 +3,8 @@ import path from 'path'
 import impl from './impl'
 import {protobuf} from '../../../config'
 
-// Making sure we have these where we need them
-// might not be neceserry
+// Making sure we have these when we need them
+// might not be necessary
 require('request')
 require('axios')
 require('lodash')
