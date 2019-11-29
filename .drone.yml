@@ -1,22 +1,16 @@
+----
 kind: pipeline
-name: Build & Pack
+name: Build
+type: docker
 
 steps:
-  - name: build image
-    image: plugins/docker
+  - name: "Build production release image"
+    image: "plugins/docker"
     settings:
-      repo: ${DRONE_REPO_NAMESPACE}/${DRONE_REPO_NAME}
-      auto_tag: true # generate tag names automatically based on git branch and git tag
-      username:
-        from_secret: docker_hub_username
-      password:
-        from_secret: docker_hub_password
+      auto_tag: true
+      repo: "${DRONE_REPO_NAMESPACE}/${DRONE_REPO_NAME}"
+      username: { from_secret: "docker_hub_username" }
+      password: { from_secret: "docker_hub_password" }
     when:
-      ref:
-        - refs/heads/master
-        - refs/heads/beta
-        - refs/heads/feature-*
-        - refs/tags/20??.*.*
-      events: [ tag, push ]
-
-trigger:
+      ref: { include: [ "refs/tags/20??.*.*", "refs/heads/master", "refs/heads/preview" ] }
+      event: [ "push", "tag" ]
