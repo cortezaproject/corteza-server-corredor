@@ -1,7 +1,7 @@
 {
   "name": "corteza-server-corredor",
   "description": "Corteza Automation Script Runner",
-  "version": "2019.12.0-rc0",
+  "version": "2020.3.0-next-gen-alpha.0",
   "license": "Apache-2.0",
   "type": "module",
   "contributors": [
@@ -12,6 +12,8 @@
   "scripts": {
     "serve": "nodemon --ext js,proto --exec node -r esm src/main.js",
     "server": "node -r esm src/main.js",
+    "tsc": "tsc",
+    "dev": "ts-node-dev --respawn --transpileOnly ./src/poc.ts",
     "test:unit": "mocha -r esm --recursive",
     "cdeps": "yarn upgrade corteza-webapp-common corteza-protobuf"
   },
@@ -28,6 +30,7 @@
     "papaparse": "^5.1.0",
     "pino": "5.13.2",
     "request": "^2.88.0",
+    "typescript": "^3.7.2",
     "vm2": "3.8.3"
   },
   "devDependencies": {
@@ -36,7 +39,8 @@
     "mocha": "^6.2.0",
     "nodemon": "^1.19.1",
     "pino-pretty": "3.2.1",
-    "sinon": "7.4.1"
+    "sinon": "7.4.1",
+    "ts-node-dev": "^1.0.0-pre.44"
   },
   "engines": {
     "node": ">=12.7.0"
