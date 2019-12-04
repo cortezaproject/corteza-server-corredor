@@ -13,7 +13,7 @@
     "serve": "nodemon --ext js,proto --exec node -r esm src/main.js",
     "server": "node -r esm src/main.js",
     "tsc": "tsc",
-    "dev": "ts-node-dev --respawn --transpileOnly ./src/app.ts",
+    "dev": "ts-node-dev --respawn --transpileOnly --ignore-watch node_module ./src/poc-dep-loading.ts",
     "test:unit": "mocha -r esm --recursive",
     "cdeps": "yarn upgrade corteza-webapp-common corteza-protobuf"
   },
@@ -24,13 +24,14 @@
     "corteza-protobuf": "cortezaproject/corteza-protobuf.git#2019.12.0",
     "corteza-webapp-common": "cortezaproject/corteza-webapp-common.git#2019.12.0",
     "dotenv": "8.1.0",
+    "download-npm-package": "^3.1.12",
     "esm": "^3.2.25",
     "grpc": "1.23.2",
     "moment": "^2.24.0",
     "pino": "5.13.2",
     "typescript": "^3.7.2",
-    "webpack": "^4.41.2",
-    "vm2": "3.8.3"
+    "vm2": "3.8.3",
+    "webpack": "^4.41.2"
   },
   "devDependencies": {
     "chai": "^4.2.0",
