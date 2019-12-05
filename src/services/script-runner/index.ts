@@ -1,14 +1,7 @@
 import grpc from "grpc"
 import path from 'path'
 import impl from './impl'
-import {protobuf} from '../../../config'
-
-// Making sure we have these when we need them
-// might not be necessary
-require('request')
-require('axios')
-require('lodash')
-require('papaparse')
+import {protobuf} from '../../config'
 
 const protoLoader = require('@grpc/proto-loader')
 

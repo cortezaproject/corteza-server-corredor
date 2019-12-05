@@ -5,12 +5,12 @@ Just a placeholder & simple instructions
 Mount user scripts to `/usr` or change `USER_SCRIPTS_PATH` to point to the right location.
 
 .Structure
-```
+----
 usr/
     package.json <5>
 
     src/
-        frontend/ <3>
+        client/ <3>
             auth/
                 index.ts <2>
 
@@ -25,26 +25,19 @@ usr/
 
             shared/ <1>
 
-        backend/ <4>
-            compose/
-                index.ts <2>
-
-            system/
-                index.ts <2>
-
-            messaging/
-                index.ts <2>
-
-            shared/ <1>
+        server/ <4>
+            index.ts
+            script1.ts
+            script2.ts
+            script3.ts
 
         shared/ <1>
 
-```
+----
 <1> Contains shared scripts.
-<2> Entry point for individual group of scripts.
-    Export functions you want to expose.
+<2> Represents bundles of clients scripts.
 <3> Frontend scripts will be bundled with Webpack
-    and offered to Corteza backend to serve to frontend apps.
-<4> Backend scripts you want to expose.
+    and offered to Corteza backend to serve to client apps.
+<4> Available server scripts.
 <5> Package with list of dependencies. Corredor will automatically
     load these packages

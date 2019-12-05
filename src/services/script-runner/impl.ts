@@ -8,8 +8,8 @@ import ComposeApiClient from 'corteza-webapp-common/src/lib/corteza-server/rest-
 import MessagingApiClient from 'corteza-webapp-common/src/lib/corteza-server/rest-api-client/messaging'
 import SystemApiClient from 'corteza-webapp-common/src/lib/corteza-server/rest-api-client/system'
 
-import logger from '../../../logger'
-import {services as servicesConfig, debug} from '../../../config'
+import logger from '../../logger'
+import {services as servicesConfig, debug} from '../../config'
 
 const timeouts = servicesConfig.scriptRunner.timeout
 
@@ -143,7 +143,7 @@ const logCall = (logger) => {
  * @param input {Date|string|number}
  * @returns {Object}
  */
-const convTimestamp = (input) => {
+const convTimestamp = (input : Date|string|number) => {
   let ms = 0
   if (input instanceof Date) {
     ms = input.getTime()
@@ -163,7 +163,7 @@ const convTimestamp = (input) => {
  * Convets obj props (std. set) that hold datetime-like values
  * @param obj {Object}
  */
-const convTimestampSet = (obj) => {
+const convTimestampSet = (obj : Record) => {
   ['createdAt', 'updatedAt', 'deletedAt'].forEach(prop => {
     if (obj[prop]) {
       obj[prop] = convTimestamp(obj[prop])
@@ -176,6 +176,7 @@ export default () => {
     // Testing the script
     Test({request}, done) {
       let elog = enrichLogger(logger, request)
+
       try {
         // @todo
         done(null, {})
