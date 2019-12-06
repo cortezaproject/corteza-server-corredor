@@ -1,3 +1,4 @@
+// @ts-ignore
 import { logger } from './config'
 
 export default require('pino')({
