@@ -1,10 +1,6 @@
 import watch from "node-watch";
 import {debounce} from "lodash";
-import {ScriptExtValidator} from "./script";
-
-interface IWatchCallback {
-    (): void
-}
+import {ScriptExtValidator, IWatchCallback} from "./d";
 
 const opt = {
     persistent: false,

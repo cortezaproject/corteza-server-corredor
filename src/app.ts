@@ -4,12 +4,12 @@ import gRPCServer from './server'
 import grpc from "grpc";
 import path from "path";
 import logger from "./logger";
-import watcher from './watcher'
+import watcher from './scripts/server/watcher'
+import Service from "./scripts/server/service";
+import serverScriptsHandlers from './scripts/server/grpc'
 
 const protoLoader = require('@grpc/proto-loader')
 
-import serverScriptsHandlers from './services/server-scripts'
-import {ServerScripts} from "./server-scripts";
 
 /**
  *
@@ -31,7 +31,8 @@ const base = path.join(config.protobuf.path, '/service-corredor-v2020.3.proto')
 const def = protoLoader.loadSync(base, {})
 const { corredor } = grpc.loadPackageDefinition(def)
 
-const h = new ServerScripts(path.join(__dirname, "../usr/src/server"))
+logger.debug('initializing server-scripts service')
+const h = new Service(path.join(__dirname, "../usr/src/server"))
 h.Load()
 watcher(h.path, () => h.Load())
 
