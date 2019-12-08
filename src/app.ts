@@ -28,8 +28,8 @@ const assumeInstalledDependencies : boolean = true;
  *
  * Main Corredor responsibilities
  *
- *  1. @todo load remote scripts (if not local)
- *  2. @todo watch and reload dependencies (if src/package.json exists)
+ *  1. @todo load remote (git-repo) scripts (if not local)
+ *  2. watch and reload dependencies (if src/package.json exists)
  *  3. @todo watch frontend-script changes, run tests (if any) and (re)bundle scripts
  *  4. watching backend-script changes and (re)link them to gRPC service
  *     @todo run tests?
