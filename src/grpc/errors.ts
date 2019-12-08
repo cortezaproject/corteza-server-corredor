@@ -14,21 +14,26 @@ export function ParseStack(stack: string) : string[] {
 }
 
 /**
- * Standard exception handler
+ * Handle exceptions and prepare gRPC error payload
  *
- * @param stack
- * @param message
+ * @param err
  * @param done
+ * @constructor
  */
-export function HandleException({ stack, message }, done : gRPC.sendUnaryData<null>) {
-    const metadata = new gRPC.Metadata()
-    ParseStack(stack).forEach(f => metadata.add('stack', f))
+export function HandleException(err : Error, done : gRPC.sendUnaryData<null>) {
+    const { name, message, stack } = err
 
-    const err : gRPC.ServiceError = {
+    const grpcErr : gRPC.ServiceError = {
         code: gRPC.status.INTERNAL,
+        name,
         message,
-
     }
 
-    done(err, null, metadata)
+    if (stack) {
+        const metadata = new gRPC.Metadata()
+        ParseStack(stack).forEach(f => metadata.add('stack', f))
+        grpcErr.metadata = metadata
+    }
+
+    done(grpcErr, null)
 }

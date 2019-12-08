@@ -1,6 +1,5 @@
 import {GetScripts} from "./scripts";
 import ScriptLogger from "./logger";
-import logger from "../../logger";
 import {IScript, IExecContext, IExecResponse} from "./d";
 
 /**
@@ -49,9 +48,6 @@ export default class Service {
 
         // Scripts loaded, replace set
         this.scripts = scripts
-
-        // @todo replace with logger
-        logger.info(`scripts reloaded`, { count: this.scripts.length })
     }
 
     /**

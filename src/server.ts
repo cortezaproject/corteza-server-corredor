@@ -11,8 +11,8 @@ interface IServerConfigurator {
 
 /**
  * Initializes the server
- * @param {IServerConfig} Server configuration
- * @param {IServerConfigurator} Server configurator callback
+ * @param {IServerConfig} config Server configuration
+ * @param {IServerConfigurator} callback Server configurator callback
  */
 export default ({ addr }: IServerConfig,
                 callback: IServerConfigurator) => {

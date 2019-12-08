@@ -12,16 +12,39 @@ import {Install} from "./scripts/deps/install";
 
 const protoLoader = require('@grpc/proto-loader');
 
-// @todo make configurable
+/**
+ * Path to user-scripts
+ *
+ * @todo make configurable
+ */
 const baseScriptsDir  = path.join(__dirname, '../usr');
-// @todo make configurable
+
+/**
+ * Path to node_modules dir (for user-script dep. installer)
+ *
+ * @todo make configurable
+ */
 const npmDownloadDir = path.join(__dirname, '../node_modules');
-// @todo make configurable
+
+/**
+ * Path to user-script package.json (list of dependencies)
+ *
+ * @todo make configurable
+ */
 const packageJSON = path.join(baseScriptsDir, 'package.json');
-// @todo make configurable
+
+/**
+ * Path to server-side user-scripts
+ *
+ * @todo make configurable
+ */
 const serverScriptsDir = path.join(baseScriptsDir, "src/server");
 
-// @todo make configurable
+/**
+ * Assume dependencies are installed
+ *
+ * @todo make configurable
+ */
 const assumeInstalledDependencies : boolean = true;
 
 /**
@@ -55,16 +78,30 @@ async function installDependencies() {
 async function reloadServerScripts() {
     // Reload scripts every-time packages change!
     logger.info('reloading server scripts');
-    return serverScriptsService.Load();
+    return serverScriptsService.Load().then(() => {
+        logger.info('server scripts reloaded', { count: serverScriptsService.List().length });
+    });
 }
 
+/**
+ * App entry point
+ */
 (async () => {
+    /**
+     * Install dependencies & make initial server-script load
+     */
+
     if (!assumeInstalledDependencies) {
         await installDependencies()
     }
 
     return reloadServerScripts()
 })().then(() => {
+    /**
+     * Setup dependency watcher that installs dependencies on
+     * change & reloads server-scripts
+     */
+
     return dependencyWatcher(packageJSON, async () => {
         await installDependencies();
 
@@ -72,13 +109,28 @@ async function reloadServerScripts() {
         return reloadServerScripts();
     })
 }).then(() => {
+    /**
+     * Setup server-script watcher that will reload server-side scripts
+     */
+
     return serverScriptsWatcher(serverScriptsService.path, reloadServerScripts)
 }).then(() => {
+    /**
+     * Start gRPC server
+     */
+
     logger.debug('starting gRPC server');
     gRPCServer(
         config.server,
         (server : grpc.Server) => {
-            server.addService(corredor.ServerScripts.service, serverScriptsHandlers(serverScriptsService))
+            server.addService(
+                // Bind server-scripts handler, service & logger
+                corredor.ServerScripts.service,
+                serverScriptsHandlers(
+                    serverScriptsService,
+                    logger.child({ system: 'gRPC', service: 'server-scripts'  })
+                )
+            )
         },
     );
 });

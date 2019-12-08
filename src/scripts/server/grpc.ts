@@ -2,6 +2,7 @@ import gRPC, {ServiceError} from 'grpc'
 import Service from "./service";
 import {HandleException} from "../../grpc/errors";
 import {gRPCServiceExecResponse, gRPCServiceListResponse} from "./d";
+import pino from "pino";
 
 /**
  * Decodes exec arguments
@@ -39,11 +40,12 @@ export function encodeExecResult(args: object) : object {
 }
 
 
-export default function (h : Service) {
+export default function (h : Service, logger : pino.BaseLogger) {
     return {
-        Exec ({ request = {} } : any, done: gRPC.sendUnaryData<gRPCServiceExecResponse>) {
-            // @ts-ignore
+        Exec ({ request = {} } : any, done: gRPC.sendUnaryData<gRPCServiceExecResponse|null>) {
             const {name, args} = request;
+
+            logger = logger.child({ rpc: 'Exec', script: name })
             try {
                 // Decode arguments
                 // passed in as keys with JSON-encoded values
@@ -53,21 +55,28 @@ export default function (h : Service) {
                 const meta = new gRPC.Metadata()
 
                 // Map each log line from the executed function to the metadata
-                log.forEach((l : string) => meta.add('log', l))
+                log.forEach((l : string) => {
+                    logger.debug(`${name} emitted log: ${l}`);
+                    meta.add('log', l)
+                })
 
                 done(null, { result: encodeExecResult(result) }, meta)
             } catch (e) {
-                // @ts-ignore
+                logger.debug(e.message, { stack: e.stack, args });
                 HandleException(e, done)
             }
         },
 
-        List ({}, done: gRPC.sendUnaryData<gRPCServiceListResponse>) {
+        List ({}, done: gRPC.sendUnaryData<gRPCServiceListResponse|null>) {
+            logger = logger.child({ rpc: 'List' })
+            logger.debug('returning list of scripts');
+
             try {
                 const scripts = h.List()
                 done(null, { scripts })
             } catch (e) {
-                // @ts-ignore
+                logger.debug(e.message, { stack: e.stack});
+
                 HandleException(e, done)
             }
         },

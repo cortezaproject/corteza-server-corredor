@@ -33,6 +33,9 @@ export async function Download (arg : string, dir : string) : Promise<any> {
 /**
  * Orchestrates download and install of NPM packages from package.json
  *
+ * @todo should be able verify (from first/previous run) what was installed and if there are changes.
+ *
+ *
  * @param {string} packageJsonPath Path to package.json file
  * @constructor
  */
