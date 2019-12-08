@@ -4,8 +4,6 @@ import {promises as fs} from "fs";
 import docblockParser from 'docblock-parser'
 import {DocBlockExtractor, IDocBlock, IScript, ScriptSecurity} from "./d";
 
-
-
 /**
  * Populates & returns script object
  *
@@ -37,7 +35,7 @@ export default async function MakeScript(filepath : string, basepath : string) :
             }
 
             if (typeof module["default"] !== 'function') {
-                rval.errors.push('exported default must be of type function');
+                rval.errors.push('exporte d default must be of type function');
                 return rval
             }
 
@@ -76,9 +74,17 @@ export function ParseDocBlock(source : string) : IDocBlock {
 
     const firstEol = text.indexOf("\n");
 
+    let label = text,
+        description = ''
+
+    if (firstEol > 0) {
+        label = text.substring(0, firstEol)
+        description = text.substring(firstEol+1)
+    }
+
     return {
-        label: text.substring(0, firstEol),
-        description: text.substring(firstEol+1),
+        label,
+        description,
         resource: tags.resource,
         events: tags.event,
         security: tags.security,

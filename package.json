@@ -14,12 +14,14 @@
     "server": "node -r esm src/main.js",
     "tsc": "tsc",
     "dev": "ts-node-dev --respawn --transpileOnly --ignore-watch node_module --ignore-watch usr -r esm ./src/app.ts",
-    "test:unit": "mocha -r esm --recursive",
+    "test:unit": "mocha -r ts-node/register -r esm --extension ts \"src/**/*spec.ts\"",
     "cdeps": "yarn upgrade corteza-webapp-common corteza-protobuf"
   },
   "dependencies": {
     "@grpc/proto-loader": "^0.5.1",
+    "@types/chai": "^4.2.6",
     "@types/lodash": "^4.14.149",
+    "@types/mocha": "^5.2.7",
     "@types/pino": "^5.14.0",
     "@types/webpack": "^4.41.0",
     "axios": "^0.18.0",
@@ -40,7 +42,7 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
-    "mocha": "^6.2.0",
+    "mocha": "^6.2.2",
     "nodemon": "^1.19.1",
     "pino-pretty": "^3.5.0",
     "sinon": "7.4.1",
