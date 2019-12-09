@@ -1,7 +1,69 @@
 import {Logger} from "./logger";
-import {IScript, IExecContext, IExecResponse} from "./d";
+import {IScript, IExecContext, IExecResponse, ScriptSecurity} from "./d";
 import {ExecArgs} from "./exec-args";
 
+export interface IListFilter {
+    query?:     string,
+    resource?:  string,
+    events?:    string[],
+    security?:  ScriptSecurity
+}
+
+export interface IListFiterFn {
+    (item: IScript): boolean
+}
+
+function match (f: IListFilter): IListFiterFn {
+    return (item: IScript): boolean => {
+        if (f === undefined) {
+            // Match all when no filter
+            return true
+        }
+
+        if (!!f.resource && f.resource !== item.resource) {
+            // Filter by resource, expecting exact match
+            return false
+        }
+
+        if (!!f.events && f.events.length > 0) {
+            // item has less events than filter,
+            // no way this can be a match.
+            if (item.events.length < f.events.length) {
+                return false
+            }
+
+            // Filter by events, should contain all filtered events
+            for (const e of f.events) {
+                // @ts-ignore
+                if (!item.events.includes(e)) {
+                    return false
+                }
+            }
+        }
+
+        if (!!f.security && f.security !== item.security) {
+            return false
+        }
+
+        if (!!f.query) {
+            // Strings to search through
+            const str = `${item.name} ${item.label} ${item.description} ${item.resource} ${item.events.join(' ')}`
+
+            // search query terms
+            for (const t of f.query.split(' ')) {
+                if (str.indexOf(t) > -1) {
+                    return true
+                }
+            }
+
+            // none matched, fail
+            return false
+        }
+
+        // No match
+        return true
+    }
+}
 
 
 /**
@@ -87,7 +149,7 @@ export class Service {
     /**
      * Returns list of scripts
      */
-    List () : IScript[] {
-        return this.scripts
+    List (f: IListFilter = {}) : IScript[] {
+        return this.scripts.filter(match(f))
     }
 }

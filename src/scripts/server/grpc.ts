@@ -1,7 +1,7 @@
 import grpc from 'grpc'
 import {Service} from "./service";
 import {HandleException} from "../../grpc/errors";
-import {gRPCServiceExecResponse, gRPCServiceListResponse} from "./d";
+import {gRPCServiceExecResponse, gRPCServiceListResponse, ScriptSecurity} from "./d";
 import pino from "pino";
 
 /**
@@ -58,7 +58,7 @@ export function Handlers (h : Service, logger : pino.BaseLogger) {
                 log.forEach((l : string) => {
                     logger.debug(`${name} emitted log: ${l}`);
                     meta.add('log', l)
-                })
+                });
 
                 done(null, { result: encodeExecResult(result) }, meta)
             } catch (e) {
@@ -67,12 +67,26 @@ export function Handlers (h : Service, logger : pino.BaseLogger) {
             }
         },
 
-        List ({}, done: grpc.sendUnaryData<gRPCServiceListResponse|null>) {
-            logger = logger.child({ rpc: 'List' })
+        List ({ request = {} }, done: grpc.sendUnaryData<gRPCServiceListResponse|null>) {
+            const grpcSecDefiner = 1;
+            const { query, resource, events, security } = request;
+
+            const filter = {
+                query,
+                resource,
+                events,
+
+                // translate protobuf's enum
+                security: security === grpcSecDefiner
+                    ? ScriptSecurity.definer
+                    : ScriptSecurity.invoker,
+            }
+
+            logger = logger.child({ rpc: 'List', filter })
             logger.debug('returning list of scripts');
 
             try {
-                const scripts = h.List()
+                const scripts = h.List(filter);
                 done(null, { scripts })
             } catch (e) {
                 logger.debug(e.message, { stack: e.stack});
