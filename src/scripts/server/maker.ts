@@ -26,7 +26,8 @@ export default async function MakeScript(filepath : string, basepath : string) :
         };
 
         try {
-            delete require.cache[require.resolve(filepath)]
+            // Remove from cache & (re)require the script
+            delete require.cache[require.resolve(filepath)];
             const module = require(filepath);
 
             if (!module["default"]) {
@@ -35,7 +36,7 @@ export default async function MakeScript(filepath : string, basepath : string) :
             }
 
             if (typeof module["default"] !== 'function') {
-                rval.errors.push('exporte d default must be of type function');
+                rval.errors.push('exported default must be of type function');
                 return rval
             }
 
