@@ -1,7 +1,7 @@
 import { describe, it } from 'mocha'
 import { expect } from 'chai'
 import path from 'path'
-import MakeScript, {ParseDocBlock} from "./maker";
+import {MakeScript, ParseDocBlock} from "./maker";
 
 describe('docblock parsing', () => {
     it('should parse a simple block', () => {
@@ -32,7 +32,7 @@ describe('docblock parsing', () => {
 describe('script making', () => {
     it('should parse itself', async () => {
         const script = await MakeScript(path.join(__dirname, 'maker.ts'), __dirname)
-        expect(script.name).to.equal('maker')
+        expect(script.name).to.equal('maker.ts')
         expect(script.fn).to.not.null
     })
 })
