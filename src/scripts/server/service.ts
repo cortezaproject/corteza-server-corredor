@@ -70,14 +70,12 @@ export class Service {
             ctx
         );
 
-
-
-        // Expand returned values into result if function returned an object
-        // If anything else was returned, stack it under 'result' property
         let result = {};
-        if (typeof rval === 'object') {
+        if (typeof rval === 'object' && rval.constructor.name === 'Object') {
+            // Expand returned values into result if function returned a plain javascript object
             result = { ...rval }
         } else {
+            // If anything else was returned, stack it under 'result' property
             result = { result: rval }
         }
 
