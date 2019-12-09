@@ -3,6 +3,8 @@ import path from "path"
 // Read .env into process.ENV.*
 require('dotenv').config()
 
+const rootDir = path.normalize(path.join(__dirname, '../'))
+
 function undef () {
   for (let arg of arguments) {
     if (arg !== undefined) {
@@ -43,7 +45,7 @@ export const server = {
 
 export const logger = {
   // Enable/disable logging
-// CORREDOR_LOG_ENABLED is used by the API as well to configure gRPC client logging
+  // CORREDOR_LOG_ENABLED is used by the API as well to configure gRPC client logging
   enabled: !!undef(process.env.CORREDOR_LOG_ENABLED, true),
 
   // Enable/disable pretty logging
@@ -56,7 +58,7 @@ export const logger = {
 }
 
 export const protobuf = {
-  path: path.normalize(undef(process.env.CORREDOR_CORTEZA_PROTOBUF_PATH, path.join(__dirname, '../node_modules/corteza-protobuf'))),
+  path: path.normalize(undef(process.env.CORREDOR_CORTEZA_PROTOBUF_PATH, path.join(rootDir, 'node_modules/corteza-protobuf'))),
 }
 
 export const services = {
@@ -67,4 +69,31 @@ export const services = {
       def: 2 * 1000, // 2s
     },
   },
+}
+
+const scriptsBaseDir = path.normalize(undef(process.env.CORREDOR_SCRIPTS_BASEDIR, path.join(rootDir, 'usr')))
+export const scripts = {
+  // where user scripts are
+  basedir: scriptsBaseDir,
+
+  dependencies: {
+    // where to get script's dependencies from
+    packageJSON: path.join(scriptsBaseDir, 'package.json'),
+
+    // where to install downloaded NPM packages
+    nodeModules: path.join(rootDir, 'node_modules'),
+
+    // assume installed packages on first load
+    assumeInstalled: debug,
+  },
+
+  server: {
+    // location of server scripts
+    basedir: path.join(scriptsBaseDir, 'src/server')
+  },
+
+  client: {
+    // location of client scripts
+    basedir: path.join(scriptsBaseDir, 'src/client')
+  }
 }

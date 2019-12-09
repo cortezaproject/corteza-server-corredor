@@ -9,41 +9,6 @@ import {ServiceDefinition} from "./grpc";
 
 
 /**
- * Path to user-scripts
- *
- * @todo make configurable
- */
-const baseScriptsDir  = path.join(__dirname, '../usr');
-
-/**
- * Path to node_modules dir (for user-script dep. installer)
- *
- * @todo make configurable
- */
-const npmDownloadDir = path.join(__dirname, '../node_modules');
-
-/**
- * Path to user-script package.json (list of dependencies)
- *
- * @todo make configurable
- */
-const packageJSON = path.join(baseScriptsDir, 'package.json');
-
-/**
- * Path to server-side user-scripts
- *
- * @todo make configurable
- */
-const serverScriptsDir = path.join(baseScriptsDir, "src/server");
-
-/**
- * Assume dependencies are installed
- *
- * @todo make configurable
- */
-const assumeInstalledDependencies : boolean = true;
-
-/**
  *
  * Main Corredor responsibilities
  *
@@ -59,20 +24,20 @@ const assumeInstalledDependencies : boolean = true;
  */
 
 
-
-
 logger.debug('initializing server-scripts service');
-const serverScriptsService = new serverScripts.Service(serverScriptsDir);
+const serverScriptsService = new serverScripts.Service(config.scripts.server.basedir);
 
 async function installDependencies() {
-    logger.info('installing dependencies', packageJSON);
-    return deps.Install(packageJSON, npmDownloadDir)
+    logger.info('installing dependencies from %s', config.scripts.dependencies.packageJSON);
+    return deps.Install(
+        config.scripts.dependencies.packageJSON,
+        config.scripts.dependencies.nodeModules)
 }
 
 async function reloadServerScripts() {
     // Reload scripts every-time packages change!
     logger.info('reloading server scripts');
-    return serverScripts.Reloader(serverScriptsDir)
+    return serverScripts.Reloader(config.scripts.server.basedir)
         .then((scripts: serverScripts.IScript[]) => {
             logger.debug('%d server scripts loaded', scripts.length);
             serverScriptsService.Update(scripts)
@@ -87,7 +52,7 @@ async function reloadServerScripts() {
      * Install dependencies & make initial server-script load
      */
 
-    if (!assumeInstalledDependencies) {
+    if (!config.scripts.dependencies.assumeInstalled) {
         await installDependencies()
     }
 
@@ -98,7 +63,7 @@ async function reloadServerScripts() {
      * change & reloads server-scripts
      */
 
-    return deps.Watcher(packageJSON, async () => {
+    return deps.Watcher(config.scripts.dependencies.packageJSON, async () => {
         await installDependencies();
 
         // Reload scripts every-time packages change!
@@ -110,9 +75,10 @@ async function reloadServerScripts() {
      */
 
     return serverScripts.Watcher(serverScriptsService.path, reloadServerScripts)
-}).then(() => {
-    return gRPCServer.LoadDefinitions(path.join(config.protobuf.path, '/service-corredor-v2020.3.proto'))
-}).then((
+})
+
+
+gRPCServer.LoadDefinitions(path.join(config.protobuf.path, '/service-corredor-v2020.3.proto')).then((
         // @ts-ignore
         { corredor: { ServerScripts } }
     ) => {
