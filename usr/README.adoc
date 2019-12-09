@@ -36,9 +36,9 @@ usr/
 ----
 <1> Contains shared scripts.
 <2> Represents bundles of clients scripts.
-<3> Frontend scripts will be bundled with Webpack
+<3> Frontend scripts will be bundled with Webpack (per subdir)
     and offered to Corteza backend to serve to client apps.
-<4> Available server scripts.
+<4> Available server scripts. Free fs strucutre.
 <5> Package with list of dependencies. Corredor will automatically
     load these packages
 

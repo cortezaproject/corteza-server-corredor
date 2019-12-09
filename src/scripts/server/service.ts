@@ -57,8 +57,7 @@ export default class Service {
      * @param args
      */
     Exec (name: string, args: object): IExecResponse {
-
-        const script = this.scripts.find(eqName(name));
+        const script : IScript|undefined = this.scripts.find(eqName(name));
 
         if (script === undefined) {
             throw new Error('script not found')
@@ -75,8 +74,8 @@ export default class Service {
             log: new ScriptLogger()
         };
 
-        const rval = script.fn(args, ctx)
-        let result = {}
+        const rval = script.fn(args, ctx);
+        let result = {};
 
         // Expand returned values into result if function returned an object
         // If anything else was returned, stack it under 'result' property
@@ -91,7 +90,7 @@ export default class Service {
             // The actual result
             result,
 
-            // Captured log
+            // Captured log from the execution
             log: ctx.log.getBuffer(),
         }
     }
