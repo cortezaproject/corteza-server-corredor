@@ -40,7 +40,7 @@ export function encodeExecResult(args: object) : object {
 }
 
 
-export default function (h : Service, logger : pino.BaseLogger) {
+export function Handlers (h : Service, logger : pino.BaseLogger) {
     return {
         Exec ({ request = {} } : any, done: gRPC.sendUnaryData<gRPCServiceExecResponse|null>) {
             const {name, args} = request;

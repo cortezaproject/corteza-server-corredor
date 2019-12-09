@@ -1,16 +1,12 @@
 // @ts-ignore
 import * as config from './config'
-import gRPCServer from './server'
-import grpc from "grpc";
 import path from "path";
 import logger from "./logger";
-import serverScriptsWatcher from './scripts/server/watcher'
-import dependencyWatcher from './scripts/deps/watcher'
-import Service from "./scripts/server/service";
-import serverScriptsHandlers from './scripts/server/grpc'
-import {Install} from "./scripts/deps/install";
+import * as deps from './scripts/deps'
+import * as serverScripts from "./scripts/server";
+import * as gRPCServer from './grpc'
+import {ServiceDefinition} from "./grpc";
 
-const protoLoader = require('@grpc/proto-loader');
 
 /**
  * Path to user-scripts
@@ -62,25 +58,25 @@ const assumeInstalledDependencies : boolean = true;
  *   - secret management
  */
 
-logger.debug('loading protobuf');
-const base = path.join(config.protobuf.path, '/service-corredor-v2020.3.proto');
-const def = protoLoader.loadSync(base, {});
-const { corredor } = grpc.loadPackageDefinition(def);
+
+
 
 logger.debug('initializing server-scripts service');
-const serverScriptsService = new Service(serverScriptsDir);
+const serverScriptsService = new serverScripts.Service(serverScriptsDir);
 
 async function installDependencies() {
     logger.info('installing dependencies', packageJSON);
-    return Install(packageJSON, npmDownloadDir)
+    return deps.Install(packageJSON, npmDownloadDir)
 }
 
 async function reloadServerScripts() {
     // Reload scripts every-time packages change!
     logger.info('reloading server scripts');
-    return serverScriptsService.Load().then(() => {
-        logger.info('server scripts reloaded', { count: serverScriptsService.List().length });
-    });
+    return serverScripts.Reloader(serverScriptsDir)
+        .then((scripts: serverScripts.IScript[]) => {
+            logger.debug('%d server scripts loaded', scripts.length);
+            serverScriptsService.Update(scripts)
+        })
 }
 
 /**
@@ -102,7 +98,7 @@ async function reloadServerScripts() {
      * change & reloads server-scripts
      */
 
-    return dependencyWatcher(packageJSON, async () => {
+    return deps.Watcher(packageJSON, async () => {
         await installDependencies();
 
         // Reload scripts every-time packages change!
@@ -113,26 +109,22 @@ async function reloadServerScripts() {
      * Setup server-script watcher that will reload server-side scripts
      */
 
-    return serverScriptsWatcher(serverScriptsService.path, reloadServerScripts)
+    return serverScripts.Watcher(serverScriptsService.path, reloadServerScripts)
 }).then(() => {
-    /**
-     * Start gRPC server
-     */
+    return gRPCServer.LoadDefinitions(path.join(config.protobuf.path, '/service-corredor-v2020.3.proto'))
+}).then((
+        // @ts-ignore
+        { corredor: { ServerScripts } }
+    ) => {
+    const svcdef: ServiceDefinition = new Map()
+    svcdef.set(ServerScripts.service, serverScripts.Handlers(
+            serverScriptsService,
+            logger.child({ system: 'gRPC', service: 'server-scripts'  })
+        )
+    )
 
     logger.debug('starting gRPC server');
-    gRPCServer(
-        config.server,
-        (server : grpc.Server) => {
-            server.addService(
-                // Bind server-scripts handler, service & logger
-                corredor.ServerScripts.service,
-                serverScriptsHandlers(
-                    serverScriptsService,
-                    logger.child({ system: 'gRPC', service: 'server-scripts'  })
-                )
-            )
-        },
-    );
+    gRPCServer.Start(config.server, svcdef);
 });
 
 

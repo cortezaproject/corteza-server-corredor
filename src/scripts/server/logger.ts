@@ -26,7 +26,7 @@ function make (type : EventType, args : IArguments) : Event {
  *
  * Gathers logged messages to internal buffer
  */
-export default class Logger {
+export class Logger {
     protected buf: Event[];
 
     constructor() {

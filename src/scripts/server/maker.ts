@@ -4,18 +4,26 @@ import {promises as fs} from "fs";
 import docblockParser from 'docblock-parser'
 import {DocBlockExtractor, IDocBlock, IScript, ScriptSecurity} from "./d";
 
+export async function Maker(gen : AsyncGenerator<string>, basepath: string) : Promise<IScript[]> {
+    let pp : Promise<IScript>[] = []
+
+    for await (const scriptLocation of gen) {
+        pp.push(MakeScript(scriptLocation, basepath))
+    }
+
+    return Promise.all(pp)
+}
+
 /**
  * Populates & returns script object
  *
  * @param {string} filepath
  */
-export default async function MakeScript(filepath : string, basepath : string) : Promise<IScript> {
+export async function MakeScript(filepath : string, basepath : string) : Promise<IScript> {
     return await fs.readFile(filepath).then(source => {
         // Trim off leading path
+        // @todo we trim too much of leading path
         let name = filepath.substring(basepath.length + 1)
-
-        // Remove extension
-        name = name.substring(0, name.lastIndexOf('.'))
 
         let rval : IScript = {
             name,

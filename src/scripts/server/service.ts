@@ -1,5 +1,4 @@
-import {GetScripts} from "./scripts";
-import ScriptLogger from "./logger";
+import {Logger} from "./logger";
 import {IScript, IExecContext, IExecResponse} from "./d";
 import {ExecArgs} from "./exec-args";
 
@@ -17,7 +16,7 @@ function eqName (name : string) {
 /**
  *
  */
-export default class Service {
+export class Service {
     readonly path: string;
     private scripts: IScript[];
 
@@ -35,22 +34,9 @@ export default class Service {
      *
      * @return {void}
      */
-    async Load () {
-        // Temp set that will replace one on class
-        const scripts: IScript[] = []
-
-        for await (const s of GetScripts(this.path)) {
-            const e = scripts.find(eqName(s.name))
-            if (e !== undefined) {
-                // Duplicate (by-name) detected
-                s.errors.push(`existing script with name "${s.name}"`)
-            }
-
-            scripts.push(s)
-        }
-
+    async Update (set : IScript[]) {
         // Scripts loaded, replace set
-        this.scripts = scripts
+        this.scripts = set
     }
 
     /**
@@ -74,10 +60,8 @@ export default class Service {
         let ctx : IExecContext = {
             // global console replacement,
             // will allow us to catch console.* calls and return them to the caller
-            log: new ScriptLogger()
+            log: new Logger()
         };
-
-
 
         const rval = script.fn(
             // Cast some of the common argument types

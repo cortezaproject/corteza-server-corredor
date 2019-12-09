@@ -14,7 +14,7 @@ const opt = {
  * @param {string} path
  * @param {IWatchCallback} callback
  */
-export default async function (path : string, callback : IWatchCallback) {
+export async function Watcher(path : string, callback : IWatchCallback) {
     const watcher = watch(path, opt, debounce(() => callback(), 500))
     process.on('SIGINT', watcher.close);
 }

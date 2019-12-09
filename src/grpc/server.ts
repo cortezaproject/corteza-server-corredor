@@ -1,22 +1,23 @@
-import logger from './logger'
-import gRPC from 'grpc'
+import logger from '../logger'
+import grpc from 'grpc'
 
 interface IServerConfig {
   addr: string
 }
 
 interface IServerConfigurator {
-  (srv: gRPC.Server): void
+  (srv: grpc.Server): void
 }
+
+export type ServiceDefinition = Map<grpc.ServiceDefinition<any>, any>
 
 /**
  * Initializes the server
  * @param {IServerConfig} config Server configuration
- * @param {IServerConfigurator} callback Server configurator callback
+ * @param {ServiceDefinition} services
  */
-export default ({ addr }: IServerConfig,
-                callback: IServerConfigurator) => {
-  const server = new gRPC.Server()
+export function Start ({ addr }: IServerConfig, services: ServiceDefinition) {
+  const server = new grpc.Server()
 
   const handle = () => {
     // Override signal handler with more severe approach
@@ -35,9 +36,9 @@ export default ({ addr }: IServerConfig,
   process.on('SIGTERM', handle);
 
   // Allow registration of servies
-  callback(server)
+  services.forEach((implementation, service) => server.addService(service, implementation));
 
-  if (server.bind(addr, gRPC.ServerCredentials.createInsecure()) === 0) {
+  if (server.bind(addr, grpc.ServerCredentials.createInsecure()) === 0) {
     logger.error(`could not bind gRPC server to ${addr}`)
     return
   }

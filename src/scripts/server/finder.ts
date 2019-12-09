@@ -1,23 +1,21 @@
 import {IScript, ScriptExtValidator} from "./d";
 import {promises as fs} from "fs";
 import path from "path";
-import MakeScript from "./maker";
-
 
 /**
  * Recursively gathers scripts-like files and returns generator
  *
  * @param {string} p path
- * @param {string} base base path
+ * @param {RegExp|undefined} validator
  */
-export async function* GetScripts (p : string, base : string = p): AsyncGenerator<IScript> {
+export async function* Finder (p : string, validator: RegExp|undefined = ScriptExtValidator): AsyncGenerator<string> {
     const ee = await fs.readdir(p, { withFileTypes: true });
     for (const e of ee) {
         const fp = path.resolve(p, e.name);
         if (e.isDirectory()) {
-            yield* GetScripts(fp, p);
-        } else if (ScriptExtValidator.test(e.name)) {
-            yield await MakeScript(fp, p)
+            yield* Finder(fp, validator);
+        } else if (validator.test(e.name)) {
+            yield fp
         }
     }
 }

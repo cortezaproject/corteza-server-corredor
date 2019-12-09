@@ -1,5 +1,8 @@
+// @ts-ignore
 import Namespace from 'corteza-webapp-common/src/lib/types/compose/namespace'
+// @ts-ignore
 import Module from 'corteza-webapp-common/src/lib/types/compose/module'
+// @ts-ignore
 import Record from 'corteza-webapp-common/src/lib/types/compose/record'
 
 export class ExecArgs {
