@@ -17,17 +17,12 @@ function eqName (name : string) {
  *
  */
 export class Service {
-    readonly path: string;
-    private scripts: IScript[];
+    private scripts: IScript[] = [];
 
     /**
-     *
-     * @param path
+     * Service constructor
      */
-    constructor (path: string) {
-        this.path = path
-        this.scripts = []
-    }
+    constructor () {}
 
     /**
      * Loads scripts

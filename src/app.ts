@@ -25,7 +25,7 @@ import {ServiceDefinition} from "./grpc";
 
 
 logger.debug('initializing server-scripts service');
-const serverScriptsService = new serverScripts.Service(config.scripts.server.basedir);
+const serverScriptsService = new serverScripts.Service();
 
 async function installDependencies() {
     logger.info('installing dependencies from %s', config.scripts.dependencies.packageJSON);
@@ -74,7 +74,7 @@ async function reloadServerScripts() {
      * Setup server-script watcher that will reload server-side scripts
      */
 
-    return serverScripts.Watcher(serverScriptsService.path, reloadServerScripts)
+    return serverScripts.Watcher(config.scripts.server.basedir, reloadServerScripts)
 })
 
 
