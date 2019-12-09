@@ -1,6 +1,9 @@
 import {GetScripts} from "./scripts";
 import ScriptLogger from "./logger";
 import {IScript, IExecContext, IExecResponse} from "./d";
+import {ExecArgs} from "./exec-args";
+
+
 
 /**
  * Creates script-name-comparison function
@@ -74,11 +77,20 @@ export default class Service {
             log: new ScriptLogger()
         };
 
-        const rval = script.fn(args, ctx);
-        let result = {};
+
+
+        const rval = script.fn(
+            // Cast some of the common argument types
+            // from plain javascript object to proper classes
+            new ExecArgs(args),
+            ctx
+        );
+
+
 
         // Expand returned values into result if function returned an object
         // If anything else was returned, stack it under 'result' property
+        let result = {};
         if (typeof rval === 'object') {
             result = { ...rval }
         } else {
