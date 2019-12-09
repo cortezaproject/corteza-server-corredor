@@ -1,4 +1,4 @@
-import ScriptLogger from "./logger";
+import {Logger} from "./logger";
 
 export interface IExecResponse {
     result: object
@@ -6,7 +6,7 @@ export interface IExecResponse {
 }
 
 export interface IExecContext {
-    log: ScriptLogger
+    log: Logger
 }
 
 export enum EventType {

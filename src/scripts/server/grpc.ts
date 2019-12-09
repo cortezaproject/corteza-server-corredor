@@ -1,5 +1,5 @@
-import gRPC, {ServiceError} from 'grpc'
-import Service from "./service";
+import grpc from 'grpc'
+import {Service} from "./service";
 import {HandleException} from "../../grpc/errors";
 import {gRPCServiceExecResponse, gRPCServiceListResponse} from "./d";
 import pino from "pino";
@@ -42,7 +42,7 @@ export function encodeExecResult(args: object) : object {
 
 export function Handlers (h : Service, logger : pino.BaseLogger) {
     return {
-        Exec ({ request = {} } : any, done: gRPC.sendUnaryData<gRPCServiceExecResponse|null>) {
+        Exec ({ request = {} } : any, done: grpc.sendUnaryData<gRPCServiceExecResponse|null>) {
             const {name, args} = request;
 
             logger = logger.child({ rpc: 'Exec', script: name })
@@ -52,7 +52,7 @@ export function Handlers (h : Service, logger : pino.BaseLogger) {
                 const dArgs = decodeExecArguments(args)
                 const { result, log } = h.Exec(name, dArgs)
 
-                const meta = new gRPC.Metadata()
+                const meta = new grpc.Metadata()
 
                 // Map each log line from the executed function to the metadata
                 log.forEach((l : string) => {
@@ -67,7 +67,7 @@ export function Handlers (h : Service, logger : pino.BaseLogger) {
             }
         },
 
-        List ({}, done: gRPC.sendUnaryData<gRPCServiceListResponse|null>) {
+        List ({}, done: grpc.sendUnaryData<gRPCServiceListResponse|null>) {
             logger = logger.child({ rpc: 'List' })
             logger.debug('returning list of scripts');
 
