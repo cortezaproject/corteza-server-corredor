@@ -1,4 +1,4 @@
-import grpc from "grpc"
+import grpc from 'grpc'
 import execInVM from 'corteza-webapp-common/src/lib/automation-scripts/exec-in-vm'
 import { Abort } from 'corteza-webapp-common/src/lib/automation-scripts/context/errors'
 import Namespace from 'corteza-webapp-common/src/lib/types/compose/namespace'
@@ -9,7 +9,7 @@ import MessagingApiClient from 'corteza-webapp-common/src/lib/corteza-server/res
 import SystemApiClient from 'corteza-webapp-common/src/lib/corteza-server/rest-api-client/system'
 
 import logger from '../../logger'
-import {services as servicesConfig, debug} from '../../config'
+import { services as servicesConfig, debug } from '../../config'
 
 const timeouts = servicesConfig.scriptRunner.timeout
 
@@ -17,7 +17,7 @@ const initApiClients = (cfg) => {
   const ctx = {
     ComposeAPI: null,
     MessagingAPI: null,
-    SystemAPI: null,
+    SystemAPI: null
   }
   // Scan config map and try to configure API clients
   const jwt = cfg['api.jwt']
@@ -54,8 +54,8 @@ const setupScriptRunner = async (elog, script, ctx = {}) => {
     ctx.$authUser = user
 
     elog.debug({
-      source: script.source,
-    },'executing the script')
+      source: script.source
+    }, 'executing the script')
 
     return execInVM(
       script.source,
@@ -68,7 +68,7 @@ const setupScriptRunner = async (elog, script, ctx = {}) => {
         //       serve it back with gRPC response?
         //       https://stackoverflow.com/a/50333959
         //       https://www.oipapio.com/question-4759570
-        console: debug ? 'inherit' : 'off',
+        console: debug ? 'inherit' : 'off'
       })
   })
 }
@@ -81,7 +81,7 @@ const handleError = (logger, done) => (e) => {
     logger.error({ stack: e.stack }, e.message)
     done({
       code: grpc.status.FAILED_PRECONDITION,
-      message: e.message + '\n\n' + e.stack,
+      message: e.message + '\n\n' + e.stack
     })
   } else if (e instanceof Abort) {
     // Abort
@@ -91,7 +91,7 @@ const handleError = (logger, done) => (e) => {
     logger.error({ stack: e.stack }, e.message)
     done({
       code: grpc.status.ABORTED,
-      message: e.message || 'Aborted',
+      message: e.message || 'Aborted'
     })
   } else if (e instanceof Error) {
     // Error
@@ -100,7 +100,7 @@ const handleError = (logger, done) => (e) => {
     logger.error({ stack: e.stack }, e.message)
     done({
       code: grpc.status.INTERNAL,
-      message: e.message + '\n\n' + e.stack,
+      message: e.message + '\n\n' + e.stack
     })
   } else if (typeof e === 'string') {
     // (string)
@@ -109,24 +109,24 @@ const handleError = (logger, done) => (e) => {
     logger.error(e)
     done({
       code: grpc.status.ABORTED,
-      message: e,
+      message: e
     })
   }
 }
 
-const enrichLogger = (logger, request = {}) =>  {
+const enrichLogger = (logger, request = {}) => {
   const {
     script,
     record,
     namespace,
-    module,
+    module
   } = request
 
   return logger.child({
     triggerID: script && script.ref ? String(script.ref) : undefined,
     namespaceID: namespace && namespace.namespaceID ? String(namespace.namespaceID) : undefined,
     moduleID: module && module.moduleID ? String(module.moduleID) : undefined,
-    recordID: record && record.recordID ? String(record.recordID) : undefined,
+    recordID: record && record.recordID ? String(record.recordID) : undefined
   })
 }
 
@@ -134,7 +134,7 @@ const logCall = (logger) => {
   const s = new Date()
   return () => {
     const duration = (new Date()).getTime() - s.getTime()
-    logger.info({duration}, 'done')
+    logger.info({ duration }, 'done')
   }
 }
 
@@ -143,7 +143,7 @@ const logCall = (logger) => {
  * @param input {Date|string|number}
  * @returns {Object}
  */
-const convTimestamp = (input : Date|string|number) => {
+const convTimestamp = (input: Date|string|number) => {
   let ms = 0
   if (input instanceof Date) {
     ms = input.getTime()
@@ -163,7 +163,7 @@ const convTimestamp = (input : Date|string|number) => {
  * Convets obj props (std. set) that hold datetime-like values
  * @param obj {Object}
  */
-const convTimestampSet = (obj : Record) => {
+const convTimestampSet = (obj: Record) => {
   ['createdAt', 'updatedAt', 'deletedAt'].forEach(prop => {
     if (obj[prop]) {
       obj[prop] = convTimestamp(obj[prop])
@@ -174,8 +174,8 @@ const convTimestampSet = (obj : Record) => {
 export default () => {
   return {
     // Testing the script
-    Test({request}, done) {
-      let elog = enrichLogger(logger, request)
+    Test ({ request }, done) {
+      const elog = enrichLogger(logger, request)
 
       try {
         // @todo
@@ -188,18 +188,18 @@ export default () => {
     },
 
     // Namespace automation scripts
-    Namespace({request}, done) {
-      let elog = enrichLogger(logger, request)
+    Namespace ({ request }, done) {
+      const elog = enrichLogger(logger, request)
 
-      let {
+      const {
         config,
         script,
-        namespace,
+        namespace
       } = request
 
-      let ctx = {
+      const ctx = {
         ...initApiClients(config),
-        $namespace: new Namespace(namespace),
+        $namespace: new Namespace(namespace)
       }
 
       setupScriptRunner(elog, script, ctx).then(ok => {
@@ -208,26 +208,26 @@ export default () => {
           done(null, {})
         }
 
-        elog.debug({namespace}, 'returning namespace')
-        done(null, {namespace: ctx.$namespace})
+        elog.debug({ namespace }, 'returning namespace')
+        done(null, { namespace: ctx.$namespace })
       }).catch(handleError(elog, done)).finally(logCall(elog))
     },
 
     // Module automation scripts
-    Module({request}, done) {
-      let elog = enrichLogger(logger, request)
+    Module ({ request }, done) {
+      const elog = enrichLogger(logger, request)
 
-      let {
+      const {
         config,
         script,
         namespace,
-        module,
+        module
       } = request
 
-      let ctx = {
+      const ctx = {
         ...initApiClients(config),
         $namespace: new Namespace(namespace),
-        $module: new Module(module),
+        $module: new Module(module)
       }
 
       setupScriptRunner(elog, script, ctx).then(ok => {
@@ -236,32 +236,32 @@ export default () => {
           done(null, {})
         }
 
-        elog.debug({module}, 'returning module')
-        done(null, {module: ctx.$module})
+        elog.debug({ module }, 'returning module')
+        done(null, { module: ctx.$module })
       }).catch(handleError(elog, done)).finally(logCall(elog))
     },
 
     // Record automation script execution
-    Record({request}, done) {
-      let elog = enrichLogger(logger, request)
+    Record ({ request }, done) {
+      const elog = enrichLogger(logger, request)
 
-      let {
+      const {
         config,
         script,
         namespace,
         module,
-        record,
+        record
       } = request
 
       const $namespace = namespace ? new Namespace(namespace) : undefined
       const $module = module ? new Module(module) : undefined
       const $record = $module && record ? new Record($module, record) : undefined
 
-      let ctx = {
+      const ctx = {
         ...initApiClients(config),
         $namespace,
         $module,
-        $record,
+        $record
       }
 
       setupScriptRunner(elog, script, ctx).then(ok => {
@@ -273,44 +273,44 @@ export default () => {
         let record = ctx.$record
 
         // remove module obj before logging
-        elog.debug({...record, module: undefined}, 'returning record')
+        elog.debug({ ...record, module: undefined }, 'returning record')
 
         // remove module obj & serialize values before sending back to caller
         if (record && record instanceof Record) {
-          record = {...record, module: undefined, values: record.serializeValues()}
+          record = { ...record, module: undefined, values: record.serializeValues() }
         } else {
           record = {}
         }
 
         convTimestampSet(record)
 
-        done(null, {record})
+        done(null, { record })
       }).catch(handleError(elog, done)).finally(logCall(elog))
     },
 
-    MailMessage({request}, done) {
-      let elog = enrichLogger(logger, request)
+    MailMessage ({ request }, done) {
+      const elog = enrichLogger(logger, request)
 
-      let {
+      const {
         config,
         script,
-        mailMessage,
+        mailMessage
       } = request
 
       // Normalize mail message header & body
-      let header = mailMessage.header
-      for (var name of Object.keys(header.raw)) {
+      const header = mailMessage.header
+      for (const name of Object.keys(header.raw)) {
         header.raw[name] = header.raw[name].values
       }
 
-      let [ from ] = header.raw.From || [ undefined ]
-      let [ to ] = header.raw.To || [ undefined ]
-      let [ subject ] = header.raw.Subject || [ undefined ]
-      let [ messageID ] = header.raw['Message-Id'] || [ undefined ]
-      let rawBody = mailMessage.rawBody.toString()
-      let $mailMessage = Object.seal({ header, rawBody, subject, to, from, messageID })
+      const [from] = header.raw.From || [undefined]
+      const [to] = header.raw.To || [undefined]
+      const [subject] = header.raw.Subject || [undefined]
+      const [messageID] = header.raw['Message-Id'] || [undefined]
+      const rawBody = mailMessage.rawBody.toString()
+      const $mailMessage = Object.seal({ header, rawBody, subject, to, from, messageID })
 
-      let ctx = { ...initApiClients(config), $mailMessage }
+      const ctx = { ...initApiClients(config), $mailMessage }
 
       setupScriptRunner(elog, script, ctx).then(ok => {
         if (!ok) {
@@ -320,6 +320,6 @@ export default () => {
         elog.info('done')
         done(null, {})
       }).catch(handleError(elog, done)).finally(logCall(elog))
-    },
+    }
   }
 }

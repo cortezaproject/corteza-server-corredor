@@ -1,39 +1,36 @@
-import webpack, {Stats} from 'webpack'
+import webpack, { Stats } from 'webpack'
 import path from 'path'
-
 
 console.log('Start')
 
-let wpOpt: webpack.Configuration = {
-    watch: true,
+const wpOpt: webpack.Configuration = {
+  watch: true,
 
-    context: path.resolve(__dirname, '../scripts'),
+  context: path.resolve(__dirname, '../scripts'),
 
-    entry: {
-        compose: './frontend/compose/index.js',
-        admin: './frontend/admin/index.js',
-    },
-    // mode: 'production',
-    mode: 'development',
-    target: 'web',
+  entry: {
+    compose: './frontend/compose/index.js',
+    admin: './frontend/admin/index.js'
+  },
+  // mode: 'production',
+  mode: 'development',
+  target: 'web',
 
-    output: {
-        path: path.resolve(__dirname, '../dist'),
-        futureEmitAssets: true,
-        filename: '[name].js'
-    },
+  output: {
+    path: path.resolve(__dirname, '../dist'),
+    futureEmitAssets: true,
+    filename: '[name].js'
+  }
 }
 
-
-let files = {}
+const files = {}
 
 const compiler = webpack(wpOpt)
 
 compiler.run((err: Error, stats: Stats) => {
-    if(err) return console.error(err)
-    console.log(stats.toJson().errors)
-    console.log(stats.toJson().warnings)
+  if (err) return console.error(err)
+  console.log(stats.toJson().errors)
+  console.log(stats.toJson().warnings)
 })
 
 console.log('Done')
-

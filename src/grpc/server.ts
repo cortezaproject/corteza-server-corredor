@@ -2,11 +2,11 @@ import logger from '../logger'
 import grpc from 'grpc'
 
 interface IServerConfig {
-  addr: string
+  addr: string;
 }
 
 interface IServerConfigurator {
-  (srv: grpc.Server): void
+  (srv: grpc.Server): void;
 }
 
 export type ServiceDefinition = Map<grpc.ServiceDefinition<any>, any>
@@ -22,21 +22,21 @@ export function Start ({ addr }: IServerConfig, services: ServiceDefinition) {
   const handle = () => {
     // Override signal handler with more severe approach
     process.on('SIGINT', () => {
-      logger.warn(`forcing gRPC server to stop`)
+      logger.warn('forcing gRPC server to stop')
       server.forceShutdown()
     })
 
-    logger.debug(`trying to stop gRPC server`)
+    logger.debug('trying to stop gRPC server')
     server.tryShutdown(() => {
-      logger.info(`gRPC server stopped`)
+      logger.info('gRPC server stopped')
     })
   }
 
-  process.on('SIGINT', handle);
-  process.on('SIGTERM', handle);
+  process.on('SIGINT', handle)
+  process.on('SIGTERM', handle)
 
   // Allow registration of servies
-  services.forEach((implementation, service) => server.addService(service, implementation));
+  services.forEach((implementation, service) => server.addService(service, implementation))
 
   if (server.bind(addr, grpc.ServerCredentials.createInsecure()) === 0) {
     logger.error(`could not bind gRPC server to ${addr}`)

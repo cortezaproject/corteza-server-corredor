@@ -1,7 +1,7 @@
-import grpc from "grpc"
+import grpc from 'grpc'
 import path from 'path'
 import impl from './impl'
-import {protobuf} from '../../config'
+import { protobuf } from '../../config'
 
 const protoLoader = require('@grpc/proto-loader')
 

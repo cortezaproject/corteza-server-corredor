@@ -21,32 +21,32 @@ import Channel from 'corteza-webapp-common/src/lib/types/messaging/channel'
  * All these variables are casted (if passed as an argument) to proper types ($record => Record, $module => Module, ...)
  */
 export class ExecArgs {
-    private args : Map<string, any>
+    private args: Map<string, any>
 
-    constructor(args : {[_: string]: any}) {
-        this.args = new Map()
+    constructor (args: {[_: string]: any}) {
+      this.args = new Map()
 
-        let arg : string;
-        for (arg in args) {
-            if (this.hasOwnProperty(arg)) {
-                // We have our own getter to handle this
+      let arg: string
+      for (arg in args) {
+        if (this.hasOwnProperty(arg)) {
+          // We have our own getter to handle this
 
-                // @ts-ignore
-                this.args.set(arg, args[arg])
-                continue
-            }
-
-            Object.defineProperty(this, arg, {
-                // @ts-ignore
-                value: args[arg],
-                writable: false,
-                enumerable: true,
-            });
+          // @ts-ignore
+          this.args.set(arg, args[arg])
+          continue
         }
+
+        Object.defineProperty(this, arg, {
+          // @ts-ignore
+          value: args[arg],
+          writable: false,
+          enumerable: true
+        })
+      }
     }
 
-    get jwt () : string {
-        return this.args.get('jwt') || ''
+    get jwt (): string {
+      return this.args.get('jwt') || ''
     }
 
     /**
@@ -54,15 +54,15 @@ export class ExecArgs {
      *
      * @returns {Record|undefined}
      */
-    get $record () : Record|undefined {
-        if (!this.args.has('$record')) {
-            return undefined
-        }
+    get $record (): Record|undefined {
+      if (!this.args.has('$record')) {
+        return undefined
+      }
 
-        return new Record(
-            this.args.get('$record'),
-            this.$module,
-        );
+      return new Record(
+        this.args.get('$record'),
+        this.$module
+      )
     }
 
     /**
@@ -70,12 +70,12 @@ export class ExecArgs {
      *
      * @returns {Module|undefined}
      */
-    get $module () : Module|undefined {
-        if (!this.args.has('$module')) {
-            return undefined
-        }
+    get $module (): Module|undefined {
+      if (!this.args.has('$module')) {
+        return undefined
+      }
 
-        return new Module(this.args.get('$module'))
+      return new Module(this.args.get('$module'))
     }
 
     /**
@@ -83,12 +83,12 @@ export class ExecArgs {
      *
      * @returns {Namespace|undefined}
      */
-    get $namespace () : Namespace|undefined {
-        if (!this.args.has('$namespace')) {
-            return undefined
-        }
+    get $namespace (): Namespace|undefined {
+      if (!this.args.has('$namespace')) {
+        return undefined
+      }
 
-        return new Namespace(this.args.get('$namespace'))
+      return new Namespace(this.args.get('$namespace'))
     }
 
     /**
@@ -96,12 +96,12 @@ export class ExecArgs {
      *
      * @returns {User|undefined}
      */
-    get $user () : User|undefined {
-        if (!this.args.has('$user')) {
-            return undefined
-        }
+    get $user (): User|undefined {
+      if (!this.args.has('$user')) {
+        return undefined
+      }
 
-        return new User(this.args.get('$user'))
+      return new User(this.args.get('$user'))
     }
 
     /**
@@ -109,12 +109,12 @@ export class ExecArgs {
      *
      * @returns {Role|undefined}
      */
-    get $role () : Role|undefined {
-        if (!this.args.has('$role')) {
-            return undefined
-        }
+    get $role (): Role|undefined {
+      if (!this.args.has('$role')) {
+        return undefined
+      }
 
-        return new Role(this.args.get('$role'))
+      return new Role(this.args.get('$role'))
     }
 
     /**
@@ -122,11 +122,11 @@ export class ExecArgs {
      *
      * @returns {Channel|undefined}
      */
-    get $channel () : Channel|undefined {
-        if (!this.args.has('$channel')) {
-            return undefined
-        }
+    get $channel (): Channel|undefined {
+      if (!this.args.has('$channel')) {
+        return undefined
+      }
 
-        return new Channel(this.args.get('$channel'))
+      return new Channel(this.args.get('$channel'))
     }
 }

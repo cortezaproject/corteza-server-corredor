@@ -1,24 +1,24 @@
-import {ExecContext} from "./exec-context";
-import {ExecArgs} from "./exec-args";
+import { ExecContext } from './exec-context'
+import { ExecArgs } from './exec-args'
 
 export interface IExecConfigCServers {
-    system:    IExecConfigServer,
-    compose:   IExecConfigServer,
-    messaging: IExecConfigServer,
+    system: IExecConfigServer;
+    compose: IExecConfigServer;
+    messaging: IExecConfigServer;
 }
 
 export interface IExecConfigServer {
-    apiBaseURL: string,
+    apiBaseURL: string;
 }
 
 export interface IExecConfig {
-    cServers:  IExecConfigCServers,
-    [_: string]: any,
+    cServers: IExecConfigCServers;
+    [_: string]: any;
 }
 
 export interface IExecResponse {
-    result: object
-    log: string[]
+    result: object;
+    log: string[];
 }
 
 export enum EventType {
@@ -29,17 +29,17 @@ export enum EventType {
 }
 
 export interface Event {
-    timestamp: Date
-    type: EventType
-    message: string
+    timestamp: Date;
+    type: EventType;
+    message: string;
 }
 
 export interface IWatchCallback {
-    (): void
+    (): void;
 }
 
-export const ScriptExtValidator = /\.(ts|js)$/;
-export const DocBlockExtractor = /(\/\*\*.+?\*\/)/s;
+export const ScriptExtValidator = /\.(ts|js)$/
+export const DocBlockExtractor = /(\/\*\*.+?\*\/)/s
 
 export enum ScriptSecurity {
     invoker = 'invoker',
@@ -47,33 +47,32 @@ export enum ScriptSecurity {
 }
 
 export interface IScriptFn{
-    (args: ExecArgs, ctx: ExecContext): any
+    (args: ExecArgs, ctx: ExecContext): any;
 }
 
 export interface IScript {
-    name:         string;
-    label?:       string;
+    name: string;
+    label?: string;
     description?: string;
-    resource?:    string;
-    events:       string[];
-    security:     ScriptSecurity;
-    fn?:          IScriptFn;
-    errors:       string[];
+    resource?: string;
+    events: string[];
+    security: ScriptSecurity;
+    fn?: IScriptFn;
+    errors: string[];
 }
 
-
 export interface IDocBlock {
-    label:       string;
+    label: string;
     description: string;
-    resource:    string|undefined;
-    events:      string[];
-    security:    ScriptSecurity;
+    resource: string|undefined;
+    events: string[];
+    security: ScriptSecurity;
 }
 
 export interface gRPCServiceExecResponse {
-    result: object
+    result: object;
 }
 
 export interface gRPCServiceListResponse {
-    scripts: IScript[]
+    scripts: IScript[];
 }

@@ -7,13 +7,11 @@ export interface IDependencyMap {
 }
 
 export interface IPackageInstallStatus {
-    name: string
-    version: string
-    installed: boolean
+    name: string;
+    version: string;
+    installed: boolean;
 }
 
 export interface IWatchCallback {
-    (): void
+    (): void;
 }
-
-

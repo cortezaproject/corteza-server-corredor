@@ -6,5 +6,5 @@ export default require('pino')({
   enabled: true,
   base: null,
   prettyPrint: false,
-  ...logger,
+  ...logger
 })

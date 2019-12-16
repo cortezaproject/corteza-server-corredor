@@ -13,17 +13,15 @@ import SystemHelper from 'corteza-webapp-common/src/lib/automation-scripts/conte
 // @ts-ignore
 import User from 'corteza-webapp-common/src/lib/types/system/user'
 
-import {Logger} from "./logger";
-import {ExecArgs} from "./exec-args";
-import {IExecConfig} from "./d";
+import { Logger } from './logger'
+import { ExecArgs } from './exec-args'
+import { IExecConfig } from './d'
 
 export interface IExecContextCtor {
-    args:   ExecArgs,
-    log:    Logger,
-    config: IExecConfig,
+    args: ExecArgs;
+    log: Logger;
+    config: IExecConfig;
 }
-
-
 
 /**
  * Handles script execution context
@@ -31,9 +29,9 @@ export interface IExecContextCtor {
  *
  */
 export class ExecContext {
-    readonly args:   ExecArgs;
+    readonly args: ExecArgs;
     readonly config: IExecConfig;
-    private  log:    Logger;
+    private log: Logger;
 
     /**
      * @param {IExecContextCtor} ctx
@@ -41,10 +39,10 @@ export class ExecContext {
      * @param {ExecArgs} ctx.args
      * @param {Logger} ctx.log
      */
-    constructor ({ config, args, log } : IExecContextCtor) {
-        this.args = args;
-        this.log = log;
-        this.config = config;
+    constructor ({ config, args, log }: IExecContextCtor) {
+      this.args = args
+      this.log = log
+      this.config = config
     }
 
     /**
@@ -52,10 +50,10 @@ export class ExecContext {
      *
      * @returns {Promise<User>}
      */
-    get $authUser () : Promise<User> {
-        return this.SystemAPI
-            .authCheck()
-            .then(({ user } : { user: User }) => user)
+    get $authUser (): Promise<User> {
+      return this.SystemAPI
+        .authCheck()
+        .then(({ user }: { user: User }) => user)
     }
 
     /**
@@ -63,11 +61,11 @@ export class ExecContext {
      *
      * @returns {Promise<SystemApiClient>}
      */
-    get SystemAPI () : SystemApiClient {
-        const { baseURL } = this.config.server.system;
-        const { jwt     } = this.args;
+    get SystemAPI (): SystemApiClient {
+      const { baseURL } = this.config.server.system
+      const { jwt } = this.args
 
-        return new SystemApiClient({ baseURL, jwt })
+      return new SystemApiClient({ baseURL, jwt })
     }
 
     /**
@@ -75,11 +73,11 @@ export class ExecContext {
      *
      * @returns {Promise<ComposeApiClient>}
      */
-    get ComposeAPI () : ComposeApiClient {
-        const { baseURL } = this.config.server.compose;
-        const { jwt     } = this.args;
+    get ComposeAPI (): ComposeApiClient {
+      const { baseURL } = this.config.server.compose
+      const { jwt } = this.args
 
-        return new ComposeApiClient({ baseURL, jwt })
+      return new ComposeApiClient({ baseURL, jwt })
     }
 
     /**
@@ -87,11 +85,11 @@ export class ExecContext {
      *
      * @returns {Promise<MessagingApiClient>}
      */
-    get MessagingAPI () : MessagingApiClient {
-        const { baseURL } = this.config.server.messaging;
-        const { jwt     } = this.args;
+    get MessagingAPI (): MessagingApiClient {
+      const { baseURL } = this.config.server.messaging
+      const { jwt } = this.args
 
-        return new MessagingApiClient({ baseURL, jwt })
+      return new MessagingApiClient({ baseURL, jwt })
     }
 
     /**
@@ -99,12 +97,12 @@ export class ExecContext {
      *
      * @returns {SystemHelper}
      */
-    get System () : SystemHelper {
-        return new SystemHelper({
-            SystemAPI:    this.SystemAPI,
-            $user:        this.args.$user,
-            $role:        this.args.$role,
-        })
+    get System (): SystemHelper {
+      return new SystemHelper({
+        SystemAPI: this.SystemAPI,
+        $user: this.args.$user,
+        $role: this.args.$role
+      })
     }
 
     /**
@@ -112,13 +110,13 @@ export class ExecContext {
      *
      * @returns {ComposeHelper}
      */
-    get Compose () : ComposeHelper {
-        return new ComposeHelper({
-            ComposeAPI: this.ComposeAPI,
-            $namespace: this.args.$namespace,
-            $module:    this.args.$module,
-            $record:    this.args.$record,
-        })
+    get Compose (): ComposeHelper {
+      return new ComposeHelper({
+        ComposeAPI: this.ComposeAPI,
+        $namespace: this.args.$namespace,
+        $module: this.args.$module,
+        $record: this.args.$record
+      })
     }
 
     /**
@@ -126,11 +124,11 @@ export class ExecContext {
      *
      * @returns {MessagingHelper}
      */
-    get Messaging () : MessagingHelper {
-        return new MessagingHelper({
-            MessagingAPI: this.MessagingAPI,
-            $authUser:    this.$authUser,
-            channel:      this.args.$channel,
-        })
+    get Messaging (): MessagingHelper {
+      return new MessagingHelper({
+        MessagingAPI: this.MessagingAPI,
+        $authUser: this.$authUser,
+        channel: this.args.$channel
+      })
     }
 }
