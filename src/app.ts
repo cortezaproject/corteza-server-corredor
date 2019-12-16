@@ -25,7 +25,19 @@ import {ServiceDefinition} from "./grpc";
 
 
 logger.debug('initializing server-scripts service');
-const serverScriptsService = new serverScripts.Service();
+const serverScriptsService = new serverScripts.Service(config.scripts.exec);
+
+logger.info('server-scripts service configured');
+logger.debug(
+    'cServer system API baseUrl',
+    config.scripts.exec.cServers.system.baseURL);
+logger.debug(
+    'cServer compose API baseUrl',
+    config.scripts.exec.cServers.compose.baseURL);
+logger.debug(
+    'cServer messaging API baseUrl',
+    config.scripts.exec.cServers.messaging.baseURL);
+
 
 async function installDependencies() {
     logger.info('installing dependencies from %s', config.scripts.dependencies.packageJSON);

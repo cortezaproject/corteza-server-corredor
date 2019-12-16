@@ -4,6 +4,13 @@ import {HandleException} from "../../grpc/errors";
 import {gRPCServiceExecResponse, gRPCServiceListResponse, ScriptSecurity} from "./d";
 import pino from "pino";
 
+interface IListRequest {
+    query?:    string;
+    resource?: string;
+    events?:   string[];
+    security?: number;
+}
+
 /**
  * Decodes exec arguments
  *
@@ -69,7 +76,7 @@ export function Handlers (h : Service, logger : pino.BaseLogger) {
 
         List ({ request = {} }, done: grpc.sendUnaryData<gRPCServiceListResponse|null>) {
             const grpcSecDefiner = 1;
-            const { query, resource, events, security } = request;
+            const { query, resource, events, security }: IListRequest = request;
 
             const filter = {
                 query,

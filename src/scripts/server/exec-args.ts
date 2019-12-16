@@ -4,11 +4,26 @@ import Namespace from 'corteza-webapp-common/src/lib/types/compose/namespace'
 import Module from 'corteza-webapp-common/src/lib/types/compose/module'
 // @ts-ignore
 import Record from 'corteza-webapp-common/src/lib/types/compose/record'
+// @ts-ignore
+import User from 'corteza-webapp-common/src/lib/types/system/user'
+// @ts-ignore
+import Role from 'corteza-webapp-common/src/lib/types/system/role'
+// @ts-ignore
+import Channel from 'corteza-webapp-common/src/lib/types/messaging/channel'
 
+/**
+ * Handles arguments, passed to the script
+ *
+ * By convention variables holding "current" resources are prefixed with dollar ($) sign.
+ * For example, before/after triggers for record will call registered scripts with $record, $module
+ * and $namespace, holding current record, it's module and namespace.
+ *
+ * All these variables are casted (if passed as an argument) to proper types ($record => Record, $module => Module, ...)
+ */
 export class ExecArgs {
     private args : Map<string, any>
 
-    constructor(args : object) {
+    constructor(args : {[_: string]: any}) {
         this.args = new Map()
 
         let arg : string;
@@ -30,6 +45,10 @@ export class ExecArgs {
         }
     }
 
+    get jwt () : string {
+        return this.args.get('jwt') || ''
+    }
+
     /**
      * Current record
      *
@@ -42,7 +61,7 @@ export class ExecArgs {
 
         return new Record(
             this.args.get('$record'),
-            this.args.has('$module'),
+            this.$module,
         );
     }
 
@@ -70,5 +89,44 @@ export class ExecArgs {
         }
 
         return new Namespace(this.args.get('$namespace'))
+    }
+
+    /**
+     * Current user
+     *
+     * @returns {User|undefined}
+     */
+    get $user () : User|undefined {
+        if (!this.args.has('$user')) {
+            return undefined
+        }
+
+        return new User(this.args.get('$user'))
+    }
+
+    /**
+     * Current role
+     *
+     * @returns {Role|undefined}
+     */
+    get $role () : Role|undefined {
+        if (!this.args.has('$role')) {
+            return undefined
+        }
+
+        return new Role(this.args.get('$role'))
+    }
+
+    /**
+     * Current channel
+     *
+     * @returns {Channel|undefined}
+     */
+    get $channel () : Channel|undefined {
+        if (!this.args.has('$channel')) {
+            return undefined
+        }
+
+        return new Channel(this.args.get('$channel'))
     }
 }

@@ -72,6 +72,32 @@ export const services = {
 }
 
 const scriptsBaseDir = path.normalize(undef(process.env.CORREDOR_SCRIPTS_BASEDIR, path.join(rootDir, 'usr')))
+const assembleCServerBaseURL = (service) => {
+  const host = undef(
+    process.env.CORREDOR_EXEC_CSERVERS_API_HOST,
+    // DOMAIN will be present in the standard configuration
+    process.env.DOMAIN,
+    // Other ways to get to the hostname
+    process.env.HOSTNAME,
+    process.env.HOST,
+  )
+
+  if (host === undefined) {
+    return undefined
+  }
+
+  const tpl = undef(
+    // will replace HOST and SERVICE
+    process.env.CORREDOR_EXEC_CSERVERS_API_BASEURL_TEMPLATE,
+    // Assume standard "api." prefix for the API
+    'https://api.{host}/{service}'
+  )
+
+  return tpl.
+    replace('{host}', host).
+    replace('{service}', service)
+}
+
 export const scripts = {
   // where user scripts are
   basedir: scriptsBaseDir,
@@ -85,6 +111,22 @@ export const scripts = {
 
     // assume installed packages on first load
     assumeInstalled: debug,
+  },
+
+  exec: {
+    cServers: {
+      system: {
+        baseURL: undef(assembleCServerBaseURL('system'), process.env.CORREDOR_EXEC_CSERVERS_SYSTEM_API_BASEURL),
+      },
+
+      compose: {
+        baseURL: undef(assembleCServerBaseURL('compose'), process.env.CORREDOR_EXEC_CSERVERS_COMPOSE_API_BASEURL),
+      },
+
+      messaging: {
+        baseURL: undef(assembleCServerBaseURL('messaging'), process.env.CORREDOR_EXEC_CSERVERS_MESSAGING_API_BASEURL),
+      },
+    }
   },
 
   server: {

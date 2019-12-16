@@ -1,12 +1,24 @@
-import {Logger} from "./logger";
+import {ExecContext} from "./exec-context";
+import {ExecArgs} from "./exec-args";
+
+export interface IExecConfigCServers {
+    system:    IExecConfigServer,
+    compose:   IExecConfigServer,
+    messaging: IExecConfigServer,
+}
+
+export interface IExecConfigServer {
+    apiBaseURL: string,
+}
+
+export interface IExecConfig {
+    cServers:  IExecConfigCServers,
+    [_: string]: any,
+}
 
 export interface IExecResponse {
     result: object
     log: string[]
-}
-
-export interface IExecContext {
-    log: Logger
 }
 
 export enum EventType {
@@ -35,7 +47,7 @@ export enum ScriptSecurity {
 }
 
 export interface IScriptFn{
-    (args: object, ctx: IExecContext): object
+    (args: ExecArgs, ctx: ExecContext): any
 }
 
 export interface IScript {

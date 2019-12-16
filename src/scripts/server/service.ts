@@ -1,6 +1,7 @@
 import {Logger} from "./logger";
-import {IScript, IExecContext, IExecResponse, ScriptSecurity} from "./d";
+import {IScript, IExecResponse, ScriptSecurity, IExecConfig} from "./d";
 import {ExecArgs} from "./exec-args";
+import {ExecContext} from "./exec-context";
 
 export interface IListFilter {
     query?:     string,
@@ -80,11 +81,14 @@ function eqName (name : string) {
  */
 export class Service {
     private scripts: IScript[] = [];
+    private config: IExecConfig;
 
     /**
      * Service constructor
      */
-    constructor () {}
+    constructor (config: IExecConfig) {
+        this.config = config
+    }
 
     /**
      * Loads scripts
@@ -101,8 +105,9 @@ export class Service {
      *
      * @param name
      * @param args
+     * @returns IExecResponse
      */
-    Exec (name: string, args: object): IExecResponse {
+    Exec (name: string, args: { jwt?: string, [_: string]: any }): IExecResponse {
         const script : IScript|undefined = this.scripts.find(eqName(name));
 
         if (script === undefined) {
@@ -113,19 +118,22 @@ export class Service {
             throw new Error('can not run uninitialized script')
         }
 
-        // Prepare context
-        let ctx : IExecContext = {
-            // global console replacement,
-            // will allow us to catch console.* calls and return them to the caller
-            log: new Logger()
-        };
+        // global console replacement,
+        // will allow us to catch console.* calls and return them to the caller
+        const log = new Logger()
 
-        const rval = script.fn(
-            // Cast some of the common argument types
-            // from plain javascript object to proper classes
-            new ExecArgs(args),
-            ctx
-        );
+        // Cast some of the common argument types
+        // from plain javascript object to proper classes
+        const execArgs = new ExecArgs(args)
+
+        // Exec function Context
+        const execCtx = new ExecContext({
+            config: this.config,
+            args: execArgs,
+            log,
+        });
+
+        const rval = script.fn(execArgs, execCtx);
 
         let result = {};
         if (typeof rval === 'object' && rval.constructor.name === 'Object') {
@@ -142,9 +150,10 @@ export class Service {
             result,
 
             // Captured log from the execution
-            log: ctx.log.getBuffer(),
+            log: log.getBuffer(),
         }
     }
+
 
     /**
      * Returns list of scripts
