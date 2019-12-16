@@ -2,22 +2,26 @@ module.exports = {
   root: false,
   env: {
     node: true,
-    mocha: true,
     es6: true,
+    mocha: true,
   },
-
   extends: [
-    "eslint:recommended",
+    'standard',
+    'plugin:@typescript-eslint/recommended',
   ],
-
-  rules: {
-    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'comma-dangle': ['error', 'always-multiline'],
-  },
-
-  parserOptions: {
-    ecmaVersion: 9,
-    sourceType: 'module',
+  parser: '@typescript-eslint/parser',
+  plugins: [
+    '@typescript-eslint',
+  ],
+  settings: {
+    'import/parsers': {
+      '@typescript-eslint/parser': [
+        '.ts',
+      ],
+    },
+    'import/resolver': {
+      typescript: {},
+    },
   },
 }
+

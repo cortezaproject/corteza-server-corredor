@@ -3,6 +3,8 @@ node_modules
 dist
 *.log
 .env
+coverage
+.nyc_output
 
 # Editor directories and files
 .idea

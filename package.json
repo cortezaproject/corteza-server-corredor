@@ -10,30 +10,52 @@
   "private": true,
   "main": "src/main.js",
   "scripts": {
-    "serve": "nodemon --ext js,proto --exec node -r esm src/main.js",
-    "server": "node -r esm src/main.js",
-    "tsc": "tsc",
     "dev": "ts-node-dev --respawn --transpileOnly --ignore-watch node_module --ignore-watch usr -r esm ./src/app.ts",
-    "test:unit": "mocha -r ts-node/register -r esm --extension ts \"src/**/*spec.ts\"",
+
+    "__serve": "nodemon --ext js,proto --exec node -r esm src/main.js",
+    "__server": "node -r esm src/main.js",
+    "__tsc": "tsc",
+
+    "lint": "eslint src/** --ext .js,.ts",
+    "test:unit": "mocha src/**/*.test.ts",
+    "test:unit:cc": "nyc mocha src/**/*.test.ts",
+
     "cdeps": "yarn upgrade corteza-webapp-common corteza-protobuf"
   },
   "dependencies": {
+    "@istanbuljs/nyc-config-typescript": "^0.1.3",
+    "@types/chai": "^4.2.7",
+    "@types/mocha": "^5.2.7",
+    "@typescript-eslint/eslint-plugin": "^2.11.0",
+    "@typescript-eslint/parser": "^2.11.0",
     "@grpc/proto-loader": "^0.5.1",
     "@types/chai": "^4.2.6",
+    "@types/chai-as-promised": "^7.1.2",
     "@types/lodash": "^4.14.149",
     "@types/mocha": "^5.2.7",
     "@types/pino": "^5.14.0",
     "@types/webpack": "^4.41.0",
     "axios": "^0.18.0",
-    "corteza-protobuf": "cortezaproject/corteza-protobuf.git#2019.12.0",
-    "corteza-webapp-common": "cortezaproject/corteza-webapp-common.git#2019.12.0",
+    "chai-as-promised": "^7.1.1",
+    "corteza-protobuf": "cortezaproject/corteza-protobuf.git#master",
+    "corteza-webapp-common": "cortezaproject/corteza-webapp-common.git#master",
+    "docblock-parser": "^1.0.0",
     "dotenv": "8.1.0",
     "download-npm-package": "^3.1.12",
+    "eslint": "^6.7.2",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-import-resolver-typescript": "^2.0.0",
+    "eslint-plugin-import": "^2.19.1",
+    "eslint-plugin-json": "^2.0.1",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
     "esm": "^3.2.25",
     "grpc": "1.23.2",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
     "node-watch": "^0.6.3",
+    "nyc": "^14.1.1",
     "pino": "5.13.2",
     "typescript": "^3.7.2",
     "vm2": "3.8.3",
@@ -41,12 +63,30 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
-    "chai-as-promised": "^7.1.1",
     "mocha": "^6.2.2",
     "nodemon": "^1.19.1",
     "pino-pretty": "^3.5.0",
     "sinon": "7.4.1",
     "ts-node-dev": "^1.0.0-pre.44"
+  },
+  "nyc": {
+    "extends": "@istanbuljs/nyc-config-typescript",
+    "require": [
+      "ts-node/register"
+    ],
+    "all": true,
+    "check-coverage": true,
+    "per-file": true,
+    "lines": 90,
+    "functions": 90,
+    "statements": 90,
+    "reporter": [
+      "text",
+      "lcov"
+    ],
+    "include": [
+      "src/**/*.ts"
+    ]
   },
   "engines": {
     "node": ">=12.7.0"
