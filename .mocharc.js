@@ -8,4 +8,6 @@ module.exports = {
   bail: true,
   recursive: true,
   extension: ['.test.ts'],
+  spec: 'src/**/*.test.ts',
+  'watch-files': [ 'src/**' ],
 }
