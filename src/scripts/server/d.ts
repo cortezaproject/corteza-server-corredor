@@ -1,24 +1,29 @@
 import { ExecContext } from './exec-context'
 import { ExecArgs } from './exec-args'
 
-export interface IExecConfigCServers {
-    system: IExecConfigServer;
-    compose: IExecConfigServer;
-    messaging: IExecConfigServer;
+export interface ExecConfigCServers {
+    system: ExecConfigServer;
+    compose: ExecConfigServer;
+    messaging: ExecConfigServer;
 }
 
-export interface IExecConfigServer {
-    apiBaseURL: string;
+export interface ExecConfigServer {
+    apiBaseURL?: string;
 }
 
-export interface IExecConfig {
-    cServers: IExecConfigCServers;
-    [_: string]: any;
+export interface ExecConfig {
+    cServers: ExecConfigCServers;
+    [_: string]: unknown;
 }
 
-export interface IExecResponse {
+export interface ExecResponse {
     result: object;
     log: string[];
+}
+
+export interface ExecArgsRaw {
+    jwt?: string;
+    [_: string]: unknown;
 }
 
 export enum EventType {
@@ -34,7 +39,7 @@ export interface Event {
     message: string;
 }
 
-export interface IWatchCallback {
+export interface WatchFn {
     (): void;
 }
 
@@ -46,22 +51,22 @@ export enum ScriptSecurity {
     definer = 'definer',
 }
 
-export interface IScriptFn{
-    (args: ExecArgs, ctx: ExecContext): any;
+export interface ScriptFn {
+    (args: ExecArgs, ctx: ExecContext): unknown;
 }
 
-export interface IScript {
+export interface Script {
     name: string;
     label?: string;
     description?: string;
     resource?: string;
     events: string[];
     security: ScriptSecurity;
-    fn?: IScriptFn;
+    fn?: ScriptFn;
     errors: string[];
 }
 
-export interface IDocBlock {
+export interface DocBlock {
     label: string;
     description: string;
     resource: string|undefined;
@@ -69,10 +74,10 @@ export interface IDocBlock {
     security: ScriptSecurity;
 }
 
-export interface gRPCServiceExecResponse {
+export interface GRPCServiceExecResponse {
     result: object;
 }
 
-export interface gRPCServiceListResponse {
-    scripts: IScript[];
+export interface GRPCServiceListResponse {
+    scripts: Script[];
 }

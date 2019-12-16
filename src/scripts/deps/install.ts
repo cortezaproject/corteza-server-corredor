@@ -1,10 +1,12 @@
+/* eslint-disable @typescript-eslint/ban-ts-ignore */
+
 // @ts-ignore
 import downloadNpmPackage from 'download-npm-package'
 import fs from 'fs'
-import { IDependencyMap, IPackageInstallStatus } from './d'
+import { DependencyMap, PackageInstallStatus } from './d'
 import logger from '../../logger'
 
-export function Dependencies (packageJsonPath: string): IDependencyMap|undefined {
+export function Dependencies (packageJsonPath: string): DependencyMap|undefined {
   if (!fs.existsSync(packageJsonPath)) {
     return undefined
   }
@@ -25,7 +27,7 @@ export function Dependencies (packageJsonPath: string): IDependencyMap|undefined
  * @param {string} dir path to node_modules
  * @constructor
  */
-export async function Download (arg: string, dir: string): Promise<any> {
+export async function Download (arg: string, dir: string): Promise<unknown> {
   return downloadNpmPackage({ arg, dir })
 }
 
@@ -36,19 +38,23 @@ export async function Download (arg: string, dir: string): Promise<any> {
  *
  *
  * @param {string} packageJsonPath Path to package.json file
+ * @param nodeModulesDir
  * @constructor
  */
-export async function Install (packageJsonPath: string, nodeModulesDir: string): Promise<IPackageInstallStatus[]> {
-  const pp: Promise<any>[] = []
+export async function Install (packageJsonPath: string, nodeModulesDir: string): Promise<PackageInstallStatus[]> {
+  const pp: Promise<PackageInstallStatus>[] = []
   const deps = Dependencies(packageJsonPath)
 
   if (deps === undefined) {
     throw Error('No dependencies found')
   }
 
-  let version: string
   for (const name in deps) {
-    pp.push(Download(`${name}@${deps[name]}`, nodeModulesDir).then(() => {
+    if (!Object.prototype.hasOwnProperty.call(deps, name)) {
+      continue
+    }
+
+    pp.push(Download(`${name}@${deps[name]}`, nodeModulesDir).then((): PackageInstallStatus => {
       logger.debug('package installed', { name, version: deps[name] })
       return { name, version: deps[name], installed: true }
     }))

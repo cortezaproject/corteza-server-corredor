@@ -1,6 +1,6 @@
 import watch from 'node-watch'
 import { debounce } from 'lodash'
-import { IWatchCallback } from './d'
+import { WatchCallback } from './d'
 
 const opt = {
   persistent: false,
@@ -12,9 +12,9 @@ const opt = {
  * Sets up watcher for path
  *
  * @param {string} path
- * @param {IWatchCallback} callback
+ * @param {WatchCallback} callback
  */
-export async function Watcher (path: string, callback: IWatchCallback) {
+export function Watcher (path: string, callback: WatchCallback): void {
   const watcher = watch(path, opt, debounce(() => callback(), 500))
   process.on('SIGINT', watcher.close)
 }

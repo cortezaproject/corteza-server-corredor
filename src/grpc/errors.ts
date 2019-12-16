@@ -20,7 +20,7 @@ export function ParseStack (stack: string): string[] {
  * @param done
  * @constructor
  */
-export function HandleException (err: Error, done: gRPC.sendUnaryData<null>) {
+export function HandleException (err: Error, done: gRPC.sendUnaryData<null>): void {
   const { name, message, stack } = err
 
   const grpcErr: gRPC.ServiceError = {

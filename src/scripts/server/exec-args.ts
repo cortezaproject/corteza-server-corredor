@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-ignore */
+
 // @ts-ignore
 import Namespace from 'corteza-webapp-common/src/lib/types/compose/namespace'
 // @ts-ignore
@@ -21,14 +23,14 @@ import Channel from 'corteza-webapp-common/src/lib/types/messaging/channel'
  * All these variables are casted (if passed as an argument) to proper types ($record => Record, $module => Module, ...)
  */
 export class ExecArgs {
-    private args: Map<string, any>
+    private args: Map<string, unknown>;
 
-    constructor (args: {[_: string]: any}) {
+    constructor (args: {[_: string]: unknown}) {
       this.args = new Map()
 
       let arg: string
       for (arg in args) {
-        if (this.hasOwnProperty(arg)) {
+        if (Object.prototype.hasOwnProperty.call(this, arg)) {
           // We have our own getter to handle this
 
           // @ts-ignore
@@ -46,7 +48,12 @@ export class ExecArgs {
     }
 
     get jwt (): string {
-      return this.args.get('jwt') || ''
+      const jwt = this.args.get('jwt')
+      if (typeof jwt === 'string') {
+        return jwt
+      }
+
+      return ''
     }
 
     /**

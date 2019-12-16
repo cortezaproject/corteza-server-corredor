@@ -1,25 +1,21 @@
 import logger from '../logger'
 import grpc from 'grpc'
 
-interface IServerConfig {
+interface ServerConfig {
   addr: string;
 }
 
-interface IServerConfigurator {
-  (srv: grpc.Server): void;
-}
-
-export type ServiceDefinition = Map<grpc.ServiceDefinition<any>, any>
+export type ServiceDefinition = Map<grpc.ServiceDefinition<unknown>, unknown>
 
 /**
  * Initializes the server
- * @param {IServerConfig} config Server configuration
+ * @param {ServerConfig} config Server configuration
  * @param {ServiceDefinition} services
  */
-export function Start ({ addr }: IServerConfig, services: ServiceDefinition) {
+export function Start ({ addr }: ServerConfig, services: ServiceDefinition): void {
   const server = new grpc.Server()
 
-  const handle = () => {
+  const handle = (): void => {
     // Override signal handler with more severe approach
     process.on('SIGINT', () => {
       logger.warn('forcing gRPC server to stop')

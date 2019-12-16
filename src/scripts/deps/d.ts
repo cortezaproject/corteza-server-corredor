@@ -1,17 +1,17 @@
-export interface IPackageJSON {
-    readonly dependencies?: IDependencyMap;
+export interface PackageJSON {
+    readonly dependencies?: DependencyMap;
 }
 
-export interface IDependencyMap {
+export interface DependencyMap {
     [dependencyName: string]: string;
 }
 
-export interface IPackageInstallStatus {
+export interface PackageInstallStatus {
     name: string;
     version: string;
     installed: boolean;
 }
 
-export interface IWatchCallback {
+export interface WatchCallback {
     (): void;
 }

@@ -1,6 +1,6 @@
 import watch from 'node-watch'
 import { debounce } from 'lodash'
-import { ScriptExtValidator, IWatchCallback } from './d'
+import { ScriptExtValidator, WatchFn } from './d'
 
 const opt = {
   persistent: false,
@@ -9,7 +9,7 @@ const opt = {
   filter: ScriptExtValidator
 }
 
-export async function Watcher (path: string, callback: IWatchCallback) {
+export function Watcher (path: string, callback: WatchFn): void {
   const watcher = watch(path, opt, debounce(() => callback(), 500))
   process.on('SIGINT', watcher.close)
 }

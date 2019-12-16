@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-ignore */
+
 // @ts-ignore
 import ComposeApiClient from 'corteza-webapp-common/src/lib/corteza-server/rest-api-client/compose'
 // @ts-ignore
@@ -15,12 +17,12 @@ import User from 'corteza-webapp-common/src/lib/types/system/user'
 
 import { Logger } from './logger'
 import { ExecArgs } from './exec-args'
-import { IExecConfig } from './d'
+import { ExecConfig } from './d'
 
-export interface IExecContextCtor {
+export interface ExecContextCtor {
     args: ExecArgs;
     log: Logger;
-    config: IExecConfig;
+    config: ExecConfig;
 }
 
 /**
@@ -30,16 +32,16 @@ export interface IExecContextCtor {
  */
 export class ExecContext {
     readonly args: ExecArgs;
-    readonly config: IExecConfig;
+    readonly config: ExecConfig;
     private log: Logger;
 
     /**
-     * @param {IExecContextCtor} ctx
-     * @param {IExecConfig} ctx.config
+     * @param {ExecContextCtor} ctx
+     * @param {ExecConfig} ctx.config
      * @param {ExecArgs} ctx.args
      * @param {Logger} ctx.log
      */
-    constructor ({ config, args, log }: IExecContextCtor) {
+    constructor ({ config, args, log }: ExecContextCtor) {
       this.args = args
       this.log = log
       this.config = config
@@ -62,10 +64,10 @@ export class ExecContext {
      * @returns {Promise<SystemApiClient>}
      */
     get SystemAPI (): SystemApiClient {
-      const { baseURL } = this.config.server.system
-      const { jwt } = this.args
-
-      return new SystemApiClient({ baseURL, jwt })
+      return new SystemApiClient({
+        baseURL: this.config.cServers.system.apiBaseURL,
+        jwt: this.args.jwt
+      })
     }
 
     /**
@@ -74,10 +76,10 @@ export class ExecContext {
      * @returns {Promise<ComposeApiClient>}
      */
     get ComposeAPI (): ComposeApiClient {
-      const { baseURL } = this.config.server.compose
-      const { jwt } = this.args
-
-      return new ComposeApiClient({ baseURL, jwt })
+      return new ComposeApiClient({
+        baseURL: this.config.cServers.compose.apiBaseURL,
+        jwt: this.args.jwt
+      })
     }
 
     /**
@@ -86,10 +88,10 @@ export class ExecContext {
      * @returns {Promise<MessagingApiClient>}
      */
     get MessagingAPI (): MessagingApiClient {
-      const { baseURL } = this.config.server.messaging
-      const { jwt } = this.args
-
-      return new MessagingApiClient({ baseURL, jwt })
+      return new MessagingApiClient({
+        baseURL: this.config.cServers.messaging.apiBaseURL,
+        jwt: this.args.jwt
+      })
     }
 
     /**

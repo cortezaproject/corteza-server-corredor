@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-ignore */
+
 import { format } from 'util'
 import { EventType, Event } from './d'
 
@@ -7,7 +9,7 @@ import { EventType, Event } from './d'
  * @param type
  * @param args
  */
-function make (type: EventType, args: IArguments): Event {
+function make (type: EventType, args: unknown[]): Event {
   return {
     timestamp: new Date(),
     type,
@@ -35,27 +37,27 @@ export class Logger {
       return this.buf.map(e => `${e.timestamp.toISOString()} ${e.type} ${e.message}`)
     }
 
-    clear () {
+    clear (): void {
       this.buf = []
     }
 
-    log (data: any, ...args: any) {
-      this.buf.push(make(EventType.info, arguments))
+    log (data: unknown, ...args: unknown[]): void {
+      this.buf.push(make(EventType.info, [data, ...args]))
     }
 
-    debug (data: any, ...args: any) {
-      this.buf.push(make(EventType.debug, arguments))
+    debug (data: unknown, ...args: unknown[]): void {
+      this.buf.push(make(EventType.debug, [data, ...args]))
     }
 
-    info (data: any, ...args: any) {
-      this.buf.push(make(EventType.info, arguments))
+    info (data: unknown, ...args: unknown[]): void {
+      this.buf.push(make(EventType.info, [data, ...args]))
     }
 
-    warn (data: any, ...args: any) {
-      this.buf.push(make(EventType.warn, arguments))
+    warn (data: unknown, ...args: unknown[]): void {
+      this.buf.push(make(EventType.warn, [data, ...args]))
     }
 
-    error (data: any, ...args: any) {
-      this.buf.push(make(EventType.error, arguments))
+    error (data: unknown, ...args: unknown[]): void {
+      this.buf.push(make(EventType.error, [data, ...args]))
     }
 }

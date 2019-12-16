@@ -1,7 +1,9 @@
+/* eslint-disable no-unused-expressions,@typescript-eslint/no-empty-function,@typescript-eslint/ban-ts-ignore */
+
 import { describe, it } from 'mocha'
 import { expect } from 'chai'
 import { Service } from './service'
-import { IScriptFn, ScriptSecurity } from './d'
+import { ExecArgsRaw, ScriptFn, ScriptSecurity } from './d'
 
 const serviceConfig = {
   cServers: {
@@ -71,18 +73,18 @@ describe('scripts list', () => {
   })
 })
 
-interface checkerFnArgs {
-    result?: any;
+interface CheckerFnArgs {
+    result?: object;
     logs?: string[];
     error?: Error;
 }
 
-interface checkerFn {
-    (_: checkerFnArgs): void;
+interface CheckerFn {
+    (_: CheckerFnArgs): void;
 }
 
 describe('execution', () => {
-  const execIt = (name: string, check: checkerFn, fn: IScriptFn, args: any = {}) => {
+  const execIt = (name: string, check: CheckerFn, fn: ScriptFn, args: ExecArgsRaw = {}): void => {
     it(name, async () => {
       // Script maker
       const svc = new Service(serviceConfig)
@@ -96,7 +98,7 @@ describe('execution', () => {
 
       svc.Exec(name, args)
         .then(check)
-        .catch((error: any) => check({ error })
+        .catch((error: Error|undefined) => check({ error })
         )
     })
   }
@@ -109,31 +111,35 @@ describe('execution', () => {
 
   execIt(
     'should get true',
-    ({ result }: checkerFnArgs) => { expect(result.result).to.be.true },
+    // @ts-ignore
+    ({ result }: CheckerFnArgs) => { expect(result.result).to.be.true },
     () => true
   )
 
   execIt(
     'should get false',
-    ({ result }: checkerFnArgs) => { expect(result.result).to.be.false },
+    // @ts-ignore
+    ({ result }: CheckerFnArgs) => { expect(result.result).to.be.false },
     () => false
   )
 
   execIt(
     'should get empty string',
-    ({ result }: checkerFnArgs) => { expect(result.result).to.equal('') },
+    // @ts-ignore
+    ({ result }: CheckerFnArgs) => { expect(result.result).to.equal('') },
     () => ''
   )
 
   execIt(
     'should get empty string',
-    ({ result }: checkerFnArgs) => { expect(result.result).to.equal('') },
+    // @ts-ignore
+    ({ result }: CheckerFnArgs) => { expect(result.result).to.equal('') },
     () => ''
   )
 
   execIt(
     'should handle thrown exception',
-    ({ result, error }: checkerFnArgs) => {
+    ({ result, error }: CheckerFnArgs) => {
       expect(result).to.be.undefined
       expect(error).to.be.instanceOf(Error)
       if (error !== undefined) {
@@ -145,16 +151,18 @@ describe('execution', () => {
 
   execIt(
     'should handle rejection',
-    ({ result, error }: checkerFnArgs) => {
+    ({ result, error }: CheckerFnArgs) => {
       expect(result).to.be.undefined
       expect(error).to.be.eq('err')
     },
+    // eslint-disable-next-line prefer-promise-reject-errors
     async () => { return Promise.reject('err') }
   )
 
   execIt(
     'should handle promise',
-    ({ result, error }: checkerFnArgs) => {
+    ({ result, error }: CheckerFnArgs) => {
+      // @ts-ignore
       expect(result.result).to.be.eq('ok')
       expect(error).to.be.undefined
     },

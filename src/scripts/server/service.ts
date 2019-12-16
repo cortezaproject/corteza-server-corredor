@@ -1,21 +1,21 @@
 import { Logger } from './logger'
-import { IScript, IExecResponse, ScriptSecurity, IExecConfig } from './d'
+import { Script, ExecResponse, ScriptSecurity, ExecConfig, ExecArgsRaw } from './d'
 import { ExecArgs } from './exec-args'
 import { ExecContext } from './exec-context'
 
-export interface IListFilter {
+export interface ListFilter {
     query?: string;
     resource?: string;
     events?: string[];
     security?: ScriptSecurity;
 }
 
-export interface IListFiterFn {
-    (item: IScript): boolean;
+export interface ListFiterFn {
+    (item: Script): boolean;
 }
 
-function match (f: IListFilter): IListFiterFn {
-  return (item: IScript): boolean => {
+function match (f: ListFilter): ListFiterFn {
+  return (item: Script): boolean => {
     if (f === undefined) {
       // Match all when no filter
       return true
@@ -35,7 +35,6 @@ function match (f: IListFilter): IListFiterFn {
 
       // Filter by events, should contain all filtered events
       for (const e of f.events) {
-        // @ts-ignore
         if (!item.events.includes(e)) {
           return false
         }
@@ -70,13 +69,13 @@ function match (f: IListFilter): IListFiterFn {
  *
  */
 export class Service {
-    private scripts: IScript[] = [];
-    private config: IExecConfig;
+    private scripts: Script[] = [];
+    private readonly config: ExecConfig;
 
     /**
      * Service constructor
      */
-    constructor (config: IExecConfig) {
+    constructor (config: ExecConfig) {
       this.config = config
     }
 
@@ -85,7 +84,7 @@ export class Service {
      *
      * @return {void}
      */
-    async Update (set: IScript[]) {
+    Update (set: Script[]): void {
       // Scripts loaded, replace set
       this.scripts = set
     }
@@ -95,10 +94,10 @@ export class Service {
      *
      * @param name
      * @param args
-     * @returns IExecResponse
+     * @returns ExecResponse
      */
-    async Exec (name: string, args: { jwt?: string; [_: string]: any }): Promise<IExecResponse> {
-      const script: IScript|undefined = this.scripts.find((s) => s.name === name)
+    async Exec (name: string, args: ExecArgsRaw): Promise<ExecResponse> {
+      const script: Script|undefined = this.scripts.find((s) => s.name === name)
 
       if (script === undefined) {
         throw new Error('script not found')
@@ -129,11 +128,12 @@ export class Service {
 
       try {
         // Wrap fn() with Promise.resolve - we do not know if function is async or not.
-        return Promise.resolve(script.fn(execArgs, execCtx)).then((rval: any) => {
+        return Promise.resolve(script.fn(execArgs, execCtx)).then((rval: unknown) => {
           let result = {}
-          if (typeof rval === 'object' && rval.constructor.name === 'Object') {
+
+          if (rval === 'object' && rval.constructor.name === 'Object') {
             // Expand returned values into result if function returned a plain javascript object
-            result = { ...rval }
+            result = Object.assign({}, rval)
           } else {
             // If anything else was returned, stack it under 'result' property
             result = { result: rval }
@@ -156,7 +156,7 @@ export class Service {
     /**
      * Returns list of scripts
      */
-    List (f: IListFilter = {}): IScript[] {
+    List (f: ListFilter = {}): Script[] {
       return this.scripts.filter(match(f))
     }
 }

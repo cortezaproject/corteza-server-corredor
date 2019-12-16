@@ -23,8 +23,6 @@ const wpOpt: webpack.Configuration = {
   }
 }
 
-const files = {}
-
 const compiler = webpack(wpOpt)
 
 compiler.run((err: Error, stats: Stats) => {

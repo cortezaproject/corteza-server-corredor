@@ -1,16 +1,26 @@
+/* eslint-disable @typescript-eslint/ban-ts-ignore */
+
 import grpc from 'grpc'
 import { Service } from './service'
-import { HandleException } from '../../grpc/errors'
-import { gRPCServiceExecResponse, gRPCServiceListResponse, ScriptSecurity } from './d'
+import { HandleException } from '../../grpc'
+import { ExecArgsRaw, GRPCServiceExecResponse, GRPCServiceListResponse, ScriptSecurity } from './d'
 import pino from 'pino'
 
-interface IListRequest {
+interface KV {
+  [_: string]: string;
+}
+
+interface ListRequest {
     query?: string;
     resource?: string;
     events?: string[];
     security?: number;
 }
 
+interface ExecRequest {
+  name: string;
+  args?: KV;
+}
 /**
  * Decodes exec arguments
  *
@@ -20,14 +30,17 @@ interface IListRequest {
  * @param {object} args
  * @returns {object} parsed arguments
  */
-export function decodeExecArguments (args: object|undefined): object {
+export function decodeExecArguments (args: KV|undefined): ExecArgsRaw {
   if (!args) {
     return {}
   }
 
   for (const k in args) {
+    if (!Object.prototype.hasOwnProperty.call(args, k)) {
+      continue
+    }
+
     try {
-      // @ts-ignore
       args[k] = JSON.parse(args[k])
     } catch (e) {
       throw new Error(`Could not parse argument ${k}: ${e}`)
@@ -37,18 +50,24 @@ export function decodeExecArguments (args: object|undefined): object {
   return args
 }
 
-export function encodeExecResult (args: object): object {
+export function encodeExecResult (args: object): KV {
+  const enc: KV = {}
+
   for (const k in args) {
+    if (!Object.prototype.hasOwnProperty.call(args, k)) {
+      continue
+    }
+
     // @ts-ignore
-    args[k] = JSON.stringify(args[k])
+    enc[k] = JSON.stringify(args[k])
   }
 
-  return args
+  return enc
 }
 
-export function Handlers (h: Service, logger: pino.BaseLogger) {
+export function Handlers (h: Service, logger: pino.BaseLogger): object {
   return {
-    Exec ({ request = {} }: any, done: grpc.sendUnaryData<gRPCServiceExecResponse|null>) {
+    Exec ({ request }: { request: ExecRequest }, done: grpc.sendUnaryData<GRPCServiceExecResponse|null>): void {
       const { name, args } = request
 
       logger = logger.child({ rpc: 'Exec', script: name })
@@ -77,9 +96,9 @@ export function Handlers (h: Service, logger: pino.BaseLogger) {
       }
     },
 
-    List ({ request = {} }, done: grpc.sendUnaryData<gRPCServiceListResponse|null>) {
+    List ({ request }: { request: ListRequest }, done: grpc.sendUnaryData<GRPCServiceListResponse|null>): void {
       const grpcSecDefiner = 1
-      const { query, resource, events, security }: IListRequest = request
+      const { query, resource, events, security } = request
 
       const filter = {
         query,
