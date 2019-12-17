@@ -1,48 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 import { promises as fs } from 'fs'
 
-// @ts-ignore
-import docblockParser from 'docblock-parser'
-import { DocBlockExtractor, DocBlock, Script, ScriptSecurity } from '.'
+import { Script, ScriptSecurity } from '.'
+import { Parse } from 'scripts/docblock'
 
-/**
- * Parses source and extracts docblock as structured object (DocBlock)
- * @param source
- * @constructor
- */
-export function ParseDocBlock (source: string): DocBlock {
-// Split by end of comment
-  const doc = (DocBlockExtractor.exec(source) || ['']).shift()
-  if (!doc) {
-    throw new Error('unable to parse docblock')
-  }
-
-  const { text, tags } = docblockParser({
-    tags: {
-      resource: docblockParser.singleParameterTag,
-      event: docblockParser.multilineTilTag,
-      security: docblockParser.singleParameterTag
-    }
-  }).parse(doc)
-
-  const firstEol = text.indexOf('\n')
-
-  let label = text
-  let description = ''
-
-  if (firstEol > 0) {
-    label = text.substring(0, firstEol)
-    description = text.substring(firstEol + 1)
-  }
-
-  return {
-    label,
-    description,
-    resource: tags.resource,
-    events: tags.event,
-    security: tags.security
-  }
-}
 /**
  * Populates & returns script object
  *
@@ -55,7 +16,7 @@ export async function MakeScript (filepath: string, basepath: string): Promise<S
     // @todo we trim too much of leading path
     const name = filepath.substring(basepath.length + 1)
 
-    let rval: Script = {
+    const rval: Script = {
       name,
       label: name,
       events: [],
@@ -89,9 +50,17 @@ export async function MakeScript (filepath: string, basepath: string): Promise<S
     }
 
     try {
-      rval = {
-        ...rval,
-        ...ParseDocBlock(source.toString())
+      const doc = Parse(source.toString())
+
+      if (doc.label !== undefined) {
+        rval.label = doc.label
+      }
+
+      rval.description = doc.description
+      rval.events = doc.events
+
+      if (doc.security !== undefined) {
+        rval.security = doc.security === ScriptSecurity.invoker ? ScriptSecurity.invoker : ScriptSecurity.definer
       }
     } catch (e) {
       rval.errors.push(e.toString())

@@ -43,7 +43,6 @@ export interface WatchFn {
 }
 
 export const ScriptExtValidator = /\.(ts|js)$/
-export const DocBlockExtractor = /(\/\*\*.+?\*\/)/s
 
 export enum ScriptSecurity {
     invoker = 'invoker',
@@ -65,10 +64,3 @@ export interface Script {
     errors: string[];
 }
 
-export interface DocBlock {
-    label: string;
-    description: string;
-    resource: string|undefined;
-    events: string[];
-    security: ScriptSecurity;
-}
