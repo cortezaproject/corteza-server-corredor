@@ -72,11 +72,3 @@ export interface DocBlock {
     events: string[];
     security: ScriptSecurity;
 }
-
-export interface GRPCServiceExecResponse {
-    result: object;
-}
-
-export interface GRPCServiceListResponse {
-    scripts: Script[];
-}

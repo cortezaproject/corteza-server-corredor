@@ -3,10 +3,27 @@
 import grpc from 'grpc'
 import pino from 'pino'
 import { HandleException } from '+grpc-server'
-import { Service, ExecArgsRaw, GRPCServiceExecResponse, GRPCServiceListResponse, ScriptSecurity } from '.'
+import {Service, ExecArgsRaw, ScriptSecurity, Script} from '.'
 
 interface KV {
   [_: string]: string;
+}
+
+interface ExecRequestWrap {
+  request: ExecRequest;
+}
+
+interface ExecRequest {
+  name: string;
+  args?: KV;
+}
+
+interface ExecResponse {
+  result: object;
+}
+
+interface ListRequestWrap {
+  request: ListRequest;
 }
 
 interface ListRequest {
@@ -16,10 +33,10 @@ interface ListRequest {
     security?: number;
 }
 
-interface ExecRequest {
-  name: string;
-  args?: KV;
+interface ListResponse {
+  scripts: Script[];
 }
+
 /**
  * Decodes exec arguments
  *
@@ -66,7 +83,7 @@ export function encodeExecResult (args: object): KV {
 
 export function Handlers (h: Service, loggerService: pino.BaseLogger): object {
   return {
-    Exec ({ request }: { request: ExecRequest }, done: grpc.sendUnaryData<GRPCServiceExecResponse|null>): void {
+    Exec ({ request }: ExecRequestWrap, done: grpc.sendUnaryData<ExecResponse|null>): void {
       const started = Date.now()
       const { name, args } = request
       const logger = loggerService.child({ rpc: 'Exec', script: name })
@@ -100,20 +117,21 @@ export function Handlers (h: Service, loggerService: pino.BaseLogger): object {
       }
     },
 
-    List ({ request }: { request: ListRequest }, done: grpc.sendUnaryData<GRPCServiceListResponse|null>): void {
-      const grpcSecDefiner = 1
-      const { query, resource, events, security } = request
+    List ({ request }: ListRequestWrap, done: grpc.sendUnaryData<ListResponse|null>): void {
+      const { query, resource, events } = request
       const logger = loggerService.child({ rpc: 'List' })
+
+      let security
+      switch (request.security) {
+        case 0: security = ScriptSecurity.invoker; break;
+        case 1: security = ScriptSecurity.definer; break;
+      }
 
       const filter = {
         query,
         resource,
         events,
-
-        // translate protobuf's enum
-        security: security === grpcSecDefiner
-          ? ScriptSecurity.definer
-          : ScriptSecurity.invoker
+        security,
       }
 
       logger.debug({ filter }, 'returning list of scripts')

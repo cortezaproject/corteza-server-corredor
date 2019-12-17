@@ -38,7 +38,7 @@ function match (f: ListFilter): ListFiterFn {
       }
     }
 
-    if (!!f.security && f.security !== item.security) {
+    if (f.security !== undefined && f.security !== item.security) {
       return false
     }
 
