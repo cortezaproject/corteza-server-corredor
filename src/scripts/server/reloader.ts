@@ -1,7 +1,5 @@
-import { Maker } from './maker'
-import { Finder as ServerScriptFinder } from './finder'
-import { Script } from './d'
+import { Script, Maker, Finder } from '.'
 
 export function Reloader (dir: string): Promise<Script[]> {
-  return Maker(ServerScriptFinder(dir), dir)
+  return Maker(Finder(dir), dir)
 }

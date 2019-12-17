@@ -3,7 +3,7 @@ import { promises as fs } from 'fs'
 
 // @ts-ignore
 import docblockParser from 'docblock-parser'
-import { DocBlockExtractor, DocBlock, Script, ScriptSecurity } from './d'
+import { DocBlockExtractor, DocBlock, Script, ScriptSecurity } from '.'
 
 /**
  * Parses source and extracts docblock as structured object (DocBlock)

@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 
 // @ts-ignore
-import * as config from './config'
+import * as config from '+config'
 import path from 'path'
-import logger from './logger'
+import logger from '+logger'
 import * as deps from './scripts/deps'
-import * as serverScripts from './scripts/server'
-import * as gRPCServer from './grpc'
+import * as serverScripts from '+ServerScripts'
+import * as gRPCServer from '+grpc-server'
 
 /**
  *

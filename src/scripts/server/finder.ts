@@ -1,4 +1,4 @@
-import { ScriptExtValidator } from './d'
+import { ScriptExtValidator } from '.'
 import { promises as fs } from 'fs'
 import path from 'path'
 

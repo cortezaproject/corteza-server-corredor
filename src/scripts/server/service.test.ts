@@ -2,8 +2,7 @@
 
 import { describe, it } from 'mocha'
 import { expect } from 'chai'
-import { Service } from './service'
-import { ExecArgsRaw, ScriptFn, ScriptSecurity } from './d'
+import { Service, ExecArgsRaw, ScriptFn, ScriptSecurity } from '.'
 
 const serviceConfig = {
   cServers: {

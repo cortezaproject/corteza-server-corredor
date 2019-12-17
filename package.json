@@ -10,7 +10,7 @@
   "private": true,
   "main": "src/app.ts",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpileOnly --ignore-watch node_module --ignore-watch usr -r esm ./src/app.ts",
+    "dev": "ts-node-dev --debounce 200 --respawn --transpileOnly --ignore-watch node_module --ignore-watch usr -r tsconfig-paths/register -r esm ./src/app.ts",
     "__serve": "nodemon --ext js,proto --exec node -r esm src/main.js",
     "__server": "node -r esm src/main.js",
     "__tsc": "tsc",
@@ -52,6 +52,8 @@
     "node-watch": "^0.6.3",
     "nyc": "^14.1.1",
     "pino": "5.13.2",
+    "ts-node-dev": "^1.0.0-pre.44",
+    "tsconfig-paths": "^3.9.0",
     "typescript": "^3.7.2",
     "vm2": "3.8.3",
     "webpack": "^4.41.2"
@@ -61,8 +63,7 @@
     "mocha": "^6.2.2",
     "nodemon": "^1.19.1",
     "pino-pretty": "^3.5.0",
-    "sinon": "7.4.1",
-    "ts-node-dev": "^1.0.0-pre.44"
+    "sinon": "7.4.1"
   },
   "nyc": {
     "extends": "@istanbuljs/nyc-config-typescript",

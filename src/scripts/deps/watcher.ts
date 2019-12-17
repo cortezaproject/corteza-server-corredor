@@ -1,6 +1,6 @@
 import watch from 'node-watch'
 import { debounce } from 'lodash'
-import { WatchCallback } from './d'
+import { WatchCallback } from '.'
 
 const opt = {
   persistent: false,

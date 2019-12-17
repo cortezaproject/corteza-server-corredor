@@ -3,8 +3,8 @@
 // @ts-ignore
 import downloadNpmPackage from 'download-npm-package'
 import fs from 'fs'
-import { DependencyMap, PackageInstallStatus } from './d'
-import logger from '../../logger'
+import { DependencyMap, PackageInstallStatus } from '.'
+import logger from '+logger'
 
 export function Dependencies (packageJsonPath: string): DependencyMap|undefined {
   if (!fs.existsSync(packageJsonPath)) {

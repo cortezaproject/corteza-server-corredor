@@ -13,7 +13,7 @@ import MessagingHelper from 'corteza-webapp-common/src/lib/automation-scripts/co
 // @ts-ignore
 import SystemHelper from 'corteza-webapp-common/src/lib/automation-scripts/context/system'
 // @ts-ignore
-import User from 'corteza-webapp-common/src/lib/types/system/user'
+import User from 'corteza-webapp-common/src/lib/system/user'
 
 import { Logger } from './logger'
 import { ExecArgs } from './exec-args'

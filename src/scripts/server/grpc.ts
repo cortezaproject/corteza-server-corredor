@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 
 import grpc from 'grpc'
-import { Service } from './service'
-import { HandleException } from '../../grpc'
-import { ExecArgsRaw, GRPCServiceExecResponse, GRPCServiceListResponse, ScriptSecurity } from './d'
 import pino from 'pino'
+import { HandleException } from '+grpc-server'
+import { Service, ExecArgsRaw, GRPCServiceExecResponse, GRPCServiceListResponse, ScriptSecurity } from '.'
 
 interface KV {
   [_: string]: string;

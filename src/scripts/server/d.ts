@@ -1,5 +1,4 @@
-import { ExecContext } from './exec-context'
-import { ExecArgs } from './exec-args'
+import { ExecArgs, ExecContext } from '.'
 
 export interface ExecConfigCServers {
     system: ExecConfigServer;
