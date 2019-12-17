@@ -28,14 +28,17 @@ const serverScriptsService = new serverScripts.Service(config.scripts.exec)
 
 logger.info('server-scripts service configured')
 logger.debug(
-  'cServer system API baseUrl',
-  config.scripts.exec.cServers.system.apiBaseURL)
+  config.scripts.exec.cServers.system,
+  'configuring cServer system API'
+)
 logger.debug(
-  'cServer compose API baseUrl',
-  config.scripts.exec.cServers.compose.apiBaseURL)
+  config.scripts.exec.cServers.compose,
+  'configuring cServer compose API'
+)
 logger.debug(
-  'cServer messaging API baseUrl',
-  config.scripts.exec.cServers.messaging.apiBaseURL)
+  config.scripts.exec.cServers.messaging,
+  'configuring cServer messaging API'
+)
 
 async function installDependencies (): Promise<deps.PackageInstallStatus[]> {
   logger.info('installing dependencies from %s', config.scripts.dependencies.packageJSON)
@@ -106,7 +109,7 @@ gRPCServer.LoadDefinitions(path.join(config.protobuf.path, '/service-corredor-v2
     corredor.ServerScripts.service,
     serverScripts.Handlers(
       serverScriptsService,
-      logger.child({ system: 'gRPC', service: 'server-scripts' })
+      logger.child({ system: 'gRPC', service: 'ServerScripts' })
     )
   )
 

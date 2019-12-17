@@ -64,17 +64,19 @@ export function encodeExecResult (args: object): KV {
   return enc
 }
 
-export function Handlers (h: Service, logger: pino.BaseLogger): object {
+export function Handlers (h: Service, loggerService: pino.BaseLogger): object {
   return {
     Exec ({ request }: { request: ExecRequest }, done: grpc.sendUnaryData<GRPCServiceExecResponse|null>): void {
+      const started = Date.now()
       const { name, args } = request
+      const logger = loggerService.child({ rpc: 'Exec', script: name })
 
-      logger = logger.child({ rpc: 'Exec', script: name })
       try {
         // Decode arguments
         // passed in as keys with JSON-encoded values
         const dArgs = decodeExecArguments(args)
 
+        logger.debug({ args }, 'executing script %s', name)
         h.Exec(name, dArgs).then(({ result, log }) => {
           const meta = new grpc.Metadata()
 
@@ -85,12 +87,15 @@ export function Handlers (h: Service, logger: pino.BaseLogger): object {
           })
 
           done(null, { result: encodeExecResult(result) }, meta)
+          logger.debug({
+            duration: Date.now() - started
+          }, 'done')
         }).catch(e => {
-          logger.debug(e.message, { stack: e.stack, args })
+          logger.debug({ stack: e.stack }, e.message)
           HandleException(e, done)
         })
       } catch (e) {
-        logger.debug(e.message, { stack: e.stack, args })
+        logger.debug({ stack: e.stack }, e.message)
         HandleException(e, done)
       }
     },
@@ -98,6 +103,7 @@ export function Handlers (h: Service, logger: pino.BaseLogger): object {
     List ({ request }: { request: ListRequest }, done: grpc.sendUnaryData<GRPCServiceListResponse|null>): void {
       const grpcSecDefiner = 1
       const { query, resource, events, security } = request
+      const logger = loggerService.child({ rpc: 'List' })
 
       const filter = {
         query,
@@ -110,15 +116,13 @@ export function Handlers (h: Service, logger: pino.BaseLogger): object {
           : ScriptSecurity.invoker
       }
 
-      logger = logger.child({ rpc: 'List', filter })
-      logger.debug('returning list of scripts')
+      logger.debug({ filter }, 'returning list of scripts')
 
       try {
         const scripts = h.List(filter)
         done(null, { scripts })
       } catch (e) {
-        logger.debug(e.message, { stack: e.stack })
-
+        logger.debug({ stack: e.stack }, e.message)
         HandleException(e, done)
       }
     }
