@@ -63,4 +63,3 @@ export interface Script {
     fn?: ScriptFn;
     errors: string[];
 }
-

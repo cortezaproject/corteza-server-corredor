@@ -6,6 +6,7 @@ import path from 'path'
 import logger from '+logger'
 import * as deps from './scripts/deps'
 import * as serverScripts from '+ServerScripts'
+import * as clientScripts from '+ClientScripts'
 import * as gRPCServer from '+grpc-server'
 
 /**
@@ -110,6 +111,15 @@ gRPCServer.LoadDefinitions(path.join(config.protobuf.path, '/service-corredor-v2
     serverScripts.Handlers(
       serverScriptsService,
       logger.child({ system: 'gRPC', service: 'ServerScripts' })
+    )
+  )
+
+  serviceDefinitions.set(
+    // @ts-ignore
+    corredor.ClientScripts.service,
+    clientScripts.Handlers(
+      // clientScriptsService,
+      logger.child({ system: 'gRPC', service: 'ClientScripts' })
     )
   )
 
