@@ -4,6 +4,14 @@ name: Build
 type: docker
 
 steps:
+  - name: "Quality Control"
+    image: node:12.7-alpine
+    commands:
+      - apk add git
+      - yarn install
+      - yarn lint
+      - yarn test:unit
+
   - name: "Build production release image"
     image: "plugins/docker"
     settings:
