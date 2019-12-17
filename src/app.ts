@@ -24,6 +24,9 @@ import * as gRPCServer from '+grpc-server'
  *   - secret management
  */
 
+logger.debug('initializing client-scripts service')
+const clientScriptsService = new clientScripts.Service()
+
 logger.debug('initializing server-scripts service')
 const serverScriptsService = new serverScripts.Service(config.scripts.exec)
 
@@ -118,7 +121,7 @@ gRPCServer.LoadDefinitions(path.join(config.protobuf.path, '/service-corredor-v2
     // @ts-ignore
     corredor.ClientScripts.service,
     clientScripts.Handlers(
-      // clientScriptsService,
+      clientScriptsService,
       logger.child({ system: 'gRPC', service: 'ClientScripts' })
     )
   )

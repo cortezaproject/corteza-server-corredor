@@ -3,7 +3,7 @@
 import grpc from 'grpc'
 import pino from 'pino'
 import { HandleException } from '+grpc-server'
-import { Script } from './';
+import { Script, ScriptType, ScriptBundle, Service } from './'
 
 interface BundleRequest {
   name: string;
@@ -30,7 +30,7 @@ interface ListResponse {
   scripts: Script[];
 }
 
-export function Handlers (loggerService: pino.BaseLogger): object {
+export function Handlers (h: Service, loggerService: pino.BaseLogger): object {
   return {
     Bundle ({ request }: { request: BundleRequest }, done: grpc.sendUnaryData<BundleResponse|null>): void {
       const { name } = request
@@ -70,19 +70,7 @@ export function Handlers (loggerService: pino.BaseLogger): object {
       logger.debug({ filter }, 'returning list of scripts')
 
       try {
-        const r: ListResponse = {
-          scripts: [
-            {
-              name: 'dummy name',
-              label: 'dummy label',
-              description: 'dummy description',
-              events: [],
-              errors: []
-            }
-          ]
-        }
-
-        done(null, r)
+        done(null, { scripts: h.List(filter) })
       } catch (e) {
         logger.debug({ stack: e.stack }, e.message)
         HandleException(e, done)
