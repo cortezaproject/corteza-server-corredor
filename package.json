@@ -10,7 +10,9 @@
   "private": true,
   "main": "src/app.ts",
   "scripts": {
-    "dev": "ts-node-dev --debounce 200 --respawn --transpileOnly --ignore-watch node_module --ignore-watch usr -r tsconfig-paths/register -r esm ./src/app.ts",
+    "tsndev": "ts-node-dev --debounce 200 --transpileOnly -r tsconfig-paths/register -r esm",
+    "serve:dev": "yarn tsndev ./src/app.ts",
+    "serve:dev:watch": "yarn tsndev --respawn --ignore-watch node_module --ignore-watch usr ./src/app.ts",
     "__serve": "nodemon --ext js,proto --exec node -r esm src/main.js",
     "__server": "node -r esm src/main.js",
     "__tsc": "tsc",
