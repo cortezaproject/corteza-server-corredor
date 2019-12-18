@@ -104,7 +104,7 @@ async function reloadServerScripts (): Promise<void> {
   serverScripts.Watcher(config.scripts.server.basedir, reloadServerScripts)
 })
 
-gRPCServer.LoadDefinitions(path.join(config.protobuf.path, '/service-corredor-v2020.3.proto')).then((
+gRPCServer.LoadDefinitions(path.join(config.protobuf.path, '/service-corredor.proto')).then((
   { corredor }
 ) => {
   const serviceDefinitions: gRPCServer.ServiceDefinition = new Map()
