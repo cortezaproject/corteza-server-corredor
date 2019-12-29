@@ -18,9 +18,10 @@ import User from 'corteza-webapp-common/src/lib/system/user'
 import { Logger } from './logger'
 import { ExecArgs } from './exec-args'
 import { ExecConfig } from './d'
+import { BaseArgs } from './corteza'
 
 export interface ExecContextCtor {
-    args: ExecArgs;
+    args: BaseArgs;
     log: Logger;
     config: ExecConfig;
 }
@@ -31,7 +32,7 @@ export interface ExecContextCtor {
  *
  */
 export class ExecContext {
-    readonly args: ExecArgs;
+    readonly args: BaseArgs;
     readonly config: ExecConfig;
     private log: Logger;
 
@@ -90,7 +91,7 @@ export class ExecContext {
     get MessagingAPI (): MessagingApiClient {
       return new MessagingApiClient({
         baseURL: this.config.cServers.messaging.apiBaseURL,
-        jwt: this.args.jwt
+        jwt: this.args
       })
     }
 
@@ -100,11 +101,7 @@ export class ExecContext {
      * @returns {SystemHelper}
      */
     get System (): SystemHelper {
-      return new SystemHelper({
-        SystemAPI: this.SystemAPI,
-        $user: this.args.$user,
-        $role: this.args.$role
-      })
+      return new SystemHelper({ SystemAPI: this.SystemAPI, ...this.args })
     }
 
     /**
@@ -113,12 +110,7 @@ export class ExecContext {
      * @returns {ComposeHelper}
      */
     get Compose (): ComposeHelper {
-      return new ComposeHelper({
-        ComposeAPI: this.ComposeAPI,
-        $namespace: this.args.$namespace,
-        $module: this.args.$module,
-        $record: this.args.$record
-      })
+      return new ComposeHelper({ ComposeAPI: this.ComposeAPI, ...this.args })
     }
 
     /**
@@ -127,10 +119,6 @@ export class ExecContext {
      * @returns {MessagingHelper}
      */
     get Messaging (): MessagingHelper {
-      return new MessagingHelper({
-        MessagingAPI: this.MessagingAPI,
-        $authUser: this.$authUser,
-        channel: this.args.$channel
-      })
+      return new MessagingHelper({ MessagingAPI: this.MessagingAPI, ...this.args })
     }
 }

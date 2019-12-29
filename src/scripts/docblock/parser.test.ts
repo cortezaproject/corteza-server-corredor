@@ -21,12 +21,44 @@ describe('docblock parsing', () => {
   })
 
   it('should parse a full block', () => {
-    const db = '/**\n * LABEL\n * Description...\n * multiline!\n * @resource foo\n * @event e1\n * @event e2\n * @security invoker\n */'
+    const db = `
+/**
+ * LABEL
+ * Description...
+ * multiline!
+ *
+ * @trigger {
+ *     on: 'afterUpdate',
+ *    for: 'compose:record',
+ *     as: 'someuser'
+ *   when: [
+ *     {module: 'someModule', namespace: 'someNamespace'},
+ *   ],
+ * }
+ *
+ * @trigger {
+ *     on: 'afterUpdate',
+ *    for: 'compose:record',
+ *     as: 'someuser'
+ *   when: [
+ *     {module: 'someModule', namespace: 'someNamespace'},
+ *   ],
+ * }
+ */`
     const p = Parse(db)
+    console.log(p)
     expect(p.label).to.equal('LABEL')
     expect(p.description).to.equal('Description...\nmultiline!')
-    expect(p.resource).to.equal('foo')
-    expect(p.events).to.deep.equal(['e1', 'e2'])
-    expect(p.security).to.equal('invoker')
+
+    const t = '{\n' +
+        "    on: 'afterUpdate',\n" +
+        "   for: 'compose:record',\n" +
+        "    as: 'someuser'\n" +
+        '  when: [\n' +
+        "    {module: 'someModule', namespace: 'someNamespace'},\n" +
+        '  ],\n' +
+        '}'
+
+    expect(p.triggers).to.deep.equal([t, t])
   })
 })

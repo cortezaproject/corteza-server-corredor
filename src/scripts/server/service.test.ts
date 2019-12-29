@@ -2,7 +2,8 @@
 
 import { describe, it } from 'mocha'
 import { expect } from 'chai'
-import { Service, ExecArgsRaw, ScriptFn, ScriptSecurity } from '.'
+import { Service, ExecArgsRaw, ScriptFn } from '.'
+import { Trigger } from '../trigger'
 
 const serviceConfig = {
   cServers: {
@@ -11,6 +12,8 @@ const serviceConfig = {
     messaging: { apiBaseURL: 'unit-test' }
   }
 }
+
+class Dummy {}
 
 describe('scripts list', () => {
   describe('empty', () => {
@@ -24,9 +27,33 @@ describe('scripts list', () => {
     const svc = new Service(serviceConfig)
     beforeEach(() => {
       svc.Update([
-        { label: 'label1', name: 'Name', description: 'deskription', resource: 'res1', errors: [], security: ScriptSecurity.definer, events: [] },
-        { label: 'label2', name: 'Name', description: 'deskription', resource: 'res2', errors: [], security: ScriptSecurity.invoker, events: ['beforeMyThing', 'afterMyThing'] },
-        { label: 'label3', name: 'Name', description: 'deskription', resource: 'res2', errors: [], security: ScriptSecurity.invoker, events: ['afterMyThing'] }
+        {
+          label: 'label1',
+          name: 'Name',
+          description: 'deskription',
+          errors: [],
+          triggers: [
+            new Trigger({ on: 'foo', for: 'res1' })
+          ]
+        },
+        {
+          label: 'label2',
+          name: 'Name',
+          description: 'deskription',
+          errors: [],
+          triggers: [
+            new Trigger({ on: 'afterMyThing', for: 'res2' })
+          ]
+        },
+        {
+          label: 'label3',
+          name: 'Name',
+          description: 'deskription',
+          errors: [],
+          triggers: [
+            new Trigger({ on: ['beforeMyThing', 'afterMyThing'], for: 'res2' })
+          ]
+        }
       ])
     })
 
@@ -40,10 +67,6 @@ describe('scripts list', () => {
 
     it('should match all 3 with description', () => {
       expect(svc.List({ query: 'deskr' })).to.have.lengthOf(3)
-    })
-
-    it('should match all by resource with query', () => {
-      expect(svc.List({ query: 'res' })).to.have.lengthOf(3)
     })
 
     it('should match 2 with res2 for resource', () => {
@@ -65,15 +88,11 @@ describe('scripts list', () => {
     it('should match all with no events', () => {
       expect(svc.List({ events: [] })).to.have.lengthOf(3)
     })
-
-    it('should match all with security=definer', () => {
-      expect(svc.List({ security: ScriptSecurity.definer })).to.have.lengthOf(1)
-    })
   })
 })
 
 interface CheckerFnArgs {
-    result?: object;
+    result?: {[_: string]: unknown}|unknown;
     logs?: string[];
     error?: Error;
 }
@@ -90,8 +109,7 @@ describe('execution', () => {
       svc.Update([{
         name,
         errors: [],
-        security: ScriptSecurity.definer,
-        events: [],
+        triggers: [],
         fn
       }])
 
@@ -109,31 +127,91 @@ describe('execution', () => {
   )
 
   execIt(
-    'should get true',
-    // @ts-ignore
-    ({ result }: CheckerFnArgs) => { expect(result.result).to.be.true },
+    'should get true when returning true',
+    ({ result, error }: CheckerFnArgs) => {
+      expect(error).to.be.undefined
+      expect(result).to.deep.eq({ result: true })
+    },
+
     () => true
   )
 
   execIt(
-    'should get false',
-    // @ts-ignore
-    ({ result }: CheckerFnArgs) => { expect(result.result).to.be.false },
+    'should get error with returning false',
+    ({ result, error }: CheckerFnArgs) => {
+      expect(result).to.be.undefined
+      expect(error).to.be.instanceOf(Error)
+    },
     () => false
   )
 
   execIt(
-    'should get empty string',
-    // @ts-ignore
-    ({ result }: CheckerFnArgs) => { expect(result.result).to.equal('') },
+    'should get empty string when returning empty string',
+    ({ result, error }: CheckerFnArgs) => {
+      expect(error).to.be.undefined
+      expect(result).to.deep.eq({ result: '' })
+    },
     () => ''
   )
 
   execIt(
-    'should get empty string',
+    'should get string when returning string',
     // @ts-ignore
-    ({ result }: CheckerFnArgs) => { expect(result.result).to.equal('') },
-    () => ''
+    ({ result, error }: CheckerFnArgs) => {
+      expect(error).to.be.undefined
+      expect(result).to.deep.eq({ result: 'rval-string' })
+    },
+    () => 'rval-string'
+  )
+
+  execIt(
+    'should get empty array when returning empty array',
+    // @ts-ignore
+    ({ result, error }: CheckerFnArgs) => {
+      expect(error).to.be.undefined
+      expect(result).to.deep.eq({ result: [] })
+    },
+    () => ([])
+  )
+
+  execIt(
+    'should get array when returning array',
+    // @ts-ignore
+    ({ result, error }: CheckerFnArgs) => {
+      expect(error).to.be.undefined
+      expect(result).to.deep.eq({ result: ['rval-string'] })
+    },
+    () => (['rval-string'])
+  )
+
+  execIt(
+    'should get empty object when returning empty object',
+    // @ts-ignore
+    ({ result, error }: CheckerFnArgs) => {
+      expect(error).to.be.undefined
+      expect(result).to.deep.eq({})
+    },
+    () => ({})
+  )
+
+  execIt(
+    'should get object when returning object',
+    // @ts-ignore
+    ({ result, error }: CheckerFnArgs) => {
+      expect(error).to.be.undefined
+      expect(result).to.deep.eq({ an: 'object' })
+    },
+    () => ({ an: 'object' })
+  )
+
+  execIt(
+    'should get non-plain-object under result',
+    // @ts-ignore
+    ({ result, error }: CheckerFnArgs) => {
+      expect(error).to.be.undefined
+      expect(result).to.deep.eq({ result: new Dummy() })
+    },
+    () => new Dummy()
   )
 
   execIt(

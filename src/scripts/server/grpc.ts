@@ -3,7 +3,7 @@
 import grpc from 'grpc'
 import pino from 'pino'
 import { HandleException } from '+grpc-server'
-import {Service, ExecArgsRaw, ScriptSecurity, Script} from '.'
+import { Service, ExecArgsRaw } from '.'
 
 interface KV {
   [_: string]: string;
@@ -34,7 +34,7 @@ interface ListRequest {
 }
 
 interface ListResponse {
-  scripts: Script[];
+  scripts: object[];
 }
 
 /**
@@ -129,17 +129,10 @@ export function Handlers (h: Service, loggerService: pino.BaseLogger): object {
       const { query, resource, events } = request
       const logger = loggerService.child({ rpc: 'List' })
 
-      let security
-      switch (request.security) {
-        case 0: security = ScriptSecurity.invoker; break;
-        case 1: security = ScriptSecurity.definer; break;
-      }
-
       const filter = {
         query,
         resource,
-        events,
-        security,
+        events
       }
 
       logger.debug({ filter }, 'returning list of scripts')

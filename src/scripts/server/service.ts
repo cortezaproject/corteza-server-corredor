@@ -1,10 +1,11 @@
-import { Logger, Script, ExecResponse, ScriptSecurity, ExecConfig, ExecArgs, ExecArgsRaw, ExecContext } from '.'
+/* eslint-disable @typescript-eslint/ban-ts-ignore */
+
+import { Logger, Script, ExecResponse, ExecConfig, ExecArgs, ExecArgsRaw, ExecContext } from '.'
 
 export interface ListFilter {
     query?: string;
     resource?: string;
     events?: string[];
-    security?: ScriptSecurity;
 }
 
 export interface ListFiterFn {
@@ -18,33 +19,36 @@ function match (f: ListFilter): ListFiterFn {
       return true
     }
 
-    if (!!f.resource && f.resource !== item.resource) {
-      // Filter by resource, expecting exact match
-      return false
-    }
+    if (f.resource || f.events) {
+      const tt = item.triggers.filter(({ resources, events }) => {
+        if (f.resource && f.resource.length > 0) {
+          // Filter by resource
+          if (!resources || resources.indexOf(f.resource) === -1) {
+            // No resources found on trigger
+            return false
+          }
+        }
 
-    if (!!f.events && f.events.length > 0) {
-      // item has less events than filter,
-      // no way this can be a match.
-      if (item.events.length < f.events.length) {
+        if (f.events && f.events.length > 0) {
+          // Filter by events
+          if (!events || f.events.find(fe => (events.indexOf(fe) > -1)) === undefined) {
+            return false
+          }
+        }
+
+        return true
+      })
+
+      if (tt.length === 0) {
+        // Filtering by resource and/or events but
+        // none of the triggers matched
         return false
       }
-
-      // Filter by events, should contain all filtered events
-      for (const e of f.events) {
-        if (!item.events.includes(e)) {
-          return false
-        }
-      }
-    }
-
-    if (f.security !== undefined && f.security !== item.security) {
-      return false
     }
 
     if (f.query) {
       // Strings to search through
-      const str = `${item.name} ${item.label} ${item.description} ${item.resource} ${item.events.join(' ')}`
+      const str = `${item.name} ${item.label} ${item.description}`
 
       // search query terms
       for (const t of f.query.split(' ')) {
@@ -119,18 +123,24 @@ export class Service {
       // Exec function Context
       const execCtx = new ExecContext({
         config: this.config,
+        // @ts-ignore
         args: execArgs,
         log
       })
 
       try {
         // Wrap fn() with Promise.resolve - we do not know if function is async or not.
-        return Promise.resolve(script.fn(execArgs, execCtx)).then((rval: unknown) => {
+        return Promise.resolve(script.fn(execArgs, execCtx)).then((rval: unknown): ExecResponse => {
           let result = {}
 
-          if (rval === 'object' && rval.constructor.name === 'Object') {
+          if (rval === false) {
+            // Abort when returning false!
+            throw new Error('Aborted')
+          }
+
+          if (typeof rval === 'object' && rval && rval.constructor.name === 'Object') {
             // Expand returned values into result if function returned a plain javascript object
-            result = Object.assign({}, rval)
+            result = { ...rval }
           } else {
             // If anything else was returned, stack it under 'result' property
             result = { result: rval }

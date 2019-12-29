@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 import { promises as fs } from 'fs'
 
-import { Script, ScriptSecurity } from '.'
-import { Parse } from 'scripts/docblock'
+import { Script } from '.'
+import { Parse as DocBlockParser } from 'scripts/docblock'
+import { Parse as TriggerParser, Trigger } from 'scripts/trigger'
 
 /**
  * Populates & returns script object
@@ -19,8 +20,7 @@ export async function MakeScript (filepath: string, basepath: string): Promise<S
     const rval: Script = {
       name,
       label: name,
-      events: [],
-      security: ScriptSecurity.invoker,
+      triggers: [],
       errors: []
     }
 
@@ -50,18 +50,14 @@ export async function MakeScript (filepath: string, basepath: string): Promise<S
     }
 
     try {
-      const doc = Parse(source.toString())
+      const doc = DocBlockParser(source.toString())
 
       if (doc.label !== undefined) {
         rval.label = doc.label
       }
 
       rval.description = doc.description
-      rval.events = doc.events
-
-      if (doc.security !== undefined) {
-        rval.security = doc.security === ScriptSecurity.invoker ? ScriptSecurity.invoker : ScriptSecurity.definer
-      }
+      rval.triggers = (doc.triggers.map(TriggerParser).filter(t => !!t) as Trigger[])
     } catch (e) {
       rval.errors.push(e.toString())
     }

@@ -1,4 +1,5 @@
 import { ExecArgs, ExecContext } from '.'
+import { Trigger } from '../trigger'
 
 export interface ExecConfigCServers {
     system: ExecConfigServer;
@@ -44,11 +45,6 @@ export interface WatchFn {
 
 export const ScriptExtValidator = /\.(ts|js)$/
 
-export enum ScriptSecurity {
-    invoker = 'invoker',
-    definer = 'definer',
-}
-
 export interface ScriptFn {
     (args: ExecArgs, ctx: ExecContext): unknown;
 }
@@ -57,9 +53,7 @@ export interface Script {
     name: string;
     label?: string;
     description?: string;
-    resource?: string;
-    events: string[];
-    security: ScriptSecurity;
+    triggers: Trigger[];
     fn?: ScriptFn;
     errors: string[];
 }

@@ -1,4 +1,4 @@
-import { Script, ScriptBundle, ScriptType } from './'
+import { Script, ScriptType } from './'
 
 export interface ListFilter {
     query?: string;

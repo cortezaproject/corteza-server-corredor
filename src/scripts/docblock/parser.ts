@@ -6,12 +6,11 @@ import docblockParser from 'docblock-parser'
 interface DocBlock {
     label: string;
     description: string;
-    resource: string|undefined;
-    events: string[];
-    security?: string;
+    triggers: string[];
 }
 
 const docBlockExtractor = /(\/\*\*.+?\*\/)/s
+const commentRemover = /(\/\*[^*]*\*\/)|(\/\/[^*]*)|(#[^*]*)/g
 
 /**
  * Parses source and extracts docblock as structured object (DocBlock)
@@ -27,9 +26,7 @@ export function Parse (source: string): DocBlock {
 
   const { text, tags } = docblockParser({
     tags: {
-      resource: docblockParser.singleParameterTag,
-      event: docblockParser.multilineTilTag,
-      security: docblockParser.singleParameterTag
+      trigger: docblockParser.multilineTilTag
     }
   }).parse(doc)
 
@@ -46,8 +43,6 @@ export function Parse (source: string): DocBlock {
   return {
     label,
     description,
-    resource: tags.resource,
-    events: tags.event,
-    security: tags.security
+    triggers: (tags.trigger || []).map((t: string) => t.replace(commentRemover, '').trim())
   }
 }

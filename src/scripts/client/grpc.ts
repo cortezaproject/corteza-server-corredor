@@ -3,7 +3,7 @@
 import grpc from 'grpc'
 import pino from 'pino'
 import { HandleException } from '+grpc-server'
-import { Script, ScriptType, ScriptBundle, Service } from './'
+import { Script, Service } from './'
 
 interface BundleRequest {
   name: string;

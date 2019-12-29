@@ -1,4 +1,5 @@
 export * from './d'
+export * from './corteza'
 export * from './exec-args'
 export * from './exec-context'
 export * from './finder'
