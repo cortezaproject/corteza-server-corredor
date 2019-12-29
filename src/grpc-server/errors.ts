@@ -18,13 +18,14 @@ export function ParseStack (stack: string): string[] {
  *
  * @param err
  * @param done
+ * @param code
  * @constructor
  */
-export function HandleException (err: Error, done: gRPC.sendUnaryData<null>): void {
+export function HandleException (err: Error, done: gRPC.sendUnaryData<null>, code: gRPC.status = gRPC.status.ABORTED): void {
   const { name, message, stack } = err
 
   const grpcErr: gRPC.ServiceError = {
-    code: gRPC.status.INTERNAL,
+    code,
     name,
     message
   }

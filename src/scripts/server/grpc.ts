@@ -88,12 +88,20 @@ export function Handlers (h: Service, loggerService: pino.BaseLogger): object {
       const { name, args } = request
       const logger = loggerService.child({ rpc: 'Exec', script: name })
 
+      let dArgs: ExecArgsRaw = {}
+
       try {
         // Decode arguments
         // passed in as keys with JSON-encoded values
-        const dArgs = decodeExecArguments(args)
+        logger.debug({ args }, 'encoded arguments')
+        dArgs = decodeExecArguments(args)
 
-        logger.debug({ args }, 'executing script %s', name)
+        logger.debug('executing script %s', name)
+      } catch (e) {
+        HandleException(e, done, grpc.status.INVALID_ARGUMENT)
+      }
+
+      try {
         h.Exec(name, dArgs).then(({ result, log }) => {
           const meta = new grpc.Metadata()
 
@@ -109,11 +117,11 @@ export function Handlers (h: Service, loggerService: pino.BaseLogger): object {
           }, 'done')
         }).catch(e => {
           logger.debug({ stack: e.stack }, e.message)
-          HandleException(e, done)
+          HandleException(e, done, grpc.status.ABORTED)
         })
       } catch (e) {
         logger.debug({ stack: e.stack }, e.message)
-        HandleException(e, done)
+        HandleException(e, done, grpc.status.ABORTED)
       }
     },
 
@@ -141,7 +149,7 @@ export function Handlers (h: Service, loggerService: pino.BaseLogger): object {
         done(null, { scripts })
       } catch (e) {
         logger.debug({ stack: e.stack }, e.message)
-        HandleException(e, done)
+        HandleException(e, done, grpc.status.INTERNAL)
       }
     }
   }

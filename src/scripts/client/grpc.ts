@@ -52,7 +52,7 @@ export function Handlers (h: Service, loggerService: pino.BaseLogger): object {
         done(null, r)
       } catch (e) {
         logger.debug({ stack: e.stack }, e.message)
-        HandleException(e, done)
+        HandleException(e, done, grpc.status.INTERNAL)
       }
     },
 
@@ -73,7 +73,7 @@ export function Handlers (h: Service, loggerService: pino.BaseLogger): object {
         done(null, { scripts: h.List(filter) })
       } catch (e) {
         logger.debug({ stack: e.stack }, e.message)
-        HandleException(e, done)
+        HandleException(e, done, grpc.status.INTERNAL)
       }
     }
   }
