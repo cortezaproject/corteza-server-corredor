@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 
-import { cortezaTypes } from './corteza';
+import { cortezaTypes } from './corteza'
 
 const oldPrefix = /^old([A-Z].+)$/
 

@@ -36,7 +36,6 @@
     "chai-as-promised": "^7.1.1",
     "corteza-protobuf": "cortezaproject/corteza-protobuf.git#master",
     "corteza-webapp-common": "cortezaproject/corteza-webapp-common.git#master",
-    "docblock-parser": "^1.0.0",
     "dotenv": "8.1.0",
     "download-npm-package": "^3.1.12",
     "eslint": "^6.7.2",

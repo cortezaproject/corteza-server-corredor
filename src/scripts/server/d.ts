@@ -53,7 +53,7 @@ export interface Script {
     name: string;
     label?: string;
     description?: string;
-    triggers: Trigger[];
-    fn?: ScriptFn;
-    errors: string[];
+    triggers?: Trigger[];
+    handler?: ScriptFn;
+    errors?: string[];
 }

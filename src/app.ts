@@ -56,17 +56,19 @@ async function reloadServerScripts (): Promise<void> {
   logger.info('reloading server scripts')
   return serverScripts.Reloader(config.scripts.server.basedir)
     .then((scripts: serverScripts.Script[]) => {
-      const isValid = (s: serverScripts.Script): boolean => !!s.fn && s.errors.length === 0
+      const isValid = (s: serverScripts.Script): boolean => !!s.name && !!s.handler
+      const vScripts = scripts.filter(isValid)
 
       logger.info('%d valid server scripts loaded (%d total)',
-        scripts.filter(isValid).length,
+        vScripts.length,
         scripts.length
       )
 
-      scripts
-        .filter(isValid)
+      vScripts
         .forEach((s: serverScripts.Script) => logger.debug('server script ready: %s', s.name))
 
+      // All scripts (even invalid ones) are given to server scripts service
+      // we might want to look at errors
       serverScriptsService.Update(scripts)
     })
 }

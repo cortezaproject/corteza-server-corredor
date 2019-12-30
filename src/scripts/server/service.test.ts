@@ -110,7 +110,7 @@ describe('execution', () => {
         name,
         errors: [],
         triggers: [],
-        fn
+        handler: fn
       }])
 
       svc.Exec(name, args)

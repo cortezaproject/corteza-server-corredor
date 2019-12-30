@@ -19,47 +19,6 @@ import MessagingObject from 'corteza-webapp-common/src/lib/types/messaging/commo
 // @ts-ignore
 import Channel from 'corteza-webapp-common/src/lib/types/messaging/channel'
 
-export type Result = void | Promise<unknown> | unknown
-
-export declare class BaseArgs {
-    readonly $invoker: User
-    readonly $authUser: User
-    readonly authToken: string
-}
-
-export declare class ComposeRecordArgs extends BaseArgs {
-    readonly $record: Record
-    readonly $oldRecord: Record
-    readonly $module: Module
-    readonly $namespace: Namespace
-}
-
-export declare class ComposeModuleArgs extends BaseArgs {
-    readonly $module: Module
-    readonly $oldModule: Module
-    readonly $namespace: Namespace
-}
-
-export declare class ComposeNamespaceArgs extends BaseArgs {
-    readonly $namespace: Namespace
-    readonly $oldNamespace: Namespace
-}
-
-// @todo declare args for page
-// @todo declare args for application
-// @todo declare args for user
-// @todo declare args for role
-// @todo declare args for channel
-// @todo declare args for message
-
-interface GetterFn {
-    (key: unknown): unknown;
-}
-
-interface GenericGetterFn<T> {
-    (val: unknown): T;
-}
-
 function genericConstructor<T> (C: new (_: unknown) => T): GenericGetterFn<T> {
   return function (val: unknown): T {
     return new C(val)
@@ -90,4 +49,3 @@ cortezaTypes.set('user', genericConstructor(User))
 cortezaTypes.set('role', genericConstructor(Role))
 cortezaTypes.set('channel', genericConstructor(Channel))
 cortezaTypes.set('message', genericConstructor(MessagingObject))
-

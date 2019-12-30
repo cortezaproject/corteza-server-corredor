@@ -20,7 +20,7 @@ function match (f: ListFilter): ListFiterFn {
     }
 
     if (f.resource || f.events) {
-      const tt = item.triggers.filter(({ resources, events }) => {
+      const tt = (item.triggers || []).filter(({ resources, events }) => {
         if (f.resource && f.resource.length > 0) {
           // Filter by resource
           if (!resources || resources.indexOf(f.resource) === -1) {
@@ -104,11 +104,11 @@ export class Service {
         throw new Error('script not found')
       }
 
-      if (!script.fn) {
+      if (!script.handler) {
         throw new Error('can not run uninitialized script')
       }
 
-      if (script.errors.length > 0) {
+      if (script.errors && script.errors.length > 0) {
         throw new Error('can not run script with initialization errors')
       }
 
@@ -129,8 +129,8 @@ export class Service {
       })
 
       try {
-        // Wrap fn() with Promise.resolve - we do not know if function is async or not.
-        return Promise.resolve(script.fn(execArgs, execCtx)).then((rval: unknown): ExecResponse => {
+        // Wrap handler() with Promise.resolve - we do not know if function is async or not.
+        return Promise.resolve(script.handler(execArgs, execCtx)).then((rval: unknown): ExecResponse => {
           let result = {}
 
           if (rval === false) {
