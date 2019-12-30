@@ -22,8 +22,9 @@ import Channel from 'corteza-webapp-common/src/lib/types/messaging/channel'
 export type Result = void | Promise<unknown> | unknown
 
 export declare class BaseArgs {
+    readonly $invoker: User
     readonly $authUser: User
-    readonly jwt: User
+    readonly authToken: string
 }
 
 export declare class ComposeRecordArgs extends BaseArgs {
@@ -78,6 +79,7 @@ function recordConstructor (): GenericGetterFn<Record> {
 export const cortezaTypes: Map<string, GetterFn> = new Map()
 
 cortezaTypes.set('authUser', genericConstructor(User))
+cortezaTypes.set('invoker', genericConstructor(User))
 
 cortezaTypes.set('record', recordConstructor())
 cortezaTypes.set('module', genericConstructor(Module))

@@ -67,7 +67,7 @@ export class ExecContext {
     get SystemAPI (): SystemApiClient {
       return new SystemApiClient({
         baseURL: this.config.cServers.system.apiBaseURL,
-        jwt: this.args.jwt
+        jwt: this.args.authToken
       })
     }
 
@@ -79,7 +79,7 @@ export class ExecContext {
     get ComposeAPI (): ComposeApiClient {
       return new ComposeApiClient({
         baseURL: this.config.cServers.compose.apiBaseURL,
-        jwt: this.args.jwt
+        jwt: this.args.authToken
       })
     }
 
@@ -91,7 +91,7 @@ export class ExecContext {
     get MessagingAPI (): MessagingApiClient {
       return new MessagingApiClient({
         baseURL: this.config.cServers.messaging.apiBaseURL,
-        jwt: this.args
+        jwt: this.args.authToken
       })
     }
 

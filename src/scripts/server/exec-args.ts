@@ -50,7 +50,6 @@ export class ExecArgs {
             configurable: false,
             enumerable: true
           })
-
         } else {
           Object.defineProperty(this, arg, {
             value: args[arg],
