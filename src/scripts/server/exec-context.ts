@@ -34,7 +34,7 @@ export interface ExecContextCtor {
 export class ExecContext {
     readonly args: BaseArgs;
     readonly config: ExecConfig;
-    private log: Logger;
+    readonly log: Logger;
 
     /**
      * @param {ExecContextCtor} ctx

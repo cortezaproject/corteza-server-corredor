@@ -11,6 +11,7 @@ interface KV {
 
 interface ExecRequestWrap {
   request: ExecRequest;
+  metadata: grpc.Metadata;
 }
 
 interface ExecRequest {
@@ -24,6 +25,7 @@ interface ExecResponse {
 
 interface ListRequestWrap {
   request: ListRequest;
+  metadata: grpc.Metadata;
 }
 
 interface ListRequest {
@@ -83,10 +85,12 @@ export function encodeExecResult (args: object): KV {
 
 export function Handlers (h: Service, loggerService: pino.BaseLogger): object {
   return {
-    Exec ({ request }: ExecRequestWrap, done: grpc.sendUnaryData<ExecResponse|null>): void {
+    Exec ({ request, metadata }: ExecRequestWrap, done: grpc.sendUnaryData<ExecResponse|null>): void {
       const started = Date.now()
       const { name, args } = request
-      const logger = loggerService.child({ rpc: 'Exec', script: name })
+
+      const [requestId] = metadata.get('x-request-id')
+      const logger = loggerService.child({ rpc: 'Exec', script: name, requestId })
 
       let dArgs: ExecArgsRaw = {}
 
