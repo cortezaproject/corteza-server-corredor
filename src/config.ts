@@ -70,10 +70,23 @@ export const isDevelopment = env.indexOf('dev') === 0
 // Is ENVIRONMENT set to production?
 export const debug = isTrue(e.CORREDOR_DEBUG) ?? !isProduction
 
+const certPath = e.CORREDOR_SERVER_CERTIFICATES_PATH ?? './certs/server'
+
 // Server settings
 // CORREDOR_ADDR is used by the API as well to configure gRPC client connection
 export const server = {
-  addr: e.CORREDOR_ADDR || '0.0.0.0:50051'
+  addr: e.CORREDOR_ADDR || '0.0.0.0:50051',
+
+  certificates: {
+    enabled:
+        true,
+    ca:
+        e.CORREDOR_SERVER_CERTIFICATES_CA ?? path.join(certPath, 'ca.crt'),
+    private:
+        e.CORREDOR_SERVER_CERTIFICATES_PRIVATE ?? path.join(certPath, 'private.key'),
+    public:
+        e.CORREDOR_SERVER_CERTIFICATES_PUBLIC ?? path.join(certPath, 'public.crt')
+  }
 }
 
 export const logger = {

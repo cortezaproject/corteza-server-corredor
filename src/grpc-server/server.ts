@@ -1,8 +1,15 @@
 import logger from '+logger'
 import grpc from 'grpc'
+import * as fs from 'fs'
 
 interface ServerConfig {
   addr: string;
+  certificates: {
+    enabled: boolean;
+    ca: string;
+    private: string;
+    public: string;
+  };
 }
 
 export type ServiceDefinition = Map<grpc.ServiceDefinition<unknown>, unknown>
@@ -12,7 +19,7 @@ export type ServiceDefinition = Map<grpc.ServiceDefinition<unknown>, unknown>
  * @param {ServerConfig} config Server configuration
  * @param {ServiceDefinition} services
  */
-export function Start ({ addr }: ServerConfig, services: ServiceDefinition): void {
+export function Start ({ addr, certificates }: ServerConfig, services: ServiceDefinition): void {
   const server = new grpc.Server()
 
   const handle = (): void => {
@@ -34,7 +41,24 @@ export function Start ({ addr }: ServerConfig, services: ServiceDefinition): voi
   // Allow registration of servies
   services.forEach((implementation, service) => server.addService(service, implementation))
 
-  if (server.bind(addr, grpc.ServerCredentials.createInsecure()) === 0) {
+  let security = grpc.ServerCredentials.createInsecure()
+
+  if (certificates.enabled) {
+    security = grpc.ServerCredentials.createSsl(
+      fs.readFileSync(certificates.ca),
+      [
+        {
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          cert_chain: fs.readFileSync(certificates.public),
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          private_key: fs.readFileSync(certificates.private)
+        }
+      ],
+      true
+    )
+  }
+
+  if (server.bind(addr, security) === 0) {
     logger.error(`could not bind gRPC server to ${addr}`)
     return
   }
