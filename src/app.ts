@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 
 // @ts-ignore
-import * as config from '+config'
 import path from 'path'
-import logger from '+logger'
+import logger from './logger'
+import * as config from './config'
 import * as deps from './scripts/deps'
-import * as serverScripts from '+ServerScripts'
-import * as clientScripts from '+ClientScripts'
-import * as gRPCServer from '+grpc-server'
+import * as serverScripts from './scripts/server'
+import * as clientScripts from './scripts/client'
+import * as gRPCServer from './grpc-server'
+import { Script } from './scripts/server/types'
 
 /**
  *
@@ -46,17 +47,15 @@ logger.debug(
 
 async function installDependencies (): Promise<deps.PackageInstallStatus[]> {
   logger.info('installing dependencies from %s', config.scripts.dependencies.packageJSON)
-  return deps.Install(
-    config.scripts.dependencies.packageJSON,
-    config.scripts.dependencies.nodeModules)
+  return deps.Install(logger, config.scripts.dependencies)
 }
 
 async function reloadServerScripts (): Promise<void> {
   // Reload scripts every-time packages change!
   logger.info('reloading server scripts')
   return serverScripts.Reloader(config.scripts.server.basedir)
-    .then((scripts: serverScripts.Script[]) => {
-      const isValid = (s: serverScripts.Script): boolean => !!s.name && !!s.handler
+    .then((scripts: Script[]) => {
+      const isValid = (s: Script): boolean => !!s.name && !!s.exec
       const vScripts = scripts.filter(isValid)
 
       logger.info('%d valid server scripts loaded (%d total)',
@@ -65,7 +64,7 @@ async function reloadServerScripts (): Promise<void> {
       )
 
       vScripts
-        .forEach((s: serverScripts.Script) => logger.debug('server script ready: %s', s.name))
+        .forEach((s: Script) => logger.debug('server script ready: %s', s.name))
 
       // All scripts (even invalid ones) are given to server scripts service
       // we might want to look at errors
@@ -129,5 +128,5 @@ gRPCServer.LoadDefinitions(path.join(config.protobuf.path, '/service-corredor.pr
   )
 
   logger.debug('starting gRPC server')
-  gRPCServer.Start(config.server, serviceDefinitions)
+  gRPCServer.Start(config.server, logger, serviceDefinitions)
 })

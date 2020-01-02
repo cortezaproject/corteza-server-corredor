@@ -1,3 +1,3 @@
-export * from './d'
 export * from './grpc'
+export * from './types'
 export * from './service'

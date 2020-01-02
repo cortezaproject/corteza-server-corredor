@@ -1,3 +1,3 @@
-export * from './d'
 export * from './install'
+export * from './types'
 export * from './watcher'

@@ -1,6 +1,6 @@
 import watch from 'node-watch'
 import { debounce } from 'lodash'
-import { ScriptExtValidator, WatchFn } from '.'
+import { ScriptExtValidator, WatchFn } from './types'
 
 const opt = {
   persistent: false,

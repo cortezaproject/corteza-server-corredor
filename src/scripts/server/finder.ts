@@ -1,6 +1,6 @@
-import { ScriptExtValidator } from '.'
 import { promises as fs } from 'fs'
 import path from 'path'
+import { ScriptExtValidator } from './types'
 
 /**
  * Recursively gathers scripts-like files and returns generator

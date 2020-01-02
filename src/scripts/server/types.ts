@@ -43,7 +43,9 @@ export interface WatchFn {
     (): void;
 }
 
-export const ScriptExtValidator = /\.(ts|js)$/
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+export const ScriptExtValidator = /\.js$/
 
 export interface ScriptFn {
     (args: ExecArgs, ctx: ExecContext): unknown;
@@ -54,6 +56,6 @@ export interface Script {
     label?: string;
     description?: string;
     triggers?: Trigger[];
-    handler?: ScriptFn;
+    exec?: ScriptFn;
     errors?: string[];
 }

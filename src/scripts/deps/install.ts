@@ -3,8 +3,13 @@
 // @ts-ignore
 import downloadNpmPackage from 'download-npm-package'
 import fs from 'fs'
-import { DependencyMap, PackageInstallStatus } from '.'
-import logger from '+logger'
+import { DependencyMap, PackageInstallStatus } from './types'
+import { BaseLogger } from 'pino'
+
+interface Config {
+  nodeModules: string;
+  packageJSON: string;
+}
 
 export function Dependencies (packageJsonPath: string): DependencyMap|undefined {
   if (!fs.existsSync(packageJsonPath)) {
@@ -35,15 +40,10 @@ export async function Download (arg: string, dir: string): Promise<unknown> {
  * Orchestrates download and install of NPM packages from package.json
  *
  * @todo should be able verify (from first/previous run) what was installed and if there are changes.
- *
- *
- * @param {string} packageJsonPath Path to package.json file
- * @param nodeModulesDir
- * @constructor
  */
-export async function Install (packageJsonPath: string, nodeModulesDir: string): Promise<PackageInstallStatus[]> {
+export async function Install (logger: BaseLogger, c: Config): Promise<PackageInstallStatus[]> {
   const pp: Promise<PackageInstallStatus>[] = []
-  const deps = Dependencies(packageJsonPath)
+  const deps = Dependencies(c.packageJSON)
 
   if (deps === undefined) {
     throw Error('No dependencies found')
@@ -54,7 +54,7 @@ export async function Install (packageJsonPath: string, nodeModulesDir: string):
       continue
     }
 
-    pp.push(Download(`${name}@${deps[name]}`, nodeModulesDir).then((): PackageInstallStatus => {
+    pp.push(Download(`${name}@${deps[name]}`, c.nodeModules).then((): PackageInstallStatus => {
       logger.debug('package installed', { name, version: deps[name] })
       return { name, version: deps[name], installed: true }
     }))

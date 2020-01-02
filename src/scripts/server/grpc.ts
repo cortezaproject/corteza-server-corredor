@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 
 import grpc from 'grpc'
-import pino from 'pino'
-import { HandleException } from '+grpc-server'
-import { Service, ExecArgsRaw } from '.'
+import { BaseLogger } from 'pino'
+import { HandleException } from '../../grpc-server'
+import { ExecArgsRaw } from './types'
+import { Service } from './service'
 
 interface KV {
   [_: string]: string;
@@ -83,7 +84,7 @@ export function encodeExecResult (args: object): KV {
   return enc
 }
 
-export function Handlers (h: Service, loggerService: pino.BaseLogger): object {
+export function Handlers (h: Service, loggerService: BaseLogger): object {
   return {
     Exec ({ request, metadata }: ExecRequestWrap, done: grpc.sendUnaryData<ExecResponse|null>): void {
       const started = Date.now()

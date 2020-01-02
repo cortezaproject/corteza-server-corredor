@@ -1,6 +1,6 @@
-import logger from '+logger'
-import grpc from 'grpc'
 import * as fs from 'fs'
+import grpc from 'grpc'
+import { BaseLogger } from 'pino'
 
 interface ServerConfig {
   addr: string;
@@ -16,10 +16,8 @@ export type ServiceDefinition = Map<grpc.ServiceDefinition<unknown>, unknown>
 
 /**
  * Initializes the server
- * @param {ServerConfig} config Server configuration
- * @param {ServiceDefinition} services
  */
-export function Start ({ addr, certificates }: ServerConfig, services: ServiceDefinition): void {
+export function Start ({ addr, certificates }: ServerConfig, logger: BaseLogger, services: ServiceDefinition): void {
   const server = new grpc.Server()
 
   const handle = (): void => {

@@ -8,8 +8,8 @@
     "Denis Arh <denis.arh@crust.tech>"
   ],
   "private": true,
-  "main": "dist/corredor.js",
-  "types": "dist/corredor.d.ts",
+  "main": "dist/app.js",
+  "types": "dist/app.d.ts",
   "scripts": {
     "tsndev": "ts-node-dev --debounce 200 --transpileOnly -r tsconfig-paths/register -r esm",
     "serve:dev": "yarn tsndev ./src/app.ts",

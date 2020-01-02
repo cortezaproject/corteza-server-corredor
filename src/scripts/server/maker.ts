@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 import { promises as fs } from 'fs'
-import { Script, ScriptFn } from '.'
+import { Script, ScriptFn } from './types'
 
 /**
  * Populates & returns script object

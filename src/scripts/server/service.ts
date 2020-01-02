@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 
-import { Logger, Script, ExecResponse, ExecConfig, ExecArgs, ExecArgsRaw, ExecContext } from '.'
+import { Logger, ExecContext, ExecArgs } from '.'
+import { ExecArgsRaw, ExecConfig, ExecResponse, Script } from './types'
 
 export interface ListFilter {
     query?: string;
@@ -8,11 +9,16 @@ export interface ListFilter {
     events?: string[];
 }
 
-export interface ListFiterFn {
+export interface ListFilterFn {
     (item: Script): boolean;
 }
 
-function match (f: ListFilter): ListFiterFn {
+interface TriggerFilterArgs {
+  resources: string[];
+  events: string[];
+}
+
+function match (f: ListFilter): ListFilterFn {
   return (item: Script): boolean => {
     if (f === undefined) {
       // Match all when no filter
@@ -20,7 +26,7 @@ function match (f: ListFilter): ListFiterFn {
     }
 
     if (f.resource || f.events) {
-      const tt = (item.triggers || []).filter(({ resources, events }) => {
+      const tt = (item.triggers || []).filter(({ resources, events }: TriggerFilterArgs) => {
         if (f.resource && f.resource.length > 0) {
           // Filter by resource
           if (!resources || resources.indexOf(f.resource) === -1) {
@@ -104,7 +110,7 @@ export class Service {
         throw new Error('script not found')
       }
 
-      if (!script.handler) {
+      if (!script.exec) {
         throw new Error('can not run uninitialized script')
       }
 
@@ -129,8 +135,8 @@ export class Service {
       })
 
       try {
-        // Wrap handler() with Promise.resolve - we do not know if function is async or not.
-        return Promise.resolve(script.handler(execArgs, execCtx)).then((rval: unknown): ExecResponse => {
+        // Wrap exec() with Promise.resolve - we do not know if function is async or not.
+        return Promise.resolve(script.exec(execArgs, execCtx)).then((rval: unknown): ExecResponse => {
           let result = {}
 
           if (rval === false) {

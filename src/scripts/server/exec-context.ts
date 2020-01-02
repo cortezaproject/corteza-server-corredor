@@ -16,9 +16,8 @@ import SystemHelper from 'corteza-webapp-common/src/lib/automation-scripts/conte
 import User from 'corteza-webapp-common/src/lib/system/user'
 
 import { Logger } from './logger'
-import { ExecArgs } from './exec-args'
-import { ExecConfig } from './d'
-import { BaseArgs } from './corteza'
+import { BaseArgs } from '../../types'
+import { ExecConfig } from './types'
 
 export interface ExecContextCtor {
     args: BaseArgs;
@@ -35,6 +34,7 @@ export class ExecContext {
     readonly args: BaseArgs;
     readonly config: ExecConfig;
     readonly log: Logger;
+    readonly console: Logger;
 
     /**
      * @param {ExecContextCtor} ctx
@@ -45,6 +45,7 @@ export class ExecContext {
     constructor ({ config, args, log }: ExecContextCtor) {
       this.args = args
       this.log = log
+      this.console = log
       this.config = config
     }
 

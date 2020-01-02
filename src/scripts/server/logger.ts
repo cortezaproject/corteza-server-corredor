@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 
 import { format } from 'util'
-import { EventType, Event } from '.'
+import { EventType, Event } from './types'
 
 /**
  * Makes new Event

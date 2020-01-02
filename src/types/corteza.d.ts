@@ -1,6 +1,18 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 
 // @ts-ignore
+import ComposeApiClient from 'corteza-webapp-common/src/lib/corteza-server/rest-api-client/compose'
+// @ts-ignore
+import MessagingApiClient from 'corteza-webapp-common/src/lib/corteza-server/rest-api-client/messaging'
+// @ts-ignore
+import SystemApiClient from 'corteza-webapp-common/src/lib/corteza-server/rest-api-client/system'
+// @ts-ignore
+import ComposeHelper from 'corteza-webapp-common/src/lib/automation-scripts/context/compose'
+// @ts-ignore
+import MessagingHelper from 'corteza-webapp-common/src/lib/automation-scripts/context/messaging'
+// @ts-ignore
+import SystemHelper from 'corteza-webapp-common/src/lib/automation-scripts/context/system'
+// @ts-ignore
 import Namespace from 'corteza-webapp-common/src/lib/types/compose/namespace'
 // @ts-ignore
 import Module from 'corteza-webapp-common/src/lib/types/compose/module'
@@ -17,51 +29,51 @@ import MessagingObject from 'corteza-webapp-common/src/lib/types/messaging/commo
 // @ts-ignore
 import Channel from 'corteza-webapp-common/src/lib/types/messaging/channel'
 
-declare class BaseArgs {
+export declare class BaseArgs {
     readonly $invoker: User
     readonly $authUser: User
     readonly authToken: string
 }
 
-declare class ComposeRecordArgs extends BaseArgs {
+export declare class ComposeRecordArgs extends BaseArgs {
     readonly $record: Record
     readonly $oldRecord: Record
     readonly $module: Module
     readonly $namespace: Namespace
 }
 
-declare class ComposeModuleArgs extends BaseArgs {
+export declare class ComposeModuleArgs extends BaseArgs {
     readonly $module: Module
     readonly $oldModule: Module
     readonly $namespace: Namespace
 }
 
-declare class ComposeNamespaceArgs extends BaseArgs {
+export declare class ComposeNamespaceArgs extends BaseArgs {
     readonly $namespace: Namespace
     readonly $oldNamespace: Namespace
 }
 
-declare class SystemUserArgs extends BaseArgs {
+export declare class SystemUserArgs extends BaseArgs {
     readonly $user: User
     readonly $oldUser: User
 }
 
-declare class SystemRoleArgs extends BaseArgs {
+export declare class SystemRoleArgs extends BaseArgs {
     readonly $role: Role
     readonly $oldRole: Role
 }
 
-declare class SystemApplicationArgs extends BaseArgs {
+export declare class SystemApplicationArgs extends BaseArgs {
     readonly $application: SystemObject
     readonly $oldApplication: SystemObject
 }
 
-declare class MessagingChannelArgs extends BaseArgs {
+export declare class MessagingChannelArgs extends BaseArgs {
     readonly channel: Channel
     readonly $oldChannel: Channel
 }
 
-declare class MessagingMessageArgs extends BaseArgs {
+export declare class MessagingMessageArgs extends BaseArgs {
     readonly $message: MessagingObject
     readonly $oldMesage: MessagingObject
     readonly channel: Channel
@@ -76,5 +88,20 @@ export declare type Result = void | Promise<unknown> | unknown
 // @todo declare args for channel
 // @todo declare args for message
 
-declare function GenericGetterFn<T> (val: unknown): T;
-declare function GetterFn(key: unknown): unknown
+export declare interface GenericGetterFn<T> {
+    (val: unknown): T;
+}
+
+export declare interface GetterFn {
+    (key: unknown): unknown;
+}
+
+export declare class ExecContext {
+    $authUser: Promise<User>;
+    SystemAPI: SystemApiClient;
+    ComposeAPI: ComposeApiClient;
+    MessagingAPI: MessagingApiClient;
+    System: SystemHelper;
+    Compose: ComposeHelper;
+    Messaging: MessagingHelper;
+}

@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 
+import { GenericGetterFn, GetterFn } from '../../types'
+
 // @ts-ignore
 import ComposeObject from 'corteza-webapp-common/src/lib/types/compose/common'
 // @ts-ignore

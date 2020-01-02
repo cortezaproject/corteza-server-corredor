@@ -35,7 +35,7 @@ export class ExecArgs {
 
           if (freeze) {
             // Freeze object if arg name prefixed with old
-            cast = (val: unknown) => cast.call(this, val)
+            cast = (val: unknown): unknown => cast.call(this, val)
           }
 
           Object.defineProperty(this, `$${arg}`, {

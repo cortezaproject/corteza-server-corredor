@@ -1,3 +1,5 @@
+import { FluentTrigger } from '../../types'
+
 const defaultResource = 'system'
 
 interface Constraint {
@@ -141,5 +143,5 @@ export class Trigger {
   }
 }
 
-const baseTrigger: TriggerBase = new Trigger()
-export default baseTrigger
+const fluentTrigger: FluentTrigger = new Trigger()
+export default fluentTrigger
