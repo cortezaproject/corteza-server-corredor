@@ -79,7 +79,7 @@ export const server = {
 
   certificates: {
     enabled:
-        true,
+        isTrue(e.CORREDOR_SERVER_CERTIFICATES_ENABLED) ?? true,
     ca:
         e.CORREDOR_SERVER_CERTIFICATES_CA ?? path.join(certPath, 'ca.crt'),
     private:
