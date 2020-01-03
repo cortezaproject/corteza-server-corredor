@@ -3,7 +3,6 @@
   "description": "Corteza Automation Script Runner",
   "version": "2020.3.0-alpha.0",
   "license": "Apache-2.0",
-  "type": "module",
   "contributors": [
     "Denis Arh <denis.arh@crust.tech>"
   ],
@@ -15,7 +14,7 @@
     "serve:dev": "yarn tsndev ./src/app.ts",
     "serve:dev:watch": "yarn tsndev --respawn --ignore-watch node_module --ignore-watch usr ./src/app.ts",
     "__serve": "nodemon --ext js,proto --exec node -r esm src/main.js",
-    "__server": "node -r esm src/main.js",
+    "server": "node -r esm dist/app.js",
     "__tsc": "tsc",
     "lint": "eslint src/** --ext .js,.ts",
     "test:unit": "mocha",
@@ -85,6 +84,6 @@
     ]
   },
   "engines": {
-    "node": ">=12.7.0"
+    "node": ">=12.14.0"
   }
 }
