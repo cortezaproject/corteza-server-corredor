@@ -15,13 +15,14 @@ import SystemHelper from 'corteza-webapp-common/src/lib/automation-scripts/conte
 // @ts-ignore
 import User from 'corteza-webapp-common/src/lib/system/user'
 
-import { Logger } from './logger'
 import { BaseArgs } from '../../types'
 import { ExecConfig } from './types'
 
+import { BaseLogger } from 'pino'
+
 export interface ExecContextCtor {
     args: BaseArgs;
-    log: Logger;
+    log: BaseLogger;
     config: ExecConfig;
 }
 
@@ -33,20 +34,19 @@ export interface ExecContextCtor {
 export class ExecContext {
     readonly args: BaseArgs;
     readonly config: ExecConfig;
-    readonly log: Logger;
-    readonly console: Logger;
+    readonly log: BaseLogger;
 
-    /**
-     * @param {ExecContextCtor} ctx
-     * @param {ExecConfig} ctx.config
-     * @param {ExecArgs} ctx.args
-     * @param {Logger} ctx.log
-     */
     constructor ({ config, args, log }: ExecContextCtor) {
       this.args = args
       this.log = log
-      this.console = log
       this.config = config
+    }
+
+    /**
+     * Alias for log, to make developer's life easier <3
+     */
+    get console (): BaseLogger {
+      return this.log
     }
 
     /**

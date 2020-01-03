@@ -26,19 +26,6 @@ export interface ExecArgsRaw {
     [_: string]: unknown;
 }
 
-export enum EventType {
-    info = 'INFO',
-    debug = 'DEBUG',
-    error = 'ERROR',
-    warn = 'WARN',
-}
-
-export interface Event {
-    timestamp: Date;
-    type: EventType;
-    message: string;
-}
-
 export interface WatchFn {
     (): void;
 }

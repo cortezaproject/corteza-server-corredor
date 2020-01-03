@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 
-import { Logger, ExecContext, ExecArgs } from '.'
+import { ExecContext, ExecArgs } from '.'
 import { ExecArgsRaw, ExecConfig, ExecResponse, Script } from './types'
+import pino from 'pino'
+import { LogToArray } from '../log-to-array'
 
 export interface ListFilter {
     query?: string;
@@ -120,7 +122,8 @@ export class Service {
 
       // global console replacement,
       // will allow us to catch console.* calls and return them to the caller
-      const log = new Logger()
+      const logBuffer = new LogToArray()
+      const log = pino({}, logBuffer)
 
       // Cast some of the common argument types
       // from plain javascript object to proper classes
@@ -158,7 +161,7 @@ export class Service {
             result,
 
             // Captured log from the execution
-            log: log.getBuffer()
+            log: logBuffer.serialize()
           }
         })
       } catch (e) {
