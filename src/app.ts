@@ -8,7 +8,8 @@ import * as deps from './scripts/deps'
 import * as serverScripts from './scripts/server'
 import * as clientScripts from './scripts/client'
 import * as gRPCServer from './grpc-server'
-import { Script } from './scripts/server/types'
+import * as scriptLoader from './scripts/loader'
+import { Script } from './scripts/types'
 
 /**
  *
@@ -53,7 +54,7 @@ async function installDependencies (): Promise<deps.PackageInstallStatus[]> {
 async function reloadServerScripts (): Promise<void> {
   // Reload scripts every-time packages change!
   logger.info('reloading server scripts')
-  return serverScripts.Reloader(config.scripts.server.basedir)
+  return scriptLoader.Reloader(config.scripts.server.basedir)
     .then((scripts: Script[]) => {
       const isValid = (s: Script): boolean => !!s.name && !!s.exec
       const vScripts = scripts.filter(isValid)

@@ -1,6 +1,12 @@
-import { FluentTrigger } from '../../types'
-
 const defaultResource = 'system'
+
+/**
+ * Using this for function testing
+ */
+const generatorSample = function * (): unknown { yield undefined }
+const isGenerator = (t): boolean => {
+  return (typeof t === 'function') && (t.constructor === generatorSample.constructor)
+}
 
 interface Constraint {
   name?:
@@ -9,6 +15,17 @@ interface Constraint {
       string;
   value:
       string[];
+}
+
+interface PlainTrigger {
+  events?:
+    string[];
+  resources?:
+    string[];
+  constraints?:
+    Constraint[];
+  runAs?:
+    string;
 }
 
 function distinct (arr: string[]): string[] {
@@ -33,11 +50,11 @@ export class Trigger {
   readonly runAs?:
       string;
 
-  constructor (t?: Trigger) {
+  constructor (t?: Trigger | PlainTrigger) {
     if (t !== undefined) {
-      this.events = t.events
-      this.resources = t.resources
-      this.constraints = t.constraints
+      this.events = t.events ?? []
+      this.resources = t.resources ?? []
+      this.constraints = t.constraints ?? []
       this.runAs = t.runAs
     } else {
       this.events = []
@@ -48,43 +65,53 @@ export class Trigger {
   }
 
   as (runAs: string): Trigger {
-    return new Trigger({ ...this, runAs })
+    const t = this ?? new Trigger()
+
+    return new Trigger({ ...t, runAs })
   }
 
   on (...events: string[]): Trigger {
+    const t = this ?? new Trigger()
+
     return new Trigger({
-      ...this,
-      events: distinct([...this.events, ...eventize('on', events)])
+      ...t,
+      events: distinct([...t.events, ...eventize('on', events)])
     })
   }
 
   before (...events: string[]): Trigger {
+    const t = this ?? new Trigger()
+
     return new Trigger({
-      ...this,
-      events: distinct([...this.events, ...eventize('before', events)])
+      ...t,
+      events: distinct([...t.events, ...eventize('before', events)])
     })
   }
 
   after (...events: string[]): Trigger {
+    const t = this ?? new Trigger()
+
     return new Trigger({
-      ...this,
-      events: distinct([...this.events, ...eventize('after', events)])
+      ...t,
+      events: distinct([...t.events, ...eventize('after', events)])
     })
   }
 
   for (...resources: string[]): Trigger {
+    const t = this ?? new Trigger()
+
     return new Trigger({
-      ...this,
-      resources: distinct([...this.resources, ...resources])
+      ...t,
+      resources: distinct([...t.resources, ...resources])
     })
   }
 
   at (...intervals: string[]): Trigger {
-    return this.deferred('onTimestamp', intervals)
+    return (this ?? new Trigger()).deferred('onTimestamp', intervals)
   }
 
   every (...intervals: string[]): Trigger {
-    return this.deferred('onInterval', intervals)
+    return (this ?? new Trigger()).deferred('onInterval', intervals)
   }
 
   where (...aa: unknown[]): Trigger {
@@ -118,16 +145,18 @@ export class Trigger {
   }
 
   private deferred (eventType: string, value: string[]): Trigger {
+    const t = this ?? new Trigger()
+
     // Do not procede if this was called on incompatible trigger
-    if (this.events.length > 0 && this.events.find(e => e === eventType)) {
+    if (t.events.length > 0 && t.events.find(e => e === eventType)) {
       throw SyntaxError('not allowed to combine interval with other event types')
     }
 
-    if (this.resources.length > 0 && this.resources.find(e => e.indexOf(':') > -1)) {
+    if (t.resources.length > 0 && t.resources.find(e => e.indexOf(':') > -1)) {
       throw SyntaxError('not allowed to use interval on non-service resources')
     }
 
-    let constraints: Constraint[] = this.constraints
+    let constraints: Constraint[] = t.constraints
     if (constraints.length > 0) {
       constraints[0].value.push(...value)
     } else {
@@ -143,5 +172,26 @@ export class Trigger {
   }
 }
 
-const fluentTrigger: FluentTrigger = new Trigger()
-export default fluentTrigger
+/**
+ * Makes triggers out of an input params
+ */
+export function Make (t: unknown): Trigger[] {
+  let tt = []
+
+  if (typeof t === 'function') {
+    // Execute trigger callback to convert to array of triggers
+    // and overwrite the function with definition
+
+    if (isGenerator(t)) {
+      tt = [...t(new Trigger())]
+    } else {
+      tt = t(new Trigger())
+    }
+  } else if (Array.isArray(t)) {
+    tt = [...t]
+  } else if (t instanceof Trigger) {
+    tt = [t]
+  }
+
+  return tt.filter(t => t instanceof Trigger)
+}
