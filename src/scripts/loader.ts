@@ -34,32 +34,30 @@ export async function * Finder (p: string, validator: RegExp|undefined = /\.js$/
 }
 
 export function ResolveScript (name: string, def: {[_: string]: unknown}): Script {
-  let triggers: Trigger[]
+  let triggers: Trigger[] = []
   const errors: string[] = []
 
   if (typeof def !== 'object') {
-    // { errors: ['triggers property/callback missing'] } as Script
+    return { name, errors: ['triggers property/callback missing'] }
   }
 
   if (Object.prototype.hasOwnProperty.call(def, 'triggers')) {
-    triggers = MakeTriggers(def.triggers)
-  } else {
-    errors.push('triggers property/callback missing')
+    triggers = MakeTriggers(def.triggers) ?? []
   }
 
-  if (triggers.length === 0) {
-    errors.push('exec callback missing')
+  if (!triggers || triggers.length === 0) {
+    errors.push('invalid or undefined triggers')
   }
 
   // @todo make sure exec is there...
   if (!Object.prototype.hasOwnProperty.call(def, 'exec')) {
     errors.push('exec callback missing')
-  } else if (typeof def.exec === 'function') {
+  } else if (typeof def.exec !== 'function') {
     errors.push('exec not a function')
   }
 
   // Merge resolved & the rest
-  return { name, errors, triggers, ...(def as object) }
+  return { ...(def as object), name, errors, triggers }
 }
 
 /**

@@ -181,7 +181,6 @@ export function Make (t: unknown): Trigger[] {
   if (typeof t === 'function') {
     // Execute trigger callback to convert to array of triggers
     // and overwrite the function with definition
-
     if (isGenerator(t)) {
       tt = [...t(new Trigger())]
     } else {
