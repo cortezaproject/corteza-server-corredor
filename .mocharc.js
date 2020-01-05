@@ -8,7 +8,7 @@ module.exports = {
   'full-trace': true,
   bail: true,
   recursive: true,
-  extension: ['.test.ts'],
+  extension: ['ts', 'js'],
   spec: 'src/**/*.test.ts',
   'watch-files': [ 'src/**' ],
 }
