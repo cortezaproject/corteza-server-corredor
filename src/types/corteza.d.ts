@@ -88,14 +88,6 @@ export declare type Result = void | Promise<unknown> | unknown
 // @todo declare args for channel
 // @todo declare args for message
 
-export declare interface GenericGetterFn<T> {
-    (val: unknown): T;
-}
-
-export declare interface GetterFn {
-    (key: unknown): unknown;
-}
-
 export declare class ExecContext {
     $authUser: Promise<User>;
     SystemAPI: SystemApiClient;
