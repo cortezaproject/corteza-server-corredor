@@ -1,12 +1,15 @@
 import watch from 'node-watch'
 import { debounce } from 'lodash'
-import { ScriptExtValidator, WatchFn } from './types'
+
+interface WatchFn {
+    (): void;
+}
 
 const opt = {
   persistent: false,
   recursive: true,
   delay: 200,
-  filter: ScriptExtValidator
+  filter: /\.js$/
 }
 
 export function Watcher (path: string, callback: WatchFn): void {

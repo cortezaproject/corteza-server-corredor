@@ -2,7 +2,7 @@
 
 import { describe, it } from 'mocha'
 import { expect } from 'chai'
-import { Service, ExecArgsRaw, ScriptFn } from '.'
+import { Service } from '.'
 import { Trigger } from '../trigger'
 
 const serviceConfig = {
@@ -33,7 +33,7 @@ describe('scripts list', () => {
           description: 'deskription',
           errors: [],
           triggers: [
-            new Trigger({ on: 'foo', for: 'res1' })
+            new Trigger({ events: ['foo'], resources: ['res1'], constraints: [] })
           ]
         },
         {
@@ -42,7 +42,7 @@ describe('scripts list', () => {
           description: 'deskription',
           errors: [],
           triggers: [
-            new Trigger({ on: 'afterMyThing', for: 'res2' })
+            new Trigger({ events: ['afterMyThing'], resources: ['res2'], constraints: [] })
           ]
         },
         {
@@ -51,7 +51,7 @@ describe('scripts list', () => {
           description: 'deskription',
           errors: [],
           triggers: [
-            new Trigger({ on: ['beforeMyThing', 'afterMyThing'], for: 'res2' })
+            new Trigger({ events: ['beforeMyThing', 'afterMyThing'], resources: ['res2'], constraints: [] })
           ]
         }
       ])
@@ -89,160 +89,4 @@ describe('scripts list', () => {
       expect(svc.List({ events: [] })).to.have.lengthOf(3)
     })
   })
-})
-
-interface CheckerFnArgs {
-    result?: {[_: string]: unknown}|unknown;
-    logs?: string[];
-    error?: Error;
-}
-
-interface CheckerFn {
-    (_: CheckerFnArgs): void;
-}
-
-describe('execution', () => {
-  const execIt = (name: string, check: CheckerFn, fn: ScriptFn, args: ExecArgsRaw = {}): void => {
-    it(name, async () => {
-      // Script maker
-      const svc = new Service(serviceConfig)
-      svc.Update([{
-        name,
-        errors: [],
-        triggers: [],
-        handler: fn
-      }])
-
-      svc.Exec(name, args)
-        .then(check)
-        .catch((error: Error|undefined) => check({ error })
-        )
-    })
-  }
-
-  execIt(
-    'empty',
-    () => {},
-    () => {}
-  )
-
-  execIt(
-    'should get true when returning true',
-    ({ result, error }: CheckerFnArgs) => {
-      expect(error).to.be.undefined
-      expect(result).to.deep.eq({ result: true })
-    },
-
-    () => true
-  )
-
-  execIt(
-    'should get error with returning false',
-    ({ result, error }: CheckerFnArgs) => {
-      expect(result).to.be.undefined
-      expect(error).to.be.instanceOf(Error)
-    },
-    () => false
-  )
-
-  execIt(
-    'should get empty string when returning empty string',
-    ({ result, error }: CheckerFnArgs) => {
-      expect(error).to.be.undefined
-      expect(result).to.deep.eq({ result: '' })
-    },
-    () => ''
-  )
-
-  execIt(
-    'should get string when returning string',
-    // @ts-ignore
-    ({ result, error }: CheckerFnArgs) => {
-      expect(error).to.be.undefined
-      expect(result).to.deep.eq({ result: 'rval-string' })
-    },
-    () => 'rval-string'
-  )
-
-  execIt(
-    'should get empty array when returning empty array',
-    // @ts-ignore
-    ({ result, error }: CheckerFnArgs) => {
-      expect(error).to.be.undefined
-      expect(result).to.deep.eq({ result: [] })
-    },
-    () => ([])
-  )
-
-  execIt(
-    'should get array when returning array',
-    // @ts-ignore
-    ({ result, error }: CheckerFnArgs) => {
-      expect(error).to.be.undefined
-      expect(result).to.deep.eq({ result: ['rval-string'] })
-    },
-    () => (['rval-string'])
-  )
-
-  execIt(
-    'should get empty object when returning empty object',
-    // @ts-ignore
-    ({ result, error }: CheckerFnArgs) => {
-      expect(error).to.be.undefined
-      expect(result).to.deep.eq({})
-    },
-    () => ({})
-  )
-
-  execIt(
-    'should get object when returning object',
-    // @ts-ignore
-    ({ result, error }: CheckerFnArgs) => {
-      expect(error).to.be.undefined
-      expect(result).to.deep.eq({ an: 'object' })
-    },
-    () => ({ an: 'object' })
-  )
-
-  execIt(
-    'should get non-plain-object under result',
-    // @ts-ignore
-    ({ result, error }: CheckerFnArgs) => {
-      expect(error).to.be.undefined
-      expect(result).to.deep.eq({ result: new Dummy() })
-    },
-    () => new Dummy()
-  )
-
-  execIt(
-    'should handle thrown exception',
-    ({ result, error }: CheckerFnArgs) => {
-      expect(result).to.be.undefined
-      expect(error).to.be.instanceOf(Error)
-      if (error !== undefined) {
-        expect(error.message).to.be.eq('err')
-      }
-    },
-    () => { throw new Error('err') }
-  )
-
-  execIt(
-    'should handle rejection',
-    ({ result, error }: CheckerFnArgs) => {
-      expect(result).to.be.undefined
-      expect(error).to.be.eq('err')
-    },
-    // eslint-disable-next-line prefer-promise-reject-errors
-    async () => { return Promise.reject('err') }
-  )
-
-  execIt(
-    'should handle promise',
-    ({ result, error }: CheckerFnArgs) => {
-      // @ts-ignore
-      expect(result.result).to.be.eq('ok')
-      expect(error).to.be.undefined
-    },
-    async () => { return Promise.resolve('ok') }
-  )
 })

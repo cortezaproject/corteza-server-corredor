@@ -3,7 +3,6 @@
 import grpc from 'grpc'
 import { BaseLogger } from 'pino'
 import { HandleException } from '../../grpc-server'
-import { ExecArgsRaw } from './types'
 import { Service } from './service'
 
 interface KV {
@@ -30,14 +29,19 @@ interface ListRequestWrap {
 }
 
 interface ListRequest {
-    query?: string;
-    resource?: string;
-    events?: string[];
-    security?: number;
+  query?: string;
+  resource?: string;
+  events?: string[];
+  security?: number;
 }
 
 interface ListResponse {
   scripts: object[];
+}
+
+interface ExecArgsRaw {
+  jwt?: string;
+  [_: string]: unknown;
 }
 
 /**
@@ -77,7 +81,6 @@ export function encodeExecResult (args: object): KV {
       continue
     }
 
-    // @ts-ignore
     enc[k] = JSON.stringify(args[k])
   }
 
