@@ -68,8 +68,13 @@ export function ResolveScript (name: string, def: {[_: string]: unknown}): Scrip
  */
 export function LoadScript (filepath: string, basepath: string): Script[] {
   const ss: Script[] = []
-  const filename = filepath.substring(basepath.length + 1)
   let module: {[_: string]: unknown}
+  let filename = filepath.substring(basepath.length + 1)
+
+  const lastDot = filename.lastIndexOf('.')
+  if (lastDot > -1) {
+    filename = filename.substring(0, lastDot)
+  }
 
   try {
     // We'll use require instead of import
@@ -96,9 +101,12 @@ export function LoadScript (filepath: string, basepath: string): Script[] {
       continue
     }
 
-    ss.push(ResolveScript(
-      name === 'default' ? filename : name,
-      (module[name] as {[_: string]: unknown})))
+    let scriptName = filename
+    if (name !== 'default') {
+      scriptName = `${filename}:${name}`
+    }
+
+    ss.push(ResolveScript(scriptName, (module[name] as {[_: string]: unknown})))
   }
 
   return ss
