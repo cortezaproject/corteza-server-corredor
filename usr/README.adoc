@@ -1,10 +1,12 @@
-= User scripts
+# User scripts
 
-Just a placeholder & simple instructions
+## Structure
 
 Mount user scripts to `/usr` or change `USER_SCRIPTS_PATH` to point to the right location.
 
 .Structure
+
+[source]
 ----
 usr/
     package.json <5>
@@ -42,3 +44,34 @@ usr/
 <5> Package with list of dependencies. Corredor will automatically
     load these packages
 
+## Server & client scripts
+
+[source,javascript]
+----
+export default {
+  label: '...2',
+  description: '...2',
+  * triggers ({ on, before, every, at }) {
+    yield on('manual')
+      .for('compose')
+      .as('someuser@cortezaproject.org')
+
+    yield before('update')
+      .for('compose:record')
+      // 1 arg  => unnamed value
+      // 2 args => name + value (operator is =)
+      // 3 args => name + operator + value
+      .where('module', ['mod1', 'mod2'])
+
+    // makes onInterval, w/o explicit .at(...) defaults to system
+    yield every('0 0 * * *')
+
+    // makes onTimestamp, w/o explicit .at(...) defaults to system
+    yield at('2017-10-10T20:10:12')
+  },
+
+  async exec (args, ctx) {
+    //
+  }
+}
+----
