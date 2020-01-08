@@ -1,6 +1,12 @@
-/* eslint-disable @typescript-eslint/ban-ts-ignore */
+import User from 'corteza-webapp-common/src/lib/types/system/user'
 
 const oldPrefix = /^old([A-Z].+)$/
+
+export declare class BaseArgs {
+    readonly $invoker: User
+    readonly $authUser: User
+    readonly authToken: string
+}
 
 export interface GenericGetterFn<T> {
   (val: unknown): T;
@@ -45,7 +51,6 @@ export class Args {
       }
 
       if (caster && caster.has(kind) && caster.get(kind)) {
-        // @ts-ignore
         let cast: ({(key: unknown): unknown}) = caster.get(kind)
 
         if (freeze) {

@@ -3,6 +3,11 @@
 import { describe, it } from 'mocha'
 import { expect } from 'chai'
 import { ArgsRaw, Exec, ScriptExecFn } from './exec'
+import { LogToArray } from '../log-to-array'
+
+// @ts-ignore
+import pino from 'pino'
+import { BaseArgs } from './args'
 
 interface CheckerFnArgs {
     result?: {[_: string]: unknown}|unknown;
@@ -17,10 +22,13 @@ interface CheckerFn {
 class Dummy {}
 
 describe('execution', () => {
-  const execIt = (name: string, check: CheckerFn, exec: ScriptExecFn, args: ArgsRaw = {}): void => {
+  const execIt = (name: string, check: CheckerFn, exec: ScriptExecFn, args?: BaseArgs): void => {
     it(name, async () => {
-      Exec({ exec }, args)
-        .then(check)
+      const logBuffer = new LogToArray()
+      const scriptLogger = pino({}, logBuffer)
+
+      Exec(exec, args, scriptLogger)
+        .then(result => check({ result }))
         .catch((error: Error|undefined) => check({ error })
         )
     })

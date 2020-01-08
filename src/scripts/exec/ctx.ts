@@ -16,7 +16,7 @@ import SystemHelper from 'corteza-webapp-common/src/lib/automation-scripts/conte
 import User from 'corteza-webapp-common/src/lib/system/user'
 
 import { BaseLogger } from 'pino'
-import { BaseArgs } from '../../types'
+import { BaseArgs } from './args'
 
 export interface ConfigCServers {
   system: ConfigServer;

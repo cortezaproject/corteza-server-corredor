@@ -1,9 +1,10 @@
-/* eslint-disable @typescript-eslint/ban-ts-ignore */
-
 import grpc from 'grpc'
-import { BaseLogger } from 'pino'
+import pino, { BaseLogger } from 'pino'
 import { HandleException } from '../../grpc-server'
 import { Service } from './service'
+import { LogToArray } from '../log-to-array'
+import { Args, BaseArgs } from '../exec'
+import { cortezaTypes } from '../exec/args-corteza'
 
 interface KV {
   [_: string]: string;
@@ -91,7 +92,9 @@ export function Handlers (h: Service, loggerService: BaseLogger): object {
   return {
     Exec ({ request, metadata }: ExecRequestWrap, done: grpc.sendUnaryData<ExecResponse|null>): void {
       const started = Date.now()
-      const { name, args } = request
+
+      // name of the script & encoded arguments
+      const { name, args: eArgs } = request
 
       const [requestId] = metadata.get('x-request-id')
       const logger = loggerService.child({ rpc: 'Exec', script: name, requestId })
@@ -101,20 +104,29 @@ export function Handlers (h: Service, loggerService: BaseLogger): object {
       try {
         // Decode arguments
         // passed in as keys with JSON-encoded values
-        logger.debug({ args }, 'encoded arguments')
-        dArgs = decodeExecArguments(args)
+        logger.debug({ eArgs }, 'encoded arguments')
+        dArgs = decodeExecArguments(eArgs)
 
         logger.debug('executing script %s', name)
       } catch (e) {
         HandleException(e, done, grpc.status.INVALID_ARGUMENT)
       }
 
+      // global console replacement,
+      // will allow us to catch console.* calls and return them to the caller
+      const logBuffer = new LogToArray()
+      const scriptLogger = pino({}, logBuffer)
+
+      // Cast some of the common argument types
+      // from plain javascript object to proper classes
+      const args = new Args(dArgs, cortezaTypes)
+
       try {
-        h.Exec(name, dArgs).then(({ result, log }) => {
+        h.Exec(name, args as BaseArgs, scriptLogger).then((result) => {
           const meta = new grpc.Metadata()
 
           // Map each log line from the executed function to the metadata
-          log.forEach((l: string) => {
+          logBuffer.serialize().forEach((l: string) => {
             logger.debug(`${name} emitted log: ${l}`)
             meta.add('log', l)
           })

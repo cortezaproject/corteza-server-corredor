@@ -1,3 +1,3 @@
 export * from './exec'
-export { Args } from './args'
+export { Args, BaseArgs } from './args'
 export { Config, Ctx } from './ctx'

@@ -29,11 +29,7 @@ import MessagingObject from 'corteza-webapp-common/src/lib/types/messaging/commo
 // @ts-ignore
 import Channel from 'corteza-webapp-common/src/lib/types/messaging/channel'
 
-export declare class BaseArgs {
-    readonly $invoker: User
-    readonly $authUser: User
-    readonly authToken: string
-}
+import { BaseArgs } from '../scripts/exec/args'
 
 export declare class ComposeRecordArgs extends BaseArgs {
     readonly $record: Record

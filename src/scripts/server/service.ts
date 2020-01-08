@@ -2,6 +2,7 @@
 
 import MakeFilterFn from '../filter'
 import * as exec from '../exec'
+import { BaseLogger } from 'pino'
 
 interface ListFilter {
     query?: string;
@@ -41,29 +42,30 @@ export class Service {
     }
 
     /**
-     * Executes the script
+     * Finds and executes the script using current configuration, passed arguments and logger
      *
-     * @param name
-     * @param args
-     * @returns ExecResponse
+     * @param {string} name Name of the script
+     * @param {exec.BaseArgs} args Arguments for the script
+     * @param {BaseLogger} log Exec logger to capture and proxy all log.* and console.* calls
+     * @returns Promise<object>
      */
-    async Exec (name: string, args: exec.ArgsRaw): Promise<exec.Response> {
+    async Exec (name: string, args: exec.BaseArgs, log: BaseLogger): Promise<object> {
       const script: Script|undefined = this.scripts.find((s) => s.name === name)
 
       if (script === undefined) {
-        throw new Error('script not found')
+        return Promise.reject(new Error('script not found'))
       }
 
       if (script.errors && script.errors.length > 0) {
-        throw new Error('can not run script with initialization errors')
+        return Promise.reject(new Error('can not run script with initialization errors'))
       }
 
       if (!script.exec || !(script.exec as exec.ScriptExecFn)) {
-        throw new Error('can not run uninitialized script')
+        return Promise.reject(new Error('can not run uninitialized script'))
       }
 
       if (script.exec as exec.ScriptExecFn) {
-        return exec.Exec(script as exec.ExecutableScript, args, this.config)
+        return exec.Exec(script.exec as exec.ScriptExecFn, args, log, this.config)
       }
     }
 

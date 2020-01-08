@@ -1,46 +1,31 @@
-import { LogToArray } from '../log-to-array'
-import pino from 'pino'
-import { Args } from './args'
-import { Config, Ctx } from './ctx'
-import { cortezaTypes } from './args-corteza'
+import { BaseLogger } from 'pino'
+import { Args, BaseArgs } from './args'
+import { Ctx } from './ctx'
 
 export interface ArgsRaw {
     jwt?: string;
     [_: string]: unknown;
 }
 
-export interface Response {
-    result: object;
-    log: string[];
-}
-
 export interface ScriptExecFn {
-    (args: Args, ctx?: Ctx): unknown;
-}
-
-export interface ExecutableScript {
-  exec: ScriptExecFn;
+    (args: BaseArgs, ctx?: Ctx): unknown;
 }
 
 /**
  * Script executor, prepares arguments, context and pass both to the script's exec function
+ * @param {function} exec Function to be executed
+ * @param {BaseArgs} args Raw arguments for the script
+ * @param {BaseLogger} log Exec logger to capture and proxy all log.* and console.* calls
+ * @param config Configuration for context that we feed to the script
+ * @returns Promise<object>
  */
-export async function Exec (script: ExecutableScript, rawArgs: ArgsRaw, config?: Config): Promise<Response> {
-  // global console replacement,
-  // will allow us to catch console.* calls and return them to the caller
-  const logBuffer = new LogToArray()
-  const log = pino({}, logBuffer)
-
-  // Cast some of the common argument types
-  // from plain javascript object to proper classes
-  const args = new Args(rawArgs, cortezaTypes)
-
-  // Exec function Context
+export async function Exec (exec: ScriptExecFn, args: BaseArgs, log: BaseLogger, config?: unknown): Promise<object> {
+  // Context for exec function (script)
   const execCtx = new Ctx(config, log, args)
 
   try {
     // Wrap exec() with Promise.resolve - we do not know if function is async or not.
-    return Promise.resolve(script.exec(args, execCtx)).then((rval: unknown): Response => {
+    return Promise.resolve(exec(args, execCtx)).then((rval: unknown): object => {
       let result = {}
 
       if (rval === false) {
@@ -57,13 +42,7 @@ export async function Exec (script: ExecutableScript, rawArgs: ArgsRaw, config?:
       }
 
       // Wrap returning value
-      return {
-        // The actual result
-        result,
-
-        // Captured log from the execution
-        log: logBuffer.serialize()
-      }
+      return result
     })
   } catch (e) {
     return Promise.reject(e)
