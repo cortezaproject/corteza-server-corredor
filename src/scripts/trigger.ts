@@ -121,12 +121,12 @@ export class Trigger {
 
     if (aa.length > 1) {
       // More than 1 argument, assuming first is constraint's name
-      name = (aa.pop() as string)
+      name = (aa.shift() as string)
     }
 
     if (aa.length > 1) {
       // More than 2 arguments, assuming 2nd is operator
-      op = (aa.pop() as string)
+      op = (aa.shift() as string)
     }
 
     // There rest of arguments are values
