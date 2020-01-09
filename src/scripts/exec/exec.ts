@@ -36,8 +36,8 @@ export async function Exec (exec: ScriptExecFn, args: BaseArgs, log: BaseLogger,
       if (typeof rval === 'object' && rval && rval.constructor.name === 'Object') {
         // Expand returned values into result if function returned a plain javascript object
         result = { ...rval }
-      } else {
-        // If anything else was returned, stack it under 'result' property
+      } else if (rval !== undefined) {
+        // If anything usable was returned, stack it under 'result' property
         result = { result: rval }
       }
 
