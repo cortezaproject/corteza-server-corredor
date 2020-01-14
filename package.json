@@ -17,7 +17,7 @@
     "lint": "eslint src/** --ext .js,.ts",
     "test:unit": "mocha",
     "test:unit:cc": "nyc mocha",
-    "cdeps": "yarn upgrade corteza-webapp-common corteza-protobuf"
+    "cdeps": "yarn upgrade corteza-js corteza-protobuf"
   },
   "dependencies": {
     "@grpc/proto-loader": "^0.5.1",
@@ -34,7 +34,7 @@
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "corteza-protobuf": "cortezaproject/corteza-protobuf.git#master",
-    "corteza-webapp-common": "cortezaproject/corteza-webapp-common.git#master",
+    "corteza-js": "cortezaproject/corteza-js.git#master",
     "dotenv": "8.1.0",
     "download-npm-package": "^3.1.12",
     "eslint": "^6.7.2",

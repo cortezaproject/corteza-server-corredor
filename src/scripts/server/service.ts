@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 
 import MakeFilterFn from '../filter'
-import * as exec from '../exec'
+import { corredor as exec } from 'corteza-js'
 import { BaseLogger } from 'pino'
 
 interface ListFilter {

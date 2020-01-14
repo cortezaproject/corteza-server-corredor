@@ -3,8 +3,7 @@ import pino, { BaseLogger } from 'pino'
 import { HandleException } from '../../grpc-server'
 import { Service } from './service'
 import { LogToArray } from '../log-to-array'
-import { Args, BaseArgs } from '../exec'
-import { cortezaTypes } from '../exec/args-corteza'
+import { corredor as exec } from 'corteza-js'
 
 interface KV {
   [_: string]: string;
@@ -119,10 +118,10 @@ export function Handlers (h: Service, loggerService: BaseLogger): object {
 
       // Cast some of the common argument types
       // from plain javascript object to proper classes
-      const args = new Args(dArgs, cortezaTypes)
+      const args = new exec.Args(dArgs)
 
       try {
-        h.Exec(name, args as BaseArgs, scriptLogger).then((result) => {
+        h.Exec(name, args as exec.BaseArgs, scriptLogger).then((result) => {
           const meta = new grpc.Metadata()
 
           // Map each log line from the executed function to the metadata
