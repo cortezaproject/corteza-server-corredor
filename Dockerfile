@@ -3,7 +3,14 @@ FROM node:12.14-alpine
 # Create app directory
 WORKDIR /corredor
 
-RUN apk add --no-cache git
+RUN apk add --no-cache \
+    git \
+    build-base \
+    g++ \
+    cairo-dev \
+    jpeg-dev \
+    pango-dev \
+    giflib-dev
 
 # Install app & support §&files
 COPY *.json *.js yarn.lock LICENSE README.md ./
