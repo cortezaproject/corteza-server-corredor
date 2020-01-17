@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 
 import MakeFilterFn from '../filter'
-import { corredor as exec } from 'corteza-js'
+import { corredor as exec } from '@cortezaproject/corteza-js'
 import { BaseLogger } from 'pino'
 
 interface ListFilter {
@@ -33,8 +33,6 @@ export class Service {
 
     /**
      * Loads scripts
-     *
-     * @return {void}
      */
     Update (set): void {
       // Scripts loaded, replace set
@@ -44,10 +42,9 @@ export class Service {
     /**
      * Finds and executes the script using current configuration, passed arguments and logger
      *
-     * @param {string} name Name of the script
-     * @param {exec.BaseArgs} args Arguments for the script
-     * @param {BaseLogger} log Exec logger to capture and proxy all log.* and console.* calls
-     * @returns Promise<object>
+     * @param name Name of the script
+     * @param args Arguments for the script
+     * @param log Exec logger to capture and proxy all log.* and console.* calls
      */
     async Exec (name: string, args: exec.BaseArgs, log: BaseLogger): Promise<object> {
       const script: Script|undefined = this.scripts.find((s) => s.name === name)

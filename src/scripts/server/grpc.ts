@@ -3,7 +3,7 @@ import pino, { BaseLogger } from 'pino'
 import { HandleException } from '../../grpc-server'
 import { Service } from './service'
 import { LogToArray } from '../log-to-array'
-import { corredor as exec } from 'corteza-js'
+import { corredor as exec } from '@cortezaproject/corteza-js'
 
 interface KV {
   [_: string]: string;

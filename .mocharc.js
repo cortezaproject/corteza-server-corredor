@@ -3,7 +3,6 @@ module.exports = {
     'esm',
     'ts-node/register',
     'source-map-support/register',
-    'tsconfig-paths/register',
   ],
   'full-trace': true,
   bail: true,

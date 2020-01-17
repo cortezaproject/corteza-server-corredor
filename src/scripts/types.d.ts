@@ -1,5 +1,5 @@
 import { Trigger } from './trigger'
-import { corredor as exec } from 'corteza-js'
+import { corredor as exec } from '@cortezaproject/corteza-js'
 
 export declare interface ScriptFn {
     (args: exec.Args, ctx?: exec.Ctx): unknown;
