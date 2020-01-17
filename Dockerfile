@@ -1,18 +1,16 @@
-FROM node:12.7-alpine
+FROM node:12.14-alpine
 
 # Create app directory
 WORKDIR /corredor
 
 RUN apk add --no-cache git
 
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-# where available (npm@5+)
-COPY package*.json ./
+# Install app & support §&files
+COPY *.json *.js yarn.lock LICENSE README.md ./
 
-RUN yarn --production --emoji false
+RUN yarn install --production --non-interactive --no-progress --emoji false
 
-# Copy application source files
+# Copy the app (so that yarn install can be cached)
 COPY src ./src
 
 # GRPC's env-vars
@@ -23,5 +21,10 @@ ENV GRPC_VERBOSITY=ERROR
 ENV ENVIRONMENT=prod
 ENV ADDR=0.0.0.0:80
 
+# User scripts
+VOLUME /corredor/usr
+VOLUME /corredor/certs
+
 EXPOSE 80
-CMD [ "node", "-r", "esm", "src/main.js"]
+ENTRYPOINT ["/usr/local/bin/yarn"]
+CMD [ "serve"]
