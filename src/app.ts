@@ -40,14 +40,14 @@ if (config.scripts.server.enabled) {
   serverScriptsService = new serverScripts.Service(config.scripts.exec)
 }
 
-async function reload () {
+async function reload (): Promise<unknown> {
   return Promise.all([
     ReloadServerScripts(serverScriptsService),
-    ReloadClientScripts(clientScriptsService),
+    ReloadClientScripts(/* clientScriptsService */),
   ])
 }
 
-async function installAndReload () {
+async function installAndReload (): Promise<unknown> {
   return InstallDependencies().then(reload)
 }
 
@@ -63,7 +63,7 @@ if (config.scripts.enabled) {
     // Setup serve & client script watchers
     // that will reload server-side scripts
     Watcher(() => ReloadServerScripts(serverScriptsService), config.scripts.server)
-    Watcher(() => ReloadClientScripts(clientScriptsService), config.scripts.client)
+    Watcher(() => ReloadClientScripts(/* clientScriptsService */), config.scripts.client)
   })
 } else {
   logger.warn('running without enabled script services')

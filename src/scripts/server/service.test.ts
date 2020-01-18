@@ -13,8 +13,6 @@ const serviceConfig = {
   },
 }
 
-class Dummy {}
-
 describe('scripts list', () => {
   describe('empty', () => {
     it('should be empty', () => {

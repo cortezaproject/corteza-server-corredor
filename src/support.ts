@@ -3,7 +3,6 @@ import * as config from './config'
 import logger from './logger'
 import * as scriptLoader from './scripts/loader'
 import { Script } from './scripts/types'
-import * as clientScripts from './scripts/client'
 import * as serverScripts from './scripts/server'
 import watch from 'node-watch'
 import { debounce } from 'lodash'
@@ -60,7 +59,7 @@ export async function ReloadServerScripts (svc: serverScripts.Service): Promise<
     })
 }
 
-export async function ReloadClientScripts (svc: clientScripts.Service): Promise<void> {
+export async function ReloadClientScripts (/* svc: clientScripts.Service */): Promise<void> {
   // if (!config.scripts.client.enabled) {
   //   return
   // }

@@ -3,7 +3,7 @@ import fs from 'fs'
 import path from 'path'
 import * as config from './config'
 
-function ctxCheck () {
+function ctxCheck (): void {
   logger.info('server-scripts service configured')
   logger.debug(
     config.scripts.exec.cServers.system,
@@ -19,7 +19,7 @@ function ctxCheck () {
   )
 }
 
-function scriptCheck (type: string, s) {
+function scriptCheck (type: string, s): void {
   if (!s.enabled) {
     logger.warn('%s scripts disabled', type)
     return
@@ -35,7 +35,7 @@ function scriptCheck (type: string, s) {
   }
 }
 
-function depCheck (d) {
+function depCheck (d): void {
   if (d.autoUpdate) {
     try {
       fs.accessSync(d.nodeModules, fs.constants.W_OK)
@@ -58,7 +58,9 @@ function depCheck (d) {
   }
 }
 
-export function EnvCheck () {
+export function EnvCheck (): void {
+  ctxCheck()
+
   logger.info('server-scripts service configured')
   logger.debug(
     config.scripts.exec.cServers.system,
