@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 
-// @ts-ignore
 import path from 'path'
 import logger from './logger'
 import * as config from './config'
@@ -8,8 +7,8 @@ import * as deps from './scripts/deps'
 import * as serverScripts from './scripts/server'
 import * as clientScripts from './scripts/client'
 import * as gRPCServer from './grpc-server'
-import * as scriptLoader from './scripts/loader'
-import { Script } from './scripts/types'
+import { EnvCheck } from './envcheck'
+import { InstallDependencies, ReloadClientScripts, ReloadServerScripts, Watcher } from './support'
 
 /**
  *
@@ -26,85 +25,49 @@ import { Script } from './scripts/types'
  *   - secret management
  */
 
-logger.debug('initializing client-scripts service')
-const clientScriptsService = new clientScripts.Service()
+EnvCheck()
 
-logger.debug('initializing server-scripts service')
-const serverScriptsService = new serverScripts.Service(config.scripts.exec)
+let clientScriptsService: clientScripts.Service
+let serverScriptsService: serverScripts.Service
 
-logger.info('server-scripts service configured')
-logger.debug(
-  config.scripts.exec.cServers.system,
-  'configuring cServer system API'
-)
-logger.debug(
-  config.scripts.exec.cServers.compose,
-  'configuring cServer compose API'
-)
-logger.debug(
-  config.scripts.exec.cServers.messaging,
-  'configuring cServer messaging API'
-)
-
-async function installDependencies (): Promise<deps.PackageInstallStatus[]> {
-  logger.info('installing dependencies from %s', config.scripts.dependencies.packageJSON)
-  return deps.Install(logger, config.scripts.dependencies)
+if (config.scripts.client.enabled) {
+  logger.debug('initializing client-scripts service')
+  clientScriptsService = new clientScripts.Service()
 }
 
-async function reloadServerScripts (): Promise<void> {
-  // Reload scripts every-time packages change!
-  logger.info('reloading server scripts')
-  return scriptLoader.Reloader(config.scripts.server.basedir)
-    .then((scripts: Script[]) => {
-      const isValid = (s: Script): boolean => !!s.name && !!s.exec
-      const vScripts = scripts.filter(isValid)
-
-      logger.info('%d valid server scripts loaded (%d total)',
-        vScripts.length,
-        scripts.length
-      )
-
-      vScripts
-        .forEach((s: Script) => logger.debug('server script ready: %s', s.name))
-
-      // All scripts (even invalid ones) are given to server scripts service
-      // we might want to look at errors
-      serverScriptsService.Update(scripts)
-    })
+if (config.scripts.server.enabled) {
+  logger.debug('initializing server-scripts service')
+  serverScriptsService = new serverScripts.Service(config.scripts.exec)
 }
 
-/**
- * App entry point
- */
-(async (): Promise<void> => {
-  /**
-     * Install dependencies & make initial server-script load
-     */
+async function reload () {
+  return Promise.all([
+    ReloadServerScripts(serverScriptsService),
+    ReloadClientScripts(clientScriptsService),
+  ])
+}
 
-  if (!config.scripts.dependencies.assumeInstalled) {
-    await installDependencies()
-  }
+async function installAndReload () {
+  return InstallDependencies().then(reload)
+}
 
-  return reloadServerScripts()
-})().then(() => {
-  /**
-     * Setup dependency watcher that installs dependencies on
-     * change & reloads server-scripts
-     */
-
-  return deps.Watcher(config.scripts.dependencies.packageJSON, async () => {
-    await installDependencies()
-
-    // Reload scripts every-time packages change!
-    return reloadServerScripts()
+if (config.scripts.enabled) {
+  // App entry point
+  installAndReload().then(() => {
+    if (config.scripts.dependencies.autoUpdate) {
+      // Setup dependency watcher that installs
+      // dependencies on change & reloads server-scripts
+      return deps.Watcher(config.scripts.dependencies.packageJSON, installAndReload)
+    }
+  }).then(() => {
+    // Setup serve & client script watchers
+    // that will reload server-side scripts
+    Watcher(() => ReloadServerScripts(serverScriptsService), config.scripts.server)
+    Watcher(() => ReloadClientScripts(clientScriptsService), config.scripts.client)
   })
-}).then(() => {
-  /**
-     * Setup server-script watcher that will reload server-side scripts
-     */
-
-  serverScripts.Watcher(config.scripts.server.basedir, reloadServerScripts)
-})
+} else {
+  logger.warn('running without enabled script services')
+}
 
 gRPCServer.LoadDefinitions(path.join(config.protobuf.path, '/service-corredor.proto')).then((
   { corredor }

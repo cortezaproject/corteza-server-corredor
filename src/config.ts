@@ -122,6 +122,7 @@ const scriptsBaseDir = path.normalize(e.CORREDOR_SCRIPTS_BASEDIR ?? path.join(ro
 export const scripts = {
   // where user scripts are
   basedir: scriptsBaseDir,
+  enabled: true,
 
   dependencies: {
     // where to get script's dependencies from
@@ -130,10 +131,11 @@ export const scripts = {
     // where to install downloaded NPM packages
     nodeModules: path.join(rootDir, 'node_modules'),
 
-    // assume installed packages on first load
-    assumeInstalled: debug
+    // do we automatically update deps?
+    autoUpdate: isTrue(e.CORREDOR_SCRIPTS_AUTO_UPDATE_DEPENDENCIES) ?? true
   },
 
+  // exec context
   exec: {
     cServers: {
       system: {
@@ -152,11 +154,17 @@ export const scripts = {
 
   server: {
     // location of server scripts
-    basedir: path.join(scriptsBaseDir, 'src/server')
+    basedir: path.normalize(e.CORREDOR_SCRIPTS_SERVER_BASEDIR ?? path.join(scriptsBaseDir, 'src/server')),
+
+    enabled: isTrue(e.CORREDOR_SCRIPTS_SERVER_ENABLED) ?? true,
+    watch: isTrue(e.CORREDOR_SCRIPTS_SERVER_WATCH) ?? true,
   },
 
   client: {
     // location of client scripts
-    basedir: path.join(scriptsBaseDir, 'src/client')
+    basedir: path.normalize(e.CORREDOR_SCRIPTS_CLIENT_BASEDIR ?? path.join(scriptsBaseDir, 'src/client')),
+
+    enabled: isTrue(e.CORREDOR_SCRIPTS_CLIENT_ENABLED) ?? true,
+    watch: isTrue(e.CORREDOR_SCRIPTS_CLIENT_WATCH) ?? true,
   }
 }
