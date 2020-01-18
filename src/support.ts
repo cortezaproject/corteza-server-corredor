@@ -42,20 +42,30 @@ export async function ReloadServerScripts (svc: serverScripts.Service): Promise<
   logger.info('reloading server scripts')
   return scriptLoader.Reloader(config.scripts.server.basedir)
     .then((scripts: Script[]) => {
-      const isValid = (s: Script): boolean => !!s.name && !!s.exec
+      const isValid = (s: Script): boolean => !!s.name && !!s.exec && s.errors.length === 0
       const vScripts = scripts.filter(isValid)
+
+      scripts
+        .filter(s => !isValid(s))
+        .forEach(({ filepath, name, errors }) => {
+          errors.forEach(error => {
+            logger.warn({ filepath, scriptName: name }, 'server script error: %s', error)
+          })
+        })
+
+      vScripts
+        .forEach(
+          ({ name, triggers }) =>
+            logger.debug({ scriptName: name, triggers: triggers.length }, 'server script ready'))
+
+      // All scripts (even invalid ones) are given to server scripts service
+      // we might want to look at errors
+      svc.Update(scripts)
 
       logger.info('%d valid server scripts loaded (%d total)',
         vScripts.length,
         scripts.length,
       )
-
-      vScripts
-        .forEach((s: Script) => logger.debug('server script ready: %s', s.name))
-
-      // All scripts (even invalid ones) are given to server scripts service
-      // we might want to look at errors
-      svc.Update(scripts)
     })
 }
 
