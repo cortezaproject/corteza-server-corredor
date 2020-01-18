@@ -6,6 +6,7 @@ export declare interface ScriptFn {
 }
 
 export declare interface Script {
+    filepath: string;
     name: string;
     label?: string;
     description?: string;

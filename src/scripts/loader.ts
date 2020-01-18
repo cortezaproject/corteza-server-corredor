@@ -2,6 +2,7 @@ import { Make as MakeTriggers, Trigger } from './trigger'
 import { Script, FluentTrigger } from './types'
 import { promises as fs } from 'fs'
 import path from 'path'
+import logger from '../logger'
 
 interface TriggerFn {
   (t: FluentTrigger): Trigger[];
@@ -11,9 +12,9 @@ interface ScriptDefinition {
   triggers: Trigger[] | TriggerFn;
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
-// export const ScriptExtValidator = /\.js$/
+interface RawScript {
+  filepath: string;
+}
 
 /**
  * Recursively gathers scripts-like files and returns generator
@@ -21,24 +22,24 @@ interface ScriptDefinition {
  * @param {string} p path
  * @param {RegExp|undefined} validator
  */
-export async function * Finder (p: string, validator: RegExp|undefined = /\.js$/): AsyncGenerator<string> {
+export async function * Finder (p: string, validator: RegExp|undefined = /\.js$/): AsyncGenerator<RawScript> {
   const ee = await fs.readdir(p, { withFileTypes: true })
   for (const e of ee) {
-    const fp = path.resolve(p, e.name)
+    const filepath = path.resolve(p, e.name)
     if (e.isDirectory()) {
-      yield * Finder(fp, validator)
+      yield * Finder(filepath, validator)
     } else if (validator.test(e.name)) {
-      yield fp
+      yield { filepath }
     }
   }
 }
 
-export function ResolveScript (name: string, def: {[_: string]: unknown}): Script {
+export function ResolveScript (name: string, filepath: string, def: {[_: string]: unknown}): Script {
   let triggers: Trigger[] = []
   const errors: string[] = []
 
   if (typeof def !== 'object') {
-    return { name, errors: ['triggers property/callback missing'] }
+    return { name, filepath, errors: ['expecting an object with script definition (exec, triggers)'] }
   }
 
   if (Object.prototype.hasOwnProperty.call(def, 'triggers')) {
@@ -49,7 +50,6 @@ export function ResolveScript (name: string, def: {[_: string]: unknown}): Scrip
     errors.push('invalid or undefined triggers')
   }
 
-  // @todo make sure exec is there...
   if (!Object.prototype.hasOwnProperty.call(def, 'exec')) {
     errors.push('exec callback missing')
   } else if (typeof def.exec !== 'function') {
@@ -57,7 +57,7 @@ export function ResolveScript (name: string, def: {[_: string]: unknown}): Scrip
   }
 
   // Merge resolved & the rest
-  return { ...(def as object), name, errors, triggers }
+  return { ...(def as object), filepath, name, errors, triggers }
 }
 
 /**
@@ -66,57 +66,55 @@ export function ResolveScript (name: string, def: {[_: string]: unknown}): Scrip
  * @param {string} filepath
  * @param {string} basepath
  */
-export function LoadScript (filepath: string, basepath: string): Script[] {
-  const ss: Script[] = []
-  let module: {[_: string]: unknown}
+export async function LoadScript ({ filepath }: RawScript, basepath: string): Promise<Script[]> {
   let filename = filepath.substring(basepath.length + 1)
+  const ss: Script[] = []
 
   const lastDot = filename.lastIndexOf('.')
   if (lastDot > -1) {
     filename = filename.substring(0, lastDot)
   }
 
-  try {
-    // We'll use require instead of import
-    // because we need more control over cache (invalidation)
+  const script = {
+    filepath,
+    name: filename,
+    errors: [],
+  }
 
-    // Remove from cache & (re)require the script
-    delete require.cache[require.resolve(filepath)]
+  return import(filepath).then(exports => {
+    for (const name in exports) {
+      if (!Object.prototype.hasOwnProperty.call(exports, name)) {
+        continue
+      }
 
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    module = require(filepath)
-  } catch (e) {
+      if (typeof exports[name] !== 'object') {
+        continue
+      }
+
+      let scriptName = filename
+      if (name !== 'default') {
+        scriptName = `${filename}:${name}`
+      }
+
+      ss.push(ResolveScript(scriptName, filepath, (exports[name] as {[_: string]: unknown})))
+    }
+
+    return ss
+  }).catch(e => {
+    logger.error(e)
     return [{
-      name: filename,
+      ...script,
       errors: [e.toString()],
     }]
-  }
+  })
 
-  for (const name in module) {
-    if (!Object.prototype.hasOwnProperty.call(module, name)) {
-      continue
-    }
-
-    if (typeof module[name] !== 'object') {
-      continue
-    }
-
-    let scriptName = filename
-    if (name !== 'default') {
-      scriptName = `${filename}:${name}`
-    }
-
-    ss.push(ResolveScript(scriptName, (module[name] as {[_: string]: unknown})))
-  }
-
-  return ss
 }
 
-export async function Reloader (dir: string): Promise<Script[]> {
+export async function Reloader (basedir: string): Promise<Script[]> {
   const pp: Script[] = []
 
-  for await (const scriptLocation of Finder(dir)) {
-    pp.push(...LoadScript(scriptLocation, dir))
+  for await (const r of Finder(basedir)) {
+    pp.push(...(await LoadScript(r, basedir)))
   }
 
   return pp
