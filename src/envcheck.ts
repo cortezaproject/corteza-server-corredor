@@ -61,20 +61,6 @@ function depCheck (d): void {
 export function EnvCheck (): void {
   ctxCheck()
 
-  logger.info('server-scripts service configured')
-  logger.debug(
-    config.scripts.exec.cServers.system,
-    'configuring cServer system API',
-  )
-  logger.debug(
-    config.scripts.exec.cServers.compose,
-    'configuring cServer compose API',
-  )
-  logger.debug(
-    config.scripts.exec.cServers.messaging,
-    'configuring cServer messaging API',
-  )
-
   const s = config.scripts
 
   scriptCheck('base', s)
