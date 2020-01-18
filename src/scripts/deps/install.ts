@@ -40,6 +40,8 @@ export async function Download (arg: string, dir: string): Promise<unknown> {
  * Orchestrates download and install of NPM packages from package.json
  *
  * @todo should be able verify (from first/previous run) what was installed and if there are changes.
+ * @todo do not blindly install packages -- should verify corredor's packages so that we do not
+ *       cause any unwanted downgrades/upgrades of packages
  */
 export async function Install (logger: BaseLogger, c: Config): Promise<PackageInstallStatus[]> {
   const pp: Promise<PackageInstallStatus>[] = []
