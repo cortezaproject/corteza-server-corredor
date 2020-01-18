@@ -54,6 +54,12 @@ If you insist on using npm, make sure correct package versions are installed (ya
 You'll see majority of development dependencies under dependencies key.
 This is intentional as we want to access certain packages in non-dev mode as well (bundling client scripts with webpack, Typescript compiling, running unit tests)
 
+.Note on running the app and bundling Corredor's application code
+We're doing some funky stuff, importing code on the fly and (by default) Webpack does not like that.
+It transpiles loading logic (see `src/loader.ts`) in a way that it does not find the user scripts any more.
+Until this problem is resolved, app code (`./src/**`) can not be compiled (ts => js) and properly bundled and application is ran via `ts-node` tool.
+
+
 ### Environmental variables
 
 Corredor read `.env` file if exists and merges that with environmental variables.
