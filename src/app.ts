@@ -70,7 +70,7 @@ if (config.scripts.enabled) {
 }
 
 gRPCServer.LoadDefinitions(path.join(config.protobuf.path, '/service-corredor.proto')).then((
-  { corredor }
+  { corredor },
 ) => {
   const serviceDefinitions: gRPCServer.ServiceDefinition = new Map()
   serviceDefinitions.set(
@@ -78,8 +78,8 @@ gRPCServer.LoadDefinitions(path.join(config.protobuf.path, '/service-corredor.pr
     corredor.ServerScripts.service,
     serverScripts.Handlers(
       serverScriptsService,
-      logger.child({ system: 'gRPC', service: 'ServerScripts' })
-    )
+      logger.child({ system: 'gRPC', service: 'ServerScripts' }),
+    ),
   )
 
   serviceDefinitions.set(
@@ -87,8 +87,8 @@ gRPCServer.LoadDefinitions(path.join(config.protobuf.path, '/service-corredor.pr
     corredor.ClientScripts.service,
     clientScripts.Handlers(
       clientScriptsService,
-      logger.child({ system: 'gRPC', service: 'ClientScripts' })
-    )
+      logger.child({ system: 'gRPC', service: 'ClientScripts' }),
+    ),
   )
 
   logger.debug('starting gRPC server')

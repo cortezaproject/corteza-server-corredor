@@ -4,18 +4,18 @@ import path from 'path'
 import * as config from './config'
 
 function ctxCheck () {
-    logger.info('server-scripts service configured')
+  logger.info('server-scripts service configured')
   logger.debug(
     config.scripts.exec.cServers.system,
-    'configuring cServer system API'
+    'configuring cServer system API',
   )
   logger.debug(
     config.scripts.exec.cServers.compose,
-    'configuring cServer compose API'
+    'configuring cServer compose API',
   )
   logger.debug(
     config.scripts.exec.cServers.messaging,
-    'configuring cServer messaging API'
+    'configuring cServer messaging API',
   )
 }
 
@@ -62,15 +62,15 @@ export function EnvCheck () {
   logger.info('server-scripts service configured')
   logger.debug(
     config.scripts.exec.cServers.system,
-    'configuring cServer system API'
+    'configuring cServer system API',
   )
   logger.debug(
     config.scripts.exec.cServers.compose,
-    'configuring cServer compose API'
+    'configuring cServer compose API',
   )
   logger.debug(
     config.scripts.exec.cServers.messaging,
-    'configuring cServer messaging API'
+    'configuring cServer messaging API',
   )
 
   const s = config.scripts

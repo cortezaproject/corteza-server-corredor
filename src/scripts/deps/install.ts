@@ -21,7 +21,7 @@ export function Dependencies (packageJsonPath: string): DependencyMap|undefined 
   return Object.assign(
     {},
     pkg.dependencies,
-    pkg.devDependencies
+    pkg.devDependencies,
   )
 }
 

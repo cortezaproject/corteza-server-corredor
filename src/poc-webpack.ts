@@ -10,7 +10,7 @@ const wpOpt: webpack.Configuration = {
 
   entry: {
     compose: './frontend/compose/index.js',
-    admin: './frontend/admin/index.js'
+    admin: './frontend/admin/index.js',
   },
   // mode: 'production',
   mode: 'development',
@@ -19,8 +19,8 @@ const wpOpt: webpack.Configuration = {
   output: {
     path: path.resolve(__dirname, '../dist'),
     futureEmitAssets: true,
-    filename: '[name].js'
-  }
+    filename: '[name].js',
+  },
 }
 
 const compiler = webpack(wpOpt)

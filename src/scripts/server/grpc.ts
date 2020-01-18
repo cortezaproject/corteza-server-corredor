@@ -132,7 +132,7 @@ export function Handlers (h: Service, loggerService: BaseLogger): object {
 
           done(null, { result: encodeExecResult(result) }, meta)
           logger.debug({
-            duration: Date.now() - started
+            duration: Date.now() - started,
           }, 'done')
         }).catch(e => {
           logger.debug({ stack: e.stack }, e.message)
@@ -151,7 +151,7 @@ export function Handlers (h: Service, loggerService: BaseLogger): object {
       const filter = {
         query,
         resource,
-        events
+        events,
       }
 
       logger.debug({ filter }, 'returning list of scripts')
@@ -163,6 +163,6 @@ export function Handlers (h: Service, loggerService: BaseLogger): object {
         logger.debug({ stack: e.stack }, e.message)
         HandleException(e, done, grpc.status.INTERNAL)
       }
-    }
+    },
   }
 }

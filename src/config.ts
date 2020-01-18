@@ -85,8 +85,8 @@ export const server = {
     private:
         e.CORREDOR_SERVER_CERTIFICATES_PRIVATE ?? path.join(certPath, 'private.key'),
     public:
-        e.CORREDOR_SERVER_CERTIFICATES_PUBLIC ?? path.join(certPath, 'public.crt')
-  }
+        e.CORREDOR_SERVER_CERTIFICATES_PUBLIC ?? path.join(certPath, 'public.crt'),
+  },
 }
 
 export const logger = {
@@ -100,11 +100,11 @@ export const logger = {
   prettyPrint: (isTrue(e.CORREDOR_LOG_PRETTY) ?? debug) && isModuleInstalled('pino-pretty'),
 
   // Log level
-  level: e.CORREDOR_LOG_LEVEL ?? (debug ? 'trace' : 'info')
+  level: e.CORREDOR_LOG_LEVEL ?? (debug ? 'trace' : 'info'),
 }
 
 export const protobuf = {
-  path: path.normalize(e.CORREDOR_CORTEZA_PROTOBUF_PATH ?? path.join(rootDir, 'node_modules/corteza-protobuf'))
+  path: path.normalize(e.CORREDOR_CORTEZA_PROTOBUF_PATH ?? path.join(rootDir, 'node_modules/corteza-protobuf')),
 }
 
 export const services = {
@@ -112,9 +112,9 @@ export const services = {
     timeout: {
       max: 30 * 1000, // 30s
       min: 100, // 0.1s
-      def: 2 * 1000 // 2s
-    }
-  }
+      def: 2 * 1000, // 2s
+    },
+  },
 }
 
 const scriptsBaseDir = path.normalize(e.CORREDOR_SCRIPTS_BASEDIR ?? path.join(rootDir, 'usr'))
@@ -132,24 +132,24 @@ export const scripts = {
     nodeModules: path.join(rootDir, 'node_modules'),
 
     // do we automatically update deps?
-    autoUpdate: isTrue(e.CORREDOR_SCRIPTS_AUTO_UPDATE_DEPENDENCIES) ?? true
+    autoUpdate: isTrue(e.CORREDOR_SCRIPTS_AUTO_UPDATE_DEPENDENCIES) ?? true,
   },
 
   // exec context
   exec: {
     cServers: {
       system: {
-        apiBaseURL: assembleBaseURL('system') ?? e.CORREDOR_EXEC_CSERVERS_SYSTEM_API_BASEURL
+        apiBaseURL: assembleBaseURL('system') ?? e.CORREDOR_EXEC_CSERVERS_SYSTEM_API_BASEURL,
       },
 
       compose: {
-        apiBaseURL: assembleBaseURL('compose') ?? e.CORREDOR_EXEC_CSERVERS_COMPOSE_API_BASEURL
+        apiBaseURL: assembleBaseURL('compose') ?? e.CORREDOR_EXEC_CSERVERS_COMPOSE_API_BASEURL,
       },
 
       messaging: {
-        apiBaseURL: assembleBaseURL('messaging') ?? e.CORREDOR_EXEC_CSERVERS_MESSAGING_API_BASEURL
-      }
-    }
+        apiBaseURL: assembleBaseURL('messaging') ?? e.CORREDOR_EXEC_CSERVERS_MESSAGING_API_BASEURL,
+      },
+    },
   },
 
   server: {
@@ -166,5 +166,5 @@ export const scripts = {
 
     enabled: isTrue(e.CORREDOR_SCRIPTS_CLIENT_ENABLED) ?? true,
     watch: isTrue(e.CORREDOR_SCRIPTS_CLIENT_WATCH) ?? true,
-  }
+  },
 }

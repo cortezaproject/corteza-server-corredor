@@ -9,8 +9,8 @@ const serviceConfig = {
   cServers: {
     system: { apiBaseURL: 'unit-test' },
     compose: { apiBaseURL: 'unit-test' },
-    messaging: { apiBaseURL: 'unit-test' }
-  }
+    messaging: { apiBaseURL: 'unit-test' },
+  },
 }
 
 class Dummy {}
@@ -33,8 +33,8 @@ describe('scripts list', () => {
           description: 'deskription',
           errors: [],
           triggers: [
-            new Trigger({ events: ['foo'], resources: ['res1'], constraints: [] })
-          ]
+            new Trigger({ events: ['foo'], resources: ['res1'], constraints: [] }),
+          ],
         },
         {
           label: 'label2',
@@ -42,8 +42,8 @@ describe('scripts list', () => {
           description: 'deskription',
           errors: [],
           triggers: [
-            new Trigger({ events: ['afterMyThing'], resources: ['res2'], constraints: [] })
-          ]
+            new Trigger({ events: ['afterMyThing'], resources: ['res2'], constraints: [] }),
+          ],
         },
         {
           label: 'label3',
@@ -51,9 +51,9 @@ describe('scripts list', () => {
           description: 'deskription',
           errors: [],
           triggers: [
-            new Trigger({ events: ['beforeMyThing', 'afterMyThing'], resources: ['res2'], constraints: [] })
-          ]
-        }
+            new Trigger({ events: ['beforeMyThing', 'afterMyThing'], resources: ['res2'], constraints: [] }),
+          ],
+        },
       ])
     })
 

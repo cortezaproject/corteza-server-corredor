@@ -88,7 +88,7 @@ export function LoadScript (filepath: string, basepath: string): Script[] {
   } catch (e) {
     return [{
       name: filename,
-      errors: [e.toString()]
+      errors: [e.toString()],
     }]
   }
 

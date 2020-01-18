@@ -49,10 +49,10 @@ export function Start ({ addr, certificates }: ServerConfig, logger: BaseLogger,
           // eslint-disable-next-line @typescript-eslint/camelcase
           cert_chain: fs.readFileSync(certificates.public),
           // eslint-disable-next-line @typescript-eslint/camelcase
-          private_key: fs.readFileSync(certificates.private)
-        }
+          private_key: fs.readFileSync(certificates.private),
+        },
       ],
-      true
+      true,
     )
   }
 

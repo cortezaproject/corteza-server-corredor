@@ -5,7 +5,7 @@ import { WatchCallback } from '.'
 const opt = {
   persistent: false,
   recursive: false,
-  delay: 200
+  delay: 200,
 }
 
 /**

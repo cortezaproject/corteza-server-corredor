@@ -27,7 +27,7 @@ export function HandleException (err: Error, done: gRPC.sendUnaryData<null>, cod
   const grpcErr: gRPC.ServiceError = {
     code,
     name,
-    message
+    message,
   }
 
   if (stack) {

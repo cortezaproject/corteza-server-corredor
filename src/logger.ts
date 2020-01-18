@@ -6,5 +6,5 @@ export default pino({
   enabled: true,
   base: null,
   prettyPrint: false,
-  ...logger
+  ...logger,
 })

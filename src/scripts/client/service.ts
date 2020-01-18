@@ -81,7 +81,7 @@ export class Service {
         events: [],
         type: ScriptType.function,
         bundle: 'example',
-        errors: []
+        errors: [],
       },
       {
         name: 'style',
@@ -90,7 +90,7 @@ export class Service {
         events: [],
         type: ScriptType.style,
         bundle: 'example',
-        errors: []
+        errors: [],
       },
       {
         name: 'VueComponent',
@@ -99,8 +99,8 @@ export class Service {
         events: [],
         type: ScriptType.component,
         bundle: 'example',
-        errors: []
-      }
+        errors: [],
+      },
     ];
 
     /**

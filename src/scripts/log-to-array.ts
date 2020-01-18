@@ -8,7 +8,7 @@ const levels = {
   40: 'WARN ',
   30: 'INFO ',
   20: 'DEBUG',
-  10: 'TRACE'
+  10: 'TRACE',
 }
 
 /**

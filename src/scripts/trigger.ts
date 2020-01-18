@@ -75,7 +75,7 @@ export class Trigger {
 
     return new Trigger({
       ...t,
-      events: distinct([...t.events, ...eventize('on', events)])
+      events: distinct([...t.events, ...eventize('on', events)]),
     })
   }
 
@@ -84,7 +84,7 @@ export class Trigger {
 
     return new Trigger({
       ...t,
-      events: distinct([...t.events, ...eventize('before', events)])
+      events: distinct([...t.events, ...eventize('before', events)]),
     })
   }
 
@@ -93,7 +93,7 @@ export class Trigger {
 
     return new Trigger({
       ...t,
-      events: distinct([...t.events, ...eventize('after', events)])
+      events: distinct([...t.events, ...eventize('after', events)]),
     })
   }
 
@@ -102,7 +102,7 @@ export class Trigger {
 
     return new Trigger({
       ...t,
-      resources: distinct([...t.resources, ...resources])
+      resources: distinct([...t.resources, ...resources]),
     })
   }
 

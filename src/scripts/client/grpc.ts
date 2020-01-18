@@ -44,9 +44,9 @@ export function Handlers (h: Service, loggerService: BaseLogger): object {
             {
               name: 'dummy',
               type: 'dummy',
-              code: '/* bundle content */'
-            }
-          ]
+              code: '/* bundle content */',
+            },
+          ],
         }
 
         done(null, r)
@@ -64,7 +64,7 @@ export function Handlers (h: Service, loggerService: BaseLogger): object {
         query,
         resource,
         events,
-        bundle
+        bundle,
       }
 
       logger.debug({ filter }, 'returning list of scripts')
@@ -75,6 +75,6 @@ export function Handlers (h: Service, loggerService: BaseLogger): object {
         logger.debug({ stack: e.stack }, e.message)
         HandleException(e, done, grpc.status.INTERNAL)
       }
-    }
+    },
   }
 }
