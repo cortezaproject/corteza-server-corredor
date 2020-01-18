@@ -9,6 +9,11 @@ module.exports = {
     'standard',
     'plugin:@typescript-eslint/recommended',
   ],
+    rules: {
+    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'comma-dangle': [ 'error', 'always-multiline' ],
+  },
   parser: '@typescript-eslint/parser',
   plugins: [
     '@typescript-eslint',
@@ -23,5 +28,13 @@ module.exports = {
       typescript: {},
     },
   },
+  overrides: [
+    {
+      "files": ["*.test.ts"],
+      "rules": {
+          "no-unused-expressions": "off"
+      }
+    }
+  ]
 }
 
