@@ -1,0 +1,119 @@
+# Corteza Corredor
+
+Corredor is an automation script runner.
+It loads and processes scripts it has access and offers them to Corteza backend server on request.
+
+It starts a gRPC server with 2 simple services:
+ - Server scripts with list and exec procedures
+ - Client scripts with list and bundle procedures
+
+See https://github.com/cortezaproejct/corteza-protobuf[protobuf service definition] for details.
+
+Corredor loads and monitors user scripts in the configured location
+
+## Server scripts
+
+These scripts are executed by Corredor directly or indirectly by the Corteza backend server.
+Scripts are not jailed or virtualized and run in the same context as the main Corredor app.
+This will probably be changed in the future to prevent scripts doing actions such as stopping the whole Corredor server
+
+Make sure your scripts are audited and making changes where they should.
+Last line of defense is (Docker) container, where the Corredor application is running.
+
+## Client scripts (WIP)
+
+Client scripts are bundled with all their dependencies and 'Corteza webapp boot loader' with Webpack.
+
+This bundles (each Corteza frontend app has one bundle) is loaded alongside the Corteza web application by the user's browser.
+
+Boot loader makes sure that all client scripts are properly registered in the event bus and executed in right order and in the right context
+
+Make sure your scripts are audited and properly coded.
+
+## Running Corredor in production
+
+```
+@todo how to run docker
+```
+
+```
+@todo how to mount user scripts
+```
+
+
+## Development & testing
+
+Corredor uses YARN for package management.
+If you insist on using npm, make sure correct package versions are installed (yarn uses `yarn.lock` to keep track of exact versions used).
+
+ 1. `yarn` to install dependencies
+ 2. `yarn serve:dev` to start the development server (restarts when files change)
+ 3. `yarn test:unit` to run all unit tests (add `--watch` watch files for changes and restart)
+
+.Note on Corredor's `package.json`
+You'll see majority of development dependencies under dependencies key.
+This is intentional as we want to access certain packages in non-dev mode as well (bundling client scripts with webpack, Typescript compiling, running unit tests)
+
+### Environmental variables
+
+Corredor read `.env` file if exists and merges that with environmental variables.
+See https://www.npmjs.com/package/dotenv[dotenv] package for details.
+
+All possible configuration is covered in `src/config.ts` where all environmental variables are read and processed.
+
+.@todo format into table and write descriptions
+```
+CORREDOR_ENVIRONMENT
+CORREDOR_ENV
+CORREDOR_DEBUG
+CORREDOR_LOG_ENABLED
+CORREDOR_LOG_PRETTY
+CORREDOR_LOG_LEVEL
+
+CORREDOR_SERVER_CERTIFICATES_PATH
+CORREDOR_ADDR
+CORREDOR_SERVER_CERTIFICATES_ENABLED
+CORREDOR_SERVER_CERTIFICATES_CA
+CORREDOR_SERVER_CERTIFICATES_PRIVATE
+CORREDOR_SERVER_CERTIFICATES_PUBLIC
+
+CORREDOR_CORTEZA_PROTOBUF_PATH
+CORREDOR_SCRIPTS_AUTO_UPDATE_DEPENDENCIES
+CORREDOR_EXEC_CSERVERS_API_HOST DOMAIN HOSTNAME HOST
+CORREDOR_EXEC_CSERVERS_API_BASEURL_TEMPLATE
+CORREDOR_EXEC_CSERVERS_SYSTEM_API_BASEURL
+CORREDOR_EXEC_CSERVERS_COMPOSE_API_BASEURL
+CORREDOR_EXEC_CSERVERS_MESSAGING_API_BASEURL
+
+CORREDOR_SCRIPTS_BASEDIR
+CORREDOR_SCRIPTS_SERVER_BASEDIR
+CORREDOR_SCRIPTS_SERVER_ENABLED
+CORREDOR_SCRIPTS_SERVER_WATCH
+CORREDOR_SCRIPTS_CLIENT_BASEDIR
+CORREDOR_SCRIPTS_CLIENT_ENABLED
+CORREDOR_SCRIPTS_CLIENT_WATCH
+```
+
+
+### BloomRPC
+
+RPC server can be manually tested with any gRPC client.
+If you do not have your favorite, we recommend https://github.com/uw-labs/bloomrpc[BloomRPC].
+
+Testing with BloomRPC client & secure server:
+
+ 1. Click on TSL button on top
+ 2. Add root certificate (ca.crt)
+ 3. Private Key (private.key)
+ 4. Cert Chain (public.crt)
+
+
+## Development plan (unordered)
+
+ - Bundling and serving Vue.js components
+ - Bundling and serving SCSS and binary content
+ - Updating files via gRPC service
+ - Support for remote (git repository) location for user scripts
+ - Support for basic git operations
+ - Automatically running user script unit tests before loading scripts
+ - Support TypeScript for user scripts
