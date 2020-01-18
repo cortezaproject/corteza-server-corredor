@@ -13,7 +13,6 @@
     "tsndev": "ts-node-dev --debounce 200 --transpileOnly -r esm",
     "serve:dev": "yarn tsndev --respawn --ignore-watch node_module --ignore-watch usr ./src/app.ts",
     "serve": "ts-node -r esm ./src/app.ts",
-    "build": "tsc",
     "lint": "eslint src/** --ext .js,.ts",
     "test:unit": "mocha",
     "test:unit:cc": "nyc mocha",
@@ -57,9 +56,13 @@
     "pino-pretty": "^3.5.0",
     "sinon": "7.4.1",
     "ts-node-dev": "^1.0.0-pre.44",
-    "typescript": "^3.7.2",
-    "vm2": "3.8.3",
+    "typescript": "^3.7.5",
     "webpack": "^4.41.2"
+  },
+  "devDependencies": {
+    "source-map-support": "^0.5.16",
+    "ts-loader": "^6.2.1",
+    "ts-node": "^8.6.2"
   },
   "nyc": {
     "extends": "@istanbuljs/nyc-config-typescript",
