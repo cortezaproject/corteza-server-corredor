@@ -17,19 +17,6 @@ function isTrue (input: string|undefined): boolean|undefined {
 }
 
 /**
- * Verifies if module is install by requiring it
- * @param module
- */
-function isModuleInstalled (module: string): boolean {
-  try {
-    require.resolve(module)
-    return true
-  } catch (e) {
-    return false
-  }
-}
-
-/**
  * Discovers/generates baseURL from environmental variables & given service
  *
  * @param {string} service
@@ -97,7 +84,7 @@ export const logger = {
   // Enable/disable pretty logging
   //
   // if LOG_PRETTY is set or inherit from debug
-  prettyPrint: (isTrue(e.CORREDOR_LOG_PRETTY) ?? debug) && isModuleInstalled('pino-pretty'),
+  prettyPrint: isTrue(e.CORREDOR_LOG_PRETTY) ?? debug,
 
   // Log level
   level: e.CORREDOR_LOG_LEVEL ?? (debug ? 'trace' : 'info'),
