@@ -13,7 +13,7 @@ RUN apk add --no-cache \
     giflib-dev
 
 # Install app & support §&files
-COPY *.json *.js yarn.lock LICENSE README.md ./
+COPY *.json *.js yarn.lock LICENSE README.adoc ./
 
 RUN yarn install --production --non-interactive --no-progress --emoji false
 
