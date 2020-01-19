@@ -67,38 +67,251 @@ See https://www.npmjs.com/package/dotenv[dotenv] package for details.
 
 All possible configuration is covered in `src/config.ts` where all environmental variables are read and processed.
 
-.@todo format into table and write descriptions
-```
-CORREDOR_ENVIRONMENT
-CORREDOR_ENV
-CORREDOR_DEBUG
-CORREDOR_LOG_ENABLED
-CORREDOR_LOG_PRETTY
-CORREDOR_LOG_LEVEL
+#### Settings for both, Corredor and API server
+[cols="m,m,"]
+|===
+|Type|Default value|Description
+3+| CORREDOR_ADDR
+| string
+| _depends on the environment_
+| This setting is used by both, Corredor and API Server.
 
-CORREDOR_SERVER_CERTIFICATES_PATH
-CORREDOR_ADDR
-CORREDOR_SERVER_CERTIFICATES_ENABLED
-CORREDOR_SERVER_CERTIFICATES_CA
-CORREDOR_SERVER_CERTIFICATES_PRIVATE
-CORREDOR_SERVER_CERTIFICATES_PUBLIC
+For Corredor server: address where it's gRPC server is listening on
 
-CORREDOR_CORTEZA_PROTOBUF_PATH
-CORREDOR_SCRIPTS_AUTO_UPDATE_DEPENDENCIES
-CORREDOR_EXEC_CSERVERS_API_HOST DOMAIN HOSTNAME HOST
-CORREDOR_EXEC_CSERVERS_API_BASEURL_TEMPLATE
-CORREDOR_EXEC_CSERVERS_SYSTEM_API_BASEURL
-CORREDOR_EXEC_CSERVERS_COMPOSE_API_BASEURL
-CORREDOR_EXEC_CSERVERS_MESSAGING_API_BASEURL
+For API server: where can Corredor server be accessed.
 
-CORREDOR_SCRIPTS_BASEDIR
-CORREDOR_SCRIPTS_SERVER_BASEDIR
-CORREDOR_SCRIPTS_SERVER_ENABLED
-CORREDOR_SCRIPTS_SERVER_WATCH
-CORREDOR_SCRIPTS_CLIENT_BASEDIR
-CORREDOR_SCRIPTS_CLIENT_ENABLED
-CORREDOR_SCRIPTS_CLIENT_WATCH
-```
+Note on default value and environment:
+
+By default (as configured in the source code), Corredor and API listen/connect-to `localhost:50051`.
+Docker images override these values with `localhost:80` and `corredor:80` so API can connect to Corredor in another container.
+If you change names of your Docker services, this value needs to be changed.
+
+3+| CORREDOR_LOG_ENABLED
+| boolean
+| corredor
+| This setting is used by both, Corredor and API Server.
+
+For Corredor service: where is service listening on (gRPC)
+
+For API server: where can Corredor service be accessed.
+
+3+| CORREDOR_LOG_LEVEL
+| string
+| info
+| Defaults to `trace` when in development environment, defines amount of log information outputed.
+
+
+|===
+
+
+#### Corredor server
+
+[cols="m,m,"]
+|===
+
+3+| CORREDOR_LOG_PRETTY
+| boolean
+| false
+| Are events logged in one-line JSON or formatted to ease development?
+
+3+| CORREDOR_ENVIRONMENT
+|string|prod
+|Set environment we're running in. This influences on other settings (see descriptions of other environmental variables).
+
+If `CORREDOR_ENVIRONMENT` is not found, Corredorr looks for `CORREDOR_ENV` and `NODE_ENV` variables (in that order).
+
+Recognised values are `/^prod.*/` and `/^dev.*/`.
+
+In production:
+ - server certificates are enabled (when not explicitly disabled by `CORREDOR_SERVER_CERTIFICATES_ENABLED=false`)
+ - rich & pretty log output is disabled (when not explicitly enabled by `CORREDOR_LOG_PRETTY=true`)
+ - log level is set to `INFO` (when not explicitly set with `CORREDOR_LOG_LEVEL` to trace, debug, info, warn, error)
+
+3+| CORREDOR_CORTEZA_PROTOBUF_PATH
+| string
+| rootdir + `node_modules/corteza-protobuf`
+| Corredor server is shipped with protobuffer definitions inside node_modules dir.
+You can change that if you need to test/alter proto buffers for development.
+
+3+| CORREDOR_SERVER_CERTIFICATES_ENABLED
+| boolean
+| true in production
+| Should Corredor gRPC require valid TLS certificates
+
+3+| CORREDOR_SERVER_CERTIFICATES_PATH
+| string
+| `/certs`
+| Path to Corredor server certificates
+
+3+| CORREDOR_SERVER_CERTIFICATES_CA
+| string
+| `ca.crt`
+| File name for the crtificate authority
+
+3+| CORREDOR_SERVER_CERTIFICATES_PRIVATE
+| string
+| `private.key`
+| File name for the private key
+
+3+| CORREDOR_SERVER_CERTIFICATES_PUBLIC
+| string
+| `public.crt`
+| File name for the public certificate
+
+
+3+| CORREDOR_SCRIPTS_AUTO_UPDATE_DEPENDENCIES
+| bool
+| `true`
+| Should corredor auto update dependencies every time scripts are refreshed?
+
+
+3+| CORREDOR_SCRIPTS_BASEDIR
+| string
+| `./usr`
+| Base directory for user scripts
+
+3+| CORREDOR_SCRIPTS_PACKAGE_JSON_FILE
+| string
+| `package.json`
+|
+
+3+| CORREDOR_SCRIPTS_NODE_MODULES_DIR
+| string
+| `./node_modules`
+| By default Corredor uses it's own directory for user scripts
+
+3+| CORREDOR_SCRIPTS_SERVER_BASEDIR
+| bool
+| scripts-basedir + +`./usr/server`
+| Location of server scritps
+
+3+| CORREDOR_SCRIPTS_SERVER_ENABLED
+| bool
+| `true`
+| Enable server scripts
+
+3+| CORREDOR_SCRIPTS_SERVER_WATCH
+| bool
+| `true`
+| Watch server scripts for changes and reload
+
+3+| CORREDOR_SCRIPTS_CLIENT_BASEDIR
+| bool
+| scripts-basedir + +`./usr/client`
+| Location of client scritps
+
+3+| CORREDOR_SCRIPTS_CLIENT_ENABLED
+| bool
+| `true`
+| Enable client scripts
+
+3+| CORREDOR_SCRIPTS_CLIENT_WATCH
+| bool
+| `true`
+| Watch client scripts for changes and reload
+
+
+3+| CORREDOR_EXEC_CSERVERS_API_HOST
+| string
+| `public.crt`
+| Where should Corredor connect to (on behalf of client scripts it is running)?
+
+This is used in combination with `CORREDOR_EXEC_CSERVERS_API_BASEURL_TEMPLATE`.
+If value is not found under `CORREDOR_EXEC_CSERVERS_API_HOST`, configuration tries to use `DOMAIN`, `HOSTNAME` and `HOST`.
+
+When starting up Corredor, you can see how Base URLs are set for each service.
+
+3+| CORREDOR_EXEC_CSERVERS_API_BASEURL_TEMPLATE
+| string
+| `https://api.{host}/{service}`
+| Template to assemble base url for system, compose and messaging REST API (`CORREDOR_EXEC_CSERVERS_*\_API_BASEURL`).
+
+Default value assumes corredor is running in monolith setup.
+If you are running subsystems in separated services, you can set this to `https://api.{service}.{host}`.
+
+When starting up Corredor, you can see how Base URLs are set for each service.
+
+3+| CORREDOR_EXEC_CSERVERS_SYSTEM_API_BASEURL
+| string
+| (assembled from baseurl template)
+| Set to a custom Base URL if you want to override value generated with `CORREDOR_EXEC_CSERVERS_API_BASEURL_TEMPLATE`.
+
+3+| CORREDOR_EXEC_CSERVERS_COMPOSE_API_BASEURL
+| string
+| (assembled from baseurl template)
+| Set to a custom Base URL if you want to override value generated with `CORREDOR_EXEC_CSERVERS_API_BASEURL_TEMPLATE`.
+
+3+| CORREDOR_EXEC_CSERVERS_MESSAGING_API_BASEURL
+| string
+| (assembled from baseurl template)
+| Set to a custom Base URL if you want to override value generated with `CORREDOR_EXEC_CSERVERS_API_BASEURL_TEMPLATE`.
+
+_Recognised by Corredor._
+|===
+
+#### Corteza API
+
+[cols="m,m,"]
+|===
+
+3+| CORREDOR_ENABLED
+| bool
+| true
+| This is a setting for API server, will Corredor be used for server automation?
+
+
+3+| CORREDOR_MAX_BACKOFF_DELAY
+| duration
+| 1m
+| Connection timeout (from API server to Corredor)
+
+CORREDOR_DEFAULT_EXEC_TIMEOUT
+| duration
+| 1m
+| Timeout for server script execution
+
+
+CORREDOR_LIST_TIMEOUT
+| duration
+| 2s
+| Timeout when fetching list of client or server scripts
+
+CORREDOR_RUN_AS_ENABLED
+| bool
+| `true`
+| Allow running server scripts as another user
+
+3+| CORREDOR_CLIENT_CERTIFICATES_ENABLED
+| boolean
+| true in production
+| Should Corredor gRPC client connect with valid TLS certificates
+
+3+| CORREDOR_CLIENT_CERTIFICATES_PATH
+| string
+| `/certs/server/server`
+| Path to Corredor client certificates
+
+3+| CORREDOR_CLIENT_CERTIFICATES_CA
+| string
+| `ca.crt`
+| File name for the crtificate authority
+
+3+| CORREDOR_CLIENT_CERTIFICATES_PRIVATE
+| string
+| `private.key`
+| File name for the private key
+
+3+| CORREDOR_CLIENT_CERTIFICATES_PUBLIC
+| string
+| `public.crt`
+| File name for the public certificate
+
+3+| CORREDOR_CLIENT_CERTIFICATES_SERVER_NAME
+| string
+|
+| Server name to use on connection
+
+|===
 
 
 ### BloomRPC
