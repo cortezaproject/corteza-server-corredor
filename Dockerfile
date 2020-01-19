@@ -25,8 +25,8 @@ COPY src ./src
 ENV GRPC_VERBOSITY=ERROR
 
 # Set Corredor's default ENV values
-ENV ENVIRONMENT=prod
-ENV ADDR=0.0.0.0:80
+ENV CORREDOR_ENVIRONMENT=prod
+ENV CORREDOR_ADDR=0.0.0.0:80
 
 # User scripts
 VOLUME /corredor/usr

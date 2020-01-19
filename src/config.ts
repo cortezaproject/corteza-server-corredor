@@ -49,24 +49,19 @@ function assembleBaseURL (service: string): string|undefined {
 
 export const env = (e.CORREDOR_ENVIRONMENT ?? e.CORREDOR_ENV ?? e.NODE_ENV ?? 'prod').trim().toLowerCase()
 
-export const isProduction = env.indexOf('prod') === 0
 export const isDevelopment = env.indexOf('dev') === 0
+export const isProduction = !isDevelopment
 
-// Detect if debug mode should be enabled
-// Is it explicitly set on by DEBUG?
-// Is ENVIRONMENT set to production?
-export const debug = isTrue(e.CORREDOR_DEBUG) ?? !isProduction
-
-const certPath = e.CORREDOR_SERVER_CERTIFICATES_PATH ?? './certs/server'
+const certPath = e.CORREDOR_SERVER_CERTIFICATES_PATH ?? '/certs'
 
 // Server settings
 // CORREDOR_ADDR is used by the API as well to configure gRPC client connection
 export const server = {
-  addr: e.CORREDOR_ADDR || '0.0.0.0:50051',
+  addr: e.CORREDOR_ADDR || 'localhost:50051',
 
   certificates: {
     enabled:
-        isTrue(e.CORREDOR_SERVER_CERTIFICATES_ENABLED) ?? true,
+        isTrue(e.CORREDOR_SERVER_CERTIFICATES_ENABLED) ?? isProduction,
     ca:
         e.CORREDOR_SERVER_CERTIFICATES_CA ?? path.join(certPath, 'ca.crt'),
     private:
@@ -84,10 +79,10 @@ export const logger = {
   // Enable/disable pretty logging
   //
   // if LOG_PRETTY is set or inherit from debug
-  prettyPrint: isTrue(e.CORREDOR_LOG_PRETTY) ?? debug,
+  prettyPrint: isTrue(e.CORREDOR_LOG_PRETTY) ?? isDevelopment,
 
   // Log level
-  level: e.CORREDOR_LOG_LEVEL ?? (debug ? 'trace' : 'info'),
+  level: e.CORREDOR_LOG_LEVEL ?? (isDevelopment ? 'trace' : 'info'),
 }
 
 export const protobuf = {
@@ -113,10 +108,10 @@ export const scripts = {
 
   dependencies: {
     // where to get script's dependencies from
-    packageJSON: path.join(scriptsBaseDir, 'package.json'),
+    packageJSON: e.CORREDOR_SCRIPTS_PACKAGE_JSON_FILE ?? path.join(scriptsBaseDir, 'package.json'),
 
     // where to install downloaded NPM packages
-    nodeModules: path.join(rootDir, 'node_modules'),
+    nodeModules: e.CORREDOR_SCRIPTS_NODE_MODULES_DIR ?? path.join(rootDir, 'node_modules'),
 
     // do we automatically update deps?
     autoUpdate: isTrue(e.CORREDOR_SCRIPTS_AUTO_UPDATE_DEPENDENCIES) ?? true,
