@@ -2,13 +2,13 @@ import { Script } from './types'
 
 interface ListFilter {
     query?: string;
-    resource?: string;
-    events?: string[];
+    resourceType?: string;
+    eventTypes?: string[];
 }
 
 interface TriggerFilterArgs {
-  resources: string[];
-  events: string[];
+  resourceTypes: string[];
+  eventTypes: string[];
 }
 
 /**
@@ -21,19 +21,19 @@ export default function (f: ListFilter): {(Script): boolean} {
       return true
     }
 
-    if (f.resource || f.events) {
-      const tt = (item.triggers || []).filter(({ resources, events }: TriggerFilterArgs) => {
-        if (f.resource && f.resource.length > 0) {
+    if (f.resourceType || f.eventTypes) {
+      const tt = (item.triggers || []).filter(({ resourceTypes, eventTypes }: TriggerFilterArgs) => {
+        if (f.resourceType && f.resourceType.length > 0) {
           // Filter by resource
-          if (!resources || resources.indexOf(f.resource) === -1) {
+          if (!resourceTypes || resourceTypes.indexOf(f.resourceType) === -1) {
             // No resources found on trigger
             return false
           }
         }
 
-        if (f.events && f.events.length > 0) {
+        if (f.eventTypes && f.eventTypes.length > 0) {
           // Filter by events
-          if (!events || f.events.find(fe => (events.indexOf(fe) > -1)) === undefined) {
+          if (!eventTypes || f.eventTypes.find(fe => (eventTypes.indexOf(fe) > -1)) === undefined) {
             return false
           }
         }

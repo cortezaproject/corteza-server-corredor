@@ -21,8 +21,8 @@ interface Bundle {
 
 interface ListRequest {
   query?: string;
-  resource?: string;
-  events?: string[];
+  resourceType?: string;
+  eventTypes?: string[];
   bundle?: string;
 }
 
@@ -57,13 +57,13 @@ export function Handlers (h: Service, loggerService: BaseLogger): object {
     },
 
     List ({ request }: { request: ListRequest }, done: grpc.sendUnaryData<ListResponse|null>): void {
-      const { query, resource, events, bundle } = request
+      const { query, resourceType, eventTypes, bundle } = request
       const logger = loggerService.child({ rpc: 'List' })
 
       const filter = {
         query,
-        resource,
-        events,
+        resourceType,
+        eventTypes,
         bundle,
       }
 

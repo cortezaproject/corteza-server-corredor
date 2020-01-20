@@ -6,8 +6,8 @@ import { BaseLogger } from 'pino'
 
 interface ListFilter {
     query?: string;
-    resource?: string;
-    events?: string[];
+    resourceType?: string;
+    eventTypes?: string[];
 }
 
 interface Script {

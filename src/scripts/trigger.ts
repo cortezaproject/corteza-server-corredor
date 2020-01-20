@@ -18,9 +18,9 @@ interface Constraint {
 }
 
 interface PlainTrigger {
-  events?:
+  eventTypes?:
     string[];
-  resources?:
+  resourceTypes?:
     string[];
   constraints?:
     Constraint[];
@@ -38,10 +38,10 @@ function eventize (prefix: string, ee: string[]): string[] {
 }
 
 export class Trigger {
-  readonly events:
+  readonly eventTypes:
       string[];
 
-  readonly resources:
+  readonly resourceTypes:
       string[];
 
   readonly constraints:
@@ -52,13 +52,13 @@ export class Trigger {
 
   constructor (t?: Trigger | PlainTrigger) {
     if (t !== undefined) {
-      this.events = t.events ?? []
-      this.resources = t.resources ?? []
+      this.eventTypes = t.eventTypes ?? []
+      this.resourceTypes = t.resourceTypes ?? []
       this.constraints = t.constraints ?? []
       this.runAs = t.runAs
     } else {
-      this.events = []
-      this.resources = []
+      this.eventTypes = []
+      this.resourceTypes = []
       this.constraints = []
       this.runAs = undefined
     }
@@ -75,7 +75,7 @@ export class Trigger {
 
     return new Trigger({
       ...t,
-      events: distinct([...t.events, ...eventize('on', events)]),
+      eventTypes: distinct([...t.eventTypes, ...eventize('on', events)]),
     })
   }
 
@@ -84,7 +84,7 @@ export class Trigger {
 
     return new Trigger({
       ...t,
-      events: distinct([...t.events, ...eventize('before', events)]),
+      eventTypes: distinct([...t.eventTypes, ...eventize('before', events)]),
     })
   }
 
@@ -93,7 +93,7 @@ export class Trigger {
 
     return new Trigger({
       ...t,
-      events: distinct([...t.events, ...eventize('after', events)]),
+      eventTypes: distinct([...t.eventTypes, ...eventize('after', events)]),
     })
   }
 
@@ -102,7 +102,7 @@ export class Trigger {
 
     return new Trigger({
       ...t,
-      resources: distinct([...t.resources, ...resources]),
+      resourceTypes: distinct([...t.resourceTypes, ...resources]),
     })
   }
 
@@ -148,11 +148,11 @@ export class Trigger {
     const t = this ?? new Trigger()
 
     // Do not procede if this was called on incompatible trigger
-    if (t.events.length > 0 && t.events.find(e => e === eventType)) {
+    if (t.eventTypes.length > 0 && t.eventTypes.find(e => e === eventType)) {
       throw SyntaxError('not allowed to combine interval with other event types')
     }
 
-    if (t.resources.length > 0 && t.resources.find(e => e.indexOf(':') > -1)) {
+    if (t.resourceTypes.length > 0 && t.resourceTypes.find(e => e.indexOf(':') > -1)) {
       throw SyntaxError('not allowed to use interval on non-service resources')
     }
 
@@ -163,12 +163,12 @@ export class Trigger {
       constraints = [{ value }]
     }
 
-    const { resources } = this
-    if (resources.length === 0) {
-      resources.push(defaultResource)
+    const { resourceTypes } = this
+    if (resourceTypes.length === 0) {
+      resourceTypes.push(defaultResource)
     }
 
-    return new Trigger({ ...this, resources, events: [eventType], constraints })
+    return new Trigger({ ...this, resourceTypes: resourceTypes, events: [eventType], constraints })
   }
 }
 
@@ -185,6 +185,10 @@ export function Make (t: unknown): Trigger[] {
       tt = [...t(new Trigger())]
     } else {
       tt = t(new Trigger())
+    }
+
+    if (!tt) {
+      tt = []
     }
   } else if (Array.isArray(t)) {
     tt = [...t]

@@ -8,8 +8,8 @@ export interface Script {
     name: string;
     label?: string;
     description?: string;
-    resource?: string;
-    events: string[];
+    resourceType?: string;
+    eventTypes: string[];
     bundle: string;
     type: ScriptType;
     errors: string[];

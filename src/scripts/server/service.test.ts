@@ -31,7 +31,7 @@ describe('scripts list', () => {
           description: 'deskription',
           errors: [],
           triggers: [
-            new Trigger({ events: ['foo'], resources: ['res1'], constraints: [] }),
+            new Trigger({ eventTypes: ['foo'], resourceTypes: ['res1'], constraints: [] }),
           ],
         },
         {
@@ -40,7 +40,7 @@ describe('scripts list', () => {
           description: 'deskription',
           errors: [],
           triggers: [
-            new Trigger({ events: ['afterMyThing'], resources: ['res2'], constraints: [] }),
+            new Trigger({ eventTypes: ['afterMyThing'], resourceTypes: ['res2'], constraints: [] }),
           ],
         },
         {
@@ -49,7 +49,7 @@ describe('scripts list', () => {
           description: 'deskription',
           errors: [],
           triggers: [
-            new Trigger({ events: ['beforeMyThing', 'afterMyThing'], resources: ['res2'], constraints: [] }),
+            new Trigger({ eventTypes: ['beforeMyThing', 'afterMyThing'], resourceTypes: ['res2'], constraints: [] }),
           ],
         },
       ])
@@ -68,23 +68,23 @@ describe('scripts list', () => {
     })
 
     it('should match 2 with res2 for resource', () => {
-      expect(svc.List({ resource: 'res2' })).to.have.lengthOf(2)
+      expect(svc.List({ resourceType: 'res2' })).to.have.lengthOf(2)
     })
 
     it('should match none with re for resource', () => {
-      expect(svc.List({ resource: 're' })).to.have.lengthOf(0)
+      expect(svc.List({ resourceType: 're' })).to.have.lengthOf(0)
     })
 
     it('should match 2 with events', () => {
-      expect(svc.List({ events: ['afterMyThing'] })).to.have.lengthOf(2)
+      expect(svc.List({ eventTypes: ['afterMyThing'] })).to.have.lengthOf(2)
     })
 
     it('should match 1 with event', () => {
-      expect(svc.List({ events: ['beforeMyThing'] })).to.have.lengthOf(1)
+      expect(svc.List({ eventTypes: ['beforeMyThing'] })).to.have.lengthOf(1)
     })
 
     it('should match all with no events', () => {
-      expect(svc.List({ events: [] })).to.have.lengthOf(3)
+      expect(svc.List({ eventTypes: [] })).to.have.lengthOf(3)
     })
   })
 })

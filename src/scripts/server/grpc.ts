@@ -30,8 +30,8 @@ interface ListRequestWrap {
 
 interface ListRequest {
   query?: string;
-  resource?: string;
-  events?: string[];
+  resourceType?: string;
+  eventTypes?: string[];
   security?: number;
 }
 
@@ -145,13 +145,13 @@ export function Handlers (h: Service, loggerService: BaseLogger): object {
     },
 
     List ({ request }: ListRequestWrap, done: grpc.sendUnaryData<ListResponse|null>): void {
-      const { query, resource, events } = request
+      const { query, resourceType, eventTypes } = request
       const logger = loggerService.child({ rpc: 'List' })
 
       const filter = {
         query,
-        resource,
-        events,
+        resourceType,
+        eventTypes,
       }
 
       logger.debug({ filter }, 'returning list of scripts')
