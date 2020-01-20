@@ -40,4 +40,20 @@ describe('trigger making', () => {
       })).is.deep.eq([st, st])
     })
   })
+
+  describe('from nothing', () => {
+    it('should handle undefined', () => {
+      expect(Make(undefined)).is.deep.eq([])
+    })
+    it('should handle null', () => {
+      expect(Make(null)).is.deep.eq([])
+    })
+    it('should handle boolean', () => {
+      expect(Make(false)).is.deep.eq([])
+      expect(Make(true)).is.deep.eq([])
+    })
+    it('should handle fn w/ void', () => {
+      expect(Make(() => { /* */ })).is.deep.eq([])
+    })
+  })
 })
