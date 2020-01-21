@@ -12,7 +12,6 @@ interface ListFilter {
 
 interface Script {
   name: string;
-  // triggers: unknown[];
   errors: string[];
   exec: unknown;
 }

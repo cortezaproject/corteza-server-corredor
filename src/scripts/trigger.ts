@@ -17,13 +17,20 @@ interface Constraint {
       string[];
 }
 
-interface PlainTrigger {
+interface UIOption {
+  name: string;
+  value: string;
+}
+
+interface RawTrigger {
   eventTypes?:
     string[];
   resourceTypes?:
     string[];
   constraints?:
     Constraint[];
+  ui?:
+    UIOption[];
   runAs?:
     string;
 }
@@ -47,19 +54,24 @@ export class Trigger {
   readonly constraints:
       Constraint[];
 
+  readonly ui:
+      UIOption[];
+
   readonly runAs?:
       string;
 
-  constructor (t?: Trigger | PlainTrigger) {
+  constructor (t?: Trigger | RawTrigger) {
     if (t !== undefined) {
       this.eventTypes = t.eventTypes ?? []
       this.resourceTypes = t.resourceTypes ?? []
       this.constraints = t.constraints ?? []
+      this.ui = t.ui ?? []
       this.runAs = t.runAs
     } else {
       this.eventTypes = []
       this.resourceTypes = []
       this.constraints = []
+      this.ui = []
       this.runAs = undefined
     }
   }
@@ -142,6 +154,11 @@ export class Trigger {
     constraints.push({ name, op, value })
 
     return new Trigger({ ...this, constraints })
+  }
+
+  uiOpt (name: string, value: string): Trigger {
+    const t = this ?? new Trigger()
+    return new Trigger({ ...t, ui: [...t.ui, { name, value }] })
   }
 
   private deferred (eventType: string, value: string[]): Trigger {
