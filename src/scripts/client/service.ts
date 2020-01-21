@@ -29,7 +29,7 @@ function match (f: ListFilter): ListFiterFn {
       return false
     }
 
-    if (!!f.resource && f.resource !== item.resource) {
+    if (!!f.resource && f.resource !== item.resourceType) {
       // Filter by resource, expecting exact match
       return false
     }
@@ -37,13 +37,13 @@ function match (f: ListFilter): ListFiterFn {
     if (!!f.events && f.events.length > 0) {
       // item has less events than filter,
       // no way this can be a match.
-      if (item.events.length < f.events.length) {
+      if (item.eventTypes.length < f.events.length) {
         return false
       }
 
       // Filter by events, should contain all filtered events
       for (const e of f.events) {
-        if (!item.events.includes(e)) {
+        if (!item.eventTypes.includes(e)) {
           return false
         }
       }
@@ -51,7 +51,7 @@ function match (f: ListFilter): ListFiterFn {
 
     if (f.query) {
       // Strings to search through
-      const str = `${item.name} ${item.label} ${item.description} ${item.resource} ${item.events.join(' ')}`
+      const str = `${item.name} ${item.label} ${item.description} ${item.resourceType} ${item.eventTypes.join(' ')}`
 
       // search query terms
       for (const t of f.query.split(' ')) {
@@ -78,7 +78,7 @@ export class Service {
         name: 'SomeFunctionWeCanCall',
         label: 'dummy label for dummy function',
         description: 'dummy description',
-        events: [],
+        eventTypes: [],
         type: ScriptType.function,
         bundle: 'example',
         errors: [],
@@ -87,7 +87,7 @@ export class Service {
         name: 'style',
         label: 'dummy label',
         description: 'dummy description',
-        events: [],
+        eventTypes: [],
         type: ScriptType.style,
         bundle: 'example',
         errors: [],
@@ -96,7 +96,7 @@ export class Service {
         name: 'VueComponent',
         label: 'dummy label',
         description: 'lorem ipsum',
-        events: [],
+        eventTypes: [],
         type: ScriptType.component,
         bundle: 'example',
         errors: [],
