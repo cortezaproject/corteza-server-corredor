@@ -112,32 +112,43 @@ export async function LoadScript ({ filepath }: RawScript, basepath: string): Pr
     errors: [],
   }
 
-  return import(filepath).then(exports => {
-    for (const name in exports) {
-      if (!Object.prototype.hasOwnProperty.call(exports, name)) {
-        continue
-      }
+  let exports: {[_: string]: unknown}
 
-      if (typeof exports[name] !== 'object') {
-        continue
-      }
+  try {
+    // We'll use require instead of import
+    // because we need more control over cache (invalidation)
 
-      let scriptName = filename
-      if (name !== 'default') {
-        scriptName = `${filename}:${name}`
-      }
+    // Remove from cache & (re)require the script
+    delete require.cache[require.resolve(filepath)]
 
-      ss.push(ResolveScript(scriptName, filepath, (exports[name] as {[_: string]: unknown})))
-    }
-
-    return ss
-  }).catch(e => {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    exports = require(filepath)
+  } catch (e) {
     logger.error(e)
     return [{
       ...script,
       errors: [e.toString()],
     }]
-  })
+  }
+
+  for (const name in exports) {
+    if (!Object.prototype.hasOwnProperty.call(exports, name)) {
+      continue
+    }
+
+    if (typeof exports[name] !== 'object') {
+      continue
+    }
+
+    let scriptName = filename
+    if (name !== 'default') {
+      scriptName = `${filename}:${name}`
+    }
+
+    ss.push(ResolveScript(scriptName, filepath, (exports[name] as {[_: string]: unknown})))
+  }
+
+  return ss
 }
 
 export async function Reloader (basedir: string): Promise<Script[]> {
