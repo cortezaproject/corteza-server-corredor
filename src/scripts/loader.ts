@@ -26,6 +26,17 @@ export async function * Finder (p: string, validator: RegExp|undefined = /\.js$/
   }
 }
 
+/**
+ * Resolves & expands given script definition, creates triggers
+ *
+ * @todo make this more typescript-ish
+ * @todo accept class as script def
+ *
+ * @param name
+ * @param filepath
+ * @param def
+ * @constructor
+ */
 export function ResolveScript (name: string, filepath: string, def: {[_: string]: unknown}): Script {
   let triggers: Trigger[] = []
   const errors: string[] = []
@@ -99,7 +110,6 @@ export async function LoadScript ({ filepath }: RawScript, basepath: string): Pr
       errors: [e.toString()],
     }]
   })
-
 }
 
 export async function Reloader (basedir: string): Promise<Script[]> {

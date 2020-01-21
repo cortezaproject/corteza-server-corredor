@@ -9,7 +9,8 @@ describe('script loading', () => {
   })
 })
 
-export default {
+export const DefaultScript = {
+  label: 'foo',
   triggers (): void { /* void */ },
   exec (): void { /* void */ },
 }
