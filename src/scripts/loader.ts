@@ -1,16 +1,8 @@
 import { Make as MakeTriggers, Trigger } from './trigger'
-import { Script, FluentTrigger } from './types'
+import { Script } from './shared'
 import { promises as fs } from 'fs'
 import path from 'path'
 import logger from '../logger'
-
-interface TriggerFn {
-  (t: FluentTrigger): Trigger[];
-}
-
-interface ScriptDefinition {
-  triggers: Trigger[] | TriggerFn;
-}
 
 interface RawScript {
   filepath: string;

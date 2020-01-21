@@ -1,6 +1,5 @@
 import { describe, it } from 'mocha'
 import { expect } from 'chai'
-import { join } from 'path'
 import { LoadScript } from './loader'
 
 describe('script loading', () => {
