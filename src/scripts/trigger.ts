@@ -31,8 +31,6 @@ interface RawTrigger {
     Constraint[];
   ui?:
     UIOption[];
-  runAs?:
-    string;
 }
 
 function distinct (arr: string[]): string[] {
@@ -57,29 +55,18 @@ export class Trigger {
   readonly ui:
       UIOption[];
 
-  readonly runAs?:
-      string;
-
   constructor (t?: Trigger | RawTrigger) {
     if (t !== undefined) {
       this.eventTypes = t.eventTypes ?? []
       this.resourceTypes = t.resourceTypes ?? []
       this.constraints = t.constraints ?? []
       this.ui = t.ui ?? []
-      this.runAs = t.runAs
     } else {
       this.eventTypes = []
       this.resourceTypes = []
       this.constraints = []
       this.ui = []
-      this.runAs = undefined
     }
-  }
-
-  as (runAs: string): Trigger {
-    const t = this ?? new Trigger()
-
-    return new Trigger({ ...t, runAs })
   }
 
   on (...events: string[]): Trigger {

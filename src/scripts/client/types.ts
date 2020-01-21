@@ -1,3 +1,5 @@
+import { ScriptSecurity } from '../shared'
+
 export enum ScriptType {
     function = 'function',
     component = 'component',

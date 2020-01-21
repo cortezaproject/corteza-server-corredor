@@ -1,11 +1,17 @@
 import { Make as MakeTriggers, Trigger } from './trigger'
-import { Script } from './shared'
+import { Script, ScriptSecurity } from './shared'
 import { promises as fs } from 'fs'
 import path from 'path'
 import logger from '../logger'
 
 interface RawScript {
   filepath: string;
+}
+
+interface RawScriptSecurity {
+  runAs?: string;
+  allow: string|string[];
+  deny: string|string[];
 }
 
 /**
@@ -23,6 +29,14 @@ export async function * Finder (p: string, validator: RegExp|undefined = /\.js$/
     } else if (validator.test(e.name)) {
       yield { filepath }
     }
+  }
+}
+
+function resolveSecurity (sec?: RawScriptSecurity): ScriptSecurity {
+  return {
+    runAs: sec.runAs,
+    deny: Array.isArray(sec.deny) ? sec.deny : [sec.deny],
+    allow: Array.isArray(sec.allow) ? sec.allow : [sec.allow],
   }
 }
 
@@ -59,8 +73,22 @@ export function ResolveScript (name: string, filepath: string, def: {[_: string]
     errors.push('exec not a function')
   }
 
+  let security: ScriptSecurity
+  if (Object.prototype.hasOwnProperty.call(def, 'security')) {
+    if (typeof def.security === 'object') {
+      security = resolveSecurity(def.security as RawScriptSecurity)
+    }
+  }
+
   // Merge resolved & the rest
-  return { ...(def as object), filepath, name, errors, triggers }
+  return {
+    ...(def as object),
+    filepath,
+    name,
+    errors,
+    triggers,
+    security,
+  }
 }
 
 /**
