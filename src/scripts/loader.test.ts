@@ -1,14 +1,13 @@
 import { describe, it } from 'mocha'
 import { expect } from 'chai'
+import { join } from 'path'
 import { LoadScript, ResolveScript } from './loader'
 import { Trigger } from './trigger'
-
-export const emptyScript = {}
 
 describe(__filename, () => {
   describe('script loading', () => {
     it('should be able to load this file', async () => {
-      const loadedScripts = await LoadScript({ filepath: __filename }, __dirname)
+      const loadedScripts = await LoadScript({ filepath: join(__dirname, '_test', 'sample.js') }, __dirname)
       expect(loadedScripts).to.have.length.greaterThan(0)
     })
   })
@@ -23,7 +22,7 @@ describe(__filename, () => {
       ])
     })
 
-    it('should complain about', async () => {
+    it('should fully resolve script', async () => {
       const s = await ResolveScript('name', 'filepath', {
         label: 'label',
         description: 'description',
