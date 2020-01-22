@@ -32,12 +32,22 @@ export async function * Finder (p: string, validator: RegExp|undefined = /\.js$/
   }
 }
 
-function resolveSecurity (sec?: RawScriptSecurity): ScriptSecurity {
-  return {
-    runAs: sec.runAs,
-    deny: Array.isArray(sec.deny) ? sec.deny : [sec.deny],
-    allow: Array.isArray(sec.allow) ? sec.allow : [sec.allow],
+function resolveSecurity ({ allow, deny, runAs }: RawScriptSecurity): ScriptSecurity|null {
+  if (!allow && !deny && !runAs) {
+    return null
   }
+
+  const out: ScriptSecurity = { runAs, allow: [], deny: [] }
+
+  if (allow) {
+    out.allow = Array.isArray(allow) ? allow : [allow]
+  }
+
+  if (deny) {
+    out.deny = Array.isArray(deny) ? deny : [deny]
+  }
+
+  return out
 }
 
 /**
