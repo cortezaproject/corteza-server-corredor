@@ -17,21 +17,11 @@ interface Constraint {
       string[];
 }
 
-interface UIOption {
+interface UIProp {
   name: string;
   value: string;
 }
 
-interface RawTrigger {
-  eventTypes?:
-    string[];
-  resourceTypes?:
-    string[];
-  constraints?:
-    Constraint[];
-  ui?:
-    UIOption[];
-}
 
 function distinct (arr: string[]): string[] {
   return arr.filter((n, i) => arr.indexOf(n) === i)
@@ -44,29 +34,26 @@ function eventize (prefix: string, ee: string[]): string[] {
 
 export class Trigger {
   readonly eventTypes:
-      string[];
+      string[] = [];
 
   readonly resourceTypes:
-      string[];
+      string[] = [];
 
   readonly constraints:
-      Constraint[];
+      Constraint[] = [];
 
-  readonly ui:
-      UIOption[];
+  readonly uiProps:
+      UIProp[] = [];
 
-  constructor (t?: Trigger | RawTrigger) {
-    if (t !== undefined) {
-      this.eventTypes = t.eventTypes ?? []
-      this.resourceTypes = t.resourceTypes ?? []
-      this.constraints = t.constraints ?? []
-      this.ui = t.ui ?? []
-    } else {
-      this.eventTypes = []
-      this.resourceTypes = []
-      this.constraints = []
-      this.ui = []
+  constructor (t?: Partial<Trigger>) {
+    if (!t) {
+      return
     }
+
+    this.eventTypes = t.eventTypes || []
+    this.resourceTypes = t.resourceTypes || []
+    this.constraints = t.constraints || []
+    this.uiProps = t.uiProps || []
   }
 
   on (...events: string[]): Trigger {
@@ -145,7 +132,7 @@ export class Trigger {
 
   uiOpt (name: string, value: string): Trigger {
     const t = this ?? new Trigger()
-    return new Trigger({ ...t, ui: [...t.ui, { name, value }] })
+    return new Trigger({ ...t, uiProps: [...t.uiProps, { name, value }] })
   }
 
   private deferred (eventType: string, value: string[]): Trigger {
