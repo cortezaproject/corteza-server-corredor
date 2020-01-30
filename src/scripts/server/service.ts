@@ -3,6 +3,7 @@
 import MakeFilterFn from '../filter'
 import { corredor as exec } from '@cortezaproject/corteza-js'
 import { BaseLogger } from 'pino'
+import { Script } from '../shared'
 
 interface ListFilter {
     query?: string;
@@ -10,11 +11,6 @@ interface ListFilter {
     eventTypes?: string[];
 }
 
-interface Script {
-  name: string;
-  errors: string[];
-  exec: unknown;
-}
 
 /**
  *
@@ -30,10 +26,20 @@ export class Service {
       this.config = config
     }
 
+    // Returns date of the most recently updated script from the set
+    get lastUpdated (): Date {
+      return this.scripts
+        .map(({ updatedAt }) => updatedAt)
+        .filter(updatedAt => updatedAt)
+        .reduce((last, updatedAt) => {
+          return last < updatedAt ? updatedAt : last
+        }, new Date('0000-01-01'))
+    }
+
     /**
      * Loads scripts
      */
-    Update (set): void {
+    Update (set: Script[]): void {
       // Scripts loaded, replace set
       this.scripts = set
     }

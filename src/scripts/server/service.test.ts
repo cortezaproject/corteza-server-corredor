@@ -13,6 +13,11 @@ const serviceConfig = {
   },
 }
 
+const baseScript = {
+  name: 'scriptname',
+  filepath: 'path/to/script',
+}
+
 describe('scripts list', () => {
   describe('empty', () => {
     it('should be empty', () => {
@@ -26,6 +31,7 @@ describe('scripts list', () => {
     beforeEach(() => {
       svc.Update([
         {
+          ...baseScript,
           label: 'label1',
           name: 'Name',
           description: 'deskription',
@@ -35,6 +41,7 @@ describe('scripts list', () => {
           ],
         },
         {
+          ...baseScript,
           label: 'label2',
           name: 'Name',
           description: 'deskription',
@@ -44,6 +51,7 @@ describe('scripts list', () => {
           ],
         },
         {
+          ...baseScript,
           label: 'label3',
           name: 'Name',
           description: 'deskription',

@@ -1,8 +1,13 @@
 import { describe, it } from 'mocha'
 import { expect } from 'chai'
 import { join } from 'path'
-import { LoadScript, ResolveScript } from './loader'
+import { LoadScript, ProcExports } from './loader'
 import { Trigger } from './trigger'
+
+const baseScript = {
+  name: 'scriptname',
+  filepath: 'path/to/script',
+}
 
 describe(__filename, () => {
   describe('script loading', () => {
@@ -14,7 +19,7 @@ describe(__filename, () => {
 
   describe('script resolving', () => {
     it('should complain about missing triggers & exec', async () => {
-      const s = await ResolveScript('', '', {})
+      const s = await ProcExports(baseScript, {})
       expect(s).to.have.property('errors').lengthOf(2)
       expect(s).to.have.property('errors').with.members([
         'invalid or undefined triggers',
@@ -23,7 +28,7 @@ describe(__filename, () => {
     })
 
     it('should fully resolve script', async () => {
-      const s = await ResolveScript('name', 'filepath', {
+      const s = await ProcExports(baseScript, {
         label: 'label',
         description: 'description',
         security: {
@@ -43,8 +48,8 @@ describe(__filename, () => {
       expect(s).to.have.property('errors').length(0)
       expect(s).to.have.property('exec').of.a('function')
       expect(s).to.have.property('triggers').lengthOf(2)
-      expect(s).to.have.property('name').equal('name')
-      expect(s).to.have.property('filepath').equal('filepath')
+      expect(s).to.have.property('name').equal('scriptname')
+      expect(s).to.have.property('filepath').equal('path/to/script')
       expect(s).to.have.property('label').equal('label')
       expect(s).to.have.property('description').equal('description')
       expect(s).to.have.property('security').deep.equal({

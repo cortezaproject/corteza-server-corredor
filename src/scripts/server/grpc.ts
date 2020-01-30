@@ -144,7 +144,7 @@ export function Handlers (h: Service, loggerService: BaseLogger): object {
       }
     },
 
-    List ({ request }: ListRequestWrap, done: grpc.sendUnaryData<ListResponse|null>): void {
+    List ({ request, metadata }: ListRequestWrap, done: grpc.sendUnaryData<ListResponse|null>): void {
       const { query, resourceType, eventTypes } = request
       const logger = loggerService.child({ rpc: 'List' })
 
@@ -154,11 +154,28 @@ export function Handlers (h: Service, loggerService: BaseLogger): object {
         eventTypes,
       }
 
+      const imsMD = metadata.get('if-modified-since')
+      const ims = (imsMD.length > 0) ? new Date(imsMD[0].toString()) : undefined
+
+      if (ims && h.lastUpdated <= ims) {
+        logger.debug({
+          ifModifiedSince: ims,
+          lastModified: h.lastUpdated,
+        }, 'scripts older than requested by if-modified-since header')
+        done(null, { scripts: [] })
+        return
+      }
+
       logger.debug({ filter }, 'returning list of scripts')
 
       try {
-        const scripts = h.List(filter)
-        done(null, { scripts })
+        done(null, {
+          scripts: h.List(filter)
+            .map(s => ({
+              ...s,
+              updatedAt: s.updatedAt.toISOString(),
+            })),
+        })
       } catch (e) {
         logger.debug({ stack: e.stack }, e.message)
         HandleException(e, done, grpc.status.INTERNAL)

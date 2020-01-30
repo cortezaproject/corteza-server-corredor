@@ -20,4 +20,5 @@ export interface Script {
     triggers?: Trigger[];
     exec?: ScriptFn;
     errors?: string[];
+    updatedAt?: Date;
 }

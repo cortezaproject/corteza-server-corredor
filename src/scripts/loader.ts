@@ -1,5 +1,5 @@
-import { Make as MakeTriggers, Trigger } from './trigger'
-import { Script, ScriptSecurity } from './shared'
+import { Make as MakeTriggers } from './trigger'
+import { Script, ScriptFn, ScriptSecurity } from './shared'
 import { promises as fs } from 'fs'
 import path from 'path'
 import logger from '../logger'
@@ -61,44 +61,44 @@ function resolveSecurity ({ allow, deny, runAs }: RawScriptSecurity): ScriptSecu
  * @param def
  * @constructor
  */
-export function ResolveScript (name: string, filepath: string, def: {[_: string]: unknown}): Script {
-  let triggers: Trigger[] = []
-  const errors: string[] = []
+export function ProcExports (s: Script, def: {[_: string]: unknown}): Script {
+  s = {
+    errors: [],
+    ...s,
+  }
 
-  if (typeof def !== 'object') {
-    return { name, filepath, errors: ['expecting an object with script definition (exec, triggers)'] }
+  if (Object.prototype.hasOwnProperty.call(def, 'label') && typeof def.label === 'string') {
+    s.label = def.label
+  }
+
+  if (Object.prototype.hasOwnProperty.call(def, 'description') && typeof def.description === 'string') {
+    s.description = def.description
   }
 
   if (Object.prototype.hasOwnProperty.call(def, 'triggers')) {
-    triggers = MakeTriggers(def.triggers) ?? []
+    s.triggers = MakeTriggers(def.triggers) ?? []
   }
 
-  if (!triggers || triggers.length === 0) {
-    errors.push('invalid or undefined triggers')
+  if (!s.triggers || s.triggers.length === 0) {
+    s.errors.push('invalid or undefined triggers')
   }
 
   if (!Object.prototype.hasOwnProperty.call(def, 'exec')) {
-    errors.push('exec callback missing')
+    s.errors.push('exec callback missing')
   } else if (typeof def.exec !== 'function') {
-    errors.push('exec not a function')
+    s.errors.push('exec not a function')
+  } else {
+    s.exec = def.exec as ScriptFn
   }
 
-  let security: ScriptSecurity
   if (Object.prototype.hasOwnProperty.call(def, 'security')) {
     if (typeof def.security === 'object') {
-      security = resolveSecurity(def.security as RawScriptSecurity)
+      s.security = resolveSecurity(def.security as RawScriptSecurity)
     }
   }
 
   // Merge resolved & the rest
-  return {
-    ...(def as object),
-    filepath,
-    name,
-    errors,
-    triggers,
-    security,
-  }
+  return s
 }
 
 /**
@@ -116,13 +116,14 @@ export async function LoadScript ({ filepath }: RawScript, basepath: string): Pr
     filename = filename.substring(0, lastDot)
   }
 
-  const script = {
+  const baseScript = {
     filepath,
     name: filename,
     errors: [],
+    updatedAt: new Date(),
   }
 
-  let exports: {[_: string]: unknown}
+  let exports: {[_: string]: {[_: string]: unknown}}
 
   try {
     // We'll use require instead of import
@@ -133,29 +134,35 @@ export async function LoadScript ({ filepath }: RawScript, basepath: string): Pr
 
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     exports = require(filepath)
+
+    baseScript.updatedAt = (await fs.stat(filepath)).mtime
   } catch (e) {
     logger.error(e)
     return [{
-      ...script,
+      ...baseScript,
       errors: [e.toString()],
     }]
   }
 
+  Object.freeze(baseScript)
+
   for (const name in exports) {
+    const script = { ...baseScript }
+
     if (!Object.prototype.hasOwnProperty.call(exports, name)) {
       continue
     }
 
     if (typeof exports[name] !== 'object') {
+      script.errors.push('expecting an object with script definition (exec, triggers)')
       continue
     }
 
-    let scriptName = filename
     if (name !== 'default') {
-      scriptName = `${filename}:${name}`
+      script.name = `${filename}:${name}`
     }
 
-    ss.push(ResolveScript(scriptName, filepath, (exports[name] as {[_: string]: unknown})))
+    ss.push(ProcExports(script, exports[name]))
   }
 
   return ss
