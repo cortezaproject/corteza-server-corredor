@@ -271,6 +271,11 @@ CORREDOR_DEFAULT_EXEC_TIMEOUT
 | Timeout for server script execution
 
 
+CORREDOR_LIST_REFRESH
+| duration
+| 30s
+| Script list refresh frequency
+
 CORREDOR_LIST_TIMEOUT
 | duration
 | 2s

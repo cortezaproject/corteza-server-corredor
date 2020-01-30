@@ -155,18 +155,18 @@ export function Handlers (h: Service, loggerService: BaseLogger): object {
       }
 
       const imsMD = metadata.get('if-modified-since')
-      const ims = (imsMD.length > 0) ? new Date(imsMD[0].toString()) : undefined
+      const ifModifiedSince = (imsMD.length > 0) ? new Date(imsMD[0].toString()) : undefined
 
-      if (ims && h.lastUpdated <= ims) {
+      if (ifModifiedSince && h.lastUpdated <= ifModifiedSince) {
         logger.debug({
-          ifModifiedSince: ims,
+          ifModifiedSince: ifModifiedSince,
           lastModified: h.lastUpdated,
         }, 'scripts older than requested by if-modified-since header')
         done(null, { scripts: [] })
         return
       }
 
-      logger.debug({ filter }, 'returning list of scripts')
+      logger.debug({ filter, ifModifiedSince }, 'returning list of scripts')
 
       try {
         done(null, {
