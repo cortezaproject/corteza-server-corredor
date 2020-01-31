@@ -4,8 +4,12 @@ import logger from './logger'
 import * as scriptLoader from './scripts/loader'
 import { Script } from './scripts/shared'
 import * as serverScripts from './scripts/server'
+import * as clientScripts from './scripts/client'
+import { BundleBuilder } from '@cortezaproject/corteza-js'
 import watch from 'node-watch'
 import { debounce } from 'lodash'
+import fs from 'fs'
+import path from 'path'
 
 interface WatchFn {
     (): void;
@@ -22,6 +26,68 @@ interface WatcherConfig {
   basedir: string;
   enabled: boolean;
   watch: boolean;
+}
+
+interface ParsedBundleFilename {
+  bundle: string;
+  filename: string;
+  ext: string;
+}
+
+// parse /home/wrk/Projects/corteza/corteza-server-corredor/usr/src/client/auth/auth_clientscript.js into
+// {
+//   bundle: 'auth',
+//   filename: 'auth_clientscript',
+//   ext: 'js'
+// }
+export function ParseBundleScriptFilename (f: string): ParsedBundleFilename {
+  const reg = new RegExp(/(\w+)(\/)(?!.*\/)(\w+)\.(.*)/)
+
+  const p: ParsedBundleFilename = {
+    bundle: '',
+    filename: '',
+    ext: '',
+  }
+
+  if (!reg.test(f)) {
+    return p
+  }
+
+  const [, bundle, , filename, ext] = reg.exec(f)
+
+  p.bundle = bundle
+  p.filename = filename
+  p.ext = ext
+
+  return p
+}
+
+// parse /home/wrk/Projects/corteza/corteza-server-corredor/usr/dist/client/compose.bundle.js into
+// {
+//   bundle: 'compose',
+//   filename: 'compose.bundle.js',
+//   ext: 'js'
+// }
+export function ParseBundleFilename (f: string): ParsedBundleFilename {
+  const reg = new RegExp(/(?!.*\/)(\w+)\.bundle\.(.*)/)
+
+  const p: ParsedBundleFilename = {
+    bundle: '',
+    filename: '',
+    ext: '',
+  }
+
+  if (!reg.test(f)) {
+    return p
+  }
+
+  const [filename, bundle, ext] = reg.exec(f)
+
+  p.bundle = bundle
+  p.filename = filename
+  p.ext = ext
+
+  return p
 }
 
 export async function InstallDependencies (): Promise<deps.PackageInstallStatus[]> {
@@ -69,14 +135,51 @@ export async function ReloadServerScripts (svc: serverScripts.Service): Promise<
     })
 }
 
-export async function ReloadClientScripts (/* svc: clientScripts.Service */): Promise<void> {
-  // if (!config.scripts.client.enabled) {
-  //   return
-  // }
+export async function ReloadClientScripts (svc: clientScripts.Service): Promise<void> {
+  if (!config.scripts.client.enabled) {
+    return
+  }
 
-  // @todo implementation
-  // logger.info('reloading client scripts')
-  // return
+  logger.info('reloading client scripts')
+
+  console.log(svc)
+
+  const files: Map<string, string[]> = new Map<string, string[]>()
+
+  for await (const r of scriptLoader.Finder(config.scripts.client.basedir)) {
+    const parsed = ParseBundleScriptFilename(r.filepath)
+
+    if (parsed.bundle !== '') {
+      const v = files.get(parsed.bundle) || [] as Array<string>
+      files.set(parsed.bundle, [r.filepath, ...v])
+    }
+  }
+
+  if (!files.size) {
+    return
+  }
+
+  console.log('FPS', files)
+
+  // call bundlebuilder and packer? to create files
+  const bb = new BundleBuilder()
+
+  files.forEach((filepaths, bundle) => {
+    bb.setBundle(bundle)
+
+    filepaths.forEach((f) => {
+      bb.registerFile(f)
+    })
+
+    bb.setStream(fs.createWriteStream(path.resolve(config.scripts.client.bundleoutput, `${bundle}.exports.js`)))
+    bb.generateImports()
+    bb.dumpToStream()
+
+    bb.buildWithBundler(
+      path.resolve(config.scripts.client.bundleoutput, `${bundle}.exports.js`),
+      path.resolve(config.scripts.client.bundleoutput),
+    )
+  })
 }
 
 export function Watcher (callback: WatchFn, cfg: WatcherConfig, opts = watcherOpts): void {

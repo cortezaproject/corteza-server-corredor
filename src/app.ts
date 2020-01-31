@@ -32,7 +32,7 @@ let serverScriptsService: serverScripts.Service
 
 if (config.scripts.client.enabled) {
   logger.debug('initializing client-scripts service')
-  clientScriptsService = new clientScripts.Service()
+  clientScriptsService = new clientScripts.Service(config.scripts.client)
 }
 
 if (config.scripts.server.enabled) {
@@ -43,7 +43,7 @@ if (config.scripts.server.enabled) {
 async function reload (): Promise<unknown> {
   return Promise.all([
     ReloadServerScripts(serverScriptsService),
-    ReloadClientScripts(/* clientScriptsService */),
+    ReloadClientScripts(clientScriptsService),
   ])
 }
 
@@ -63,7 +63,7 @@ if (config.scripts.enabled) {
     // Setup serve & client script watchers
     // that will reload server-side scripts
     Watcher(() => ReloadServerScripts(serverScriptsService), config.scripts.server)
-    Watcher(() => ReloadClientScripts(/* clientScriptsService */), config.scripts.client)
+    Watcher(() => ReloadClientScripts(clientScriptsService), config.scripts.client)
   })
 } else {
   logger.warn('running without enabled script services')

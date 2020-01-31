@@ -1,9 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 
 import grpc from 'grpc'
+import * as scriptLoader from '../../scripts/loader'
 import { BaseLogger } from 'pino'
 import { HandleException } from '../../grpc-server'
 import { Script, Service } from './'
+import fs from 'fs'
+import path from 'path'
+import { ParseBundleFilename, ParseBundleScriptFilename } from '../../support'
 
 interface BundleRequest {
   name: string;
@@ -32,23 +36,45 @@ interface ListResponse {
 
 export function Handlers (h: Service, loggerService: BaseLogger): object {
   return {
-    Bundle ({ request }: { request: BundleRequest }, done: grpc.sendUnaryData<BundleResponse|null>): void {
+    async Bundle ({ request }: { request: BundleRequest }, done: grpc.sendUnaryData<BundleResponse|null>): void {
       const { name } = request
       const logger = loggerService.child({ rpc: 'Bundle' })
 
       logger.debug({ name }, 'serving bundle')
 
-      try {
-        const r: BundleResponse = {
-          bundles: [
-            {
-              name: 'dummy',
-              type: 'dummy',
-              code: '/* bundle content */',
-            },
-          ],
-        }
+      // create bundle with webpack
+      // serve them here
+      const filepaths: string[] = []
 
+      for await (const r of scriptLoader.Finder(h.config.bundleoutput, new RegExp(/bundle\.js$/))) {
+        filepaths.push(r.filepath)
+      }
+
+      if (!filepaths.length) {
+        const r: BundleResponse = { bundles: [] }
+        done(null, r)
+      }
+
+      const r: BundleResponse = {
+        bundles: [],
+      }
+
+      filepaths.forEach((f: string) => {
+        const content = fs.readFileSync(f)
+        const { bundle, filename, ext } = ParseBundleFilename(f)
+
+        if (filename !== '' && bundle === name) {
+          const b: Bundle = {
+            name: bundle,
+            type: ext,
+            code: content.toString(),
+          }
+
+          r.bundles.push(b)
+        }
+      })
+
+      try {
         done(null, r)
       } catch (e) {
         logger.debug({ stack: e.stack }, e.message)

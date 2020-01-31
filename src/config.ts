@@ -148,5 +148,6 @@ export const scripts = {
 
     enabled: isTrue(e.CORREDOR_SCRIPTS_CLIENT_ENABLED) ?? true,
     watch: isTrue(e.CORREDOR_SCRIPTS_CLIENT_WATCH) ?? true,
+    bundleoutput: path.normalize(e.CORREDOR_SCRIPTS_CLIENT_BASEDIR ?? path.join(scriptsBaseDir, 'dist/client')),
   },
 }

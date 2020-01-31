@@ -1,4 +1,5 @@
 import { Script, ScriptType } from './'
+import { corredor as exec } from '@cortezaproject/corteza-js'
 
 export interface ListFilter {
     query?: string;
@@ -73,6 +74,15 @@ function match (f: ListFilter): ListFiterFn {
  *
  */
 export class Service {
+  public readonly config: Record<string, any>;
+
+  /**
+     * Service constructor
+     */
+  constructor (config: Record<string, any>) {
+    this.config = config
+  }
+
     private scripts: Script[] = [
       {
         name: 'SomeFunctionWeCanCall',
