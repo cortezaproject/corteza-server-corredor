@@ -142,51 +142,79 @@ export async function ReloadClientScripts (svc: clientScripts.Service): Promise<
 
   logger.info('reloading client scripts')
 
-  console.log(svc)
+  return scriptLoader.Reloader(config.scripts.client.basedir)
+    .then((scripts: Script[]) => {
+      const isValid = (s: Script): boolean => !!s.name && !!s.exec && s.errors.length === 0
+      const vScripts = scripts.filter(isValid)
 
-  const files: Map<string, string[]> = new Map<string, string[]>()
+      scripts
+        .filter(s => !isValid(s))
+        .forEach(({ filepath, name, errors }) => {
+          errors.forEach(error => {
+            logger.warn({ filepath, scriptName: name }, 'client script error: %s', error)
+          })
+        })
 
-  for await (const r of scriptLoader.Finder(config.scripts.client.basedir)) {
-    const parsed = ParseBundleScriptFilename(r.filepath)
+      vScripts
+        .forEach(
+          ({ name, triggers }) =>
+            logger.debug({ scriptName: name, triggers: triggers.length }, 'client script ready'))
 
-    if (parsed.bundle !== '') {
-      const v = files.get(parsed.bundle) || [] as Array<string>
-      files.set(parsed.bundle, [r.filepath, ...v])
-    }
-  }
+      // All scripts (even invalid ones) are given to client scripts service
+      // we might want to look at errors
+      svc.Update(scripts)
 
-  if (!files.size) {
-    return
-  }
+      logger.info('%d valid client scripts loaded (%d total)',
+        vScripts.length,
+        scripts.length,
+      )
+    })
 
-  // call bundlebuilder and packer? to create files
-  const bb = new BundleBuilder()
-
-  // files.forEach(async (filepaths, bundle) => {
-  for await (const bundle of files.keys()) {
-    const filepaths = files.get(bundle)
-    bb.addBundle(bundle)
-
-    for await (const f of filepaths) {
-      const s = await scriptLoader.LoadScript({ filepath: f }, config.scripts.client.basedir)
-
-      s.forEach(async (script) => {
-        bb.registerScript2(script, f, bundle)
-      })
-    }
-  }
-
-  for await (const bundle of bb.getBundles()) {
-    bb.setStream(fs.createWriteStream(path.resolve(config.scripts.client.bundleoutput, `${bundle}.exports.js`)))
-    bb.generateImports(bundle)
-    bb.dumpToStream(bundle)
-
-    bb.buildWithBundler(
-      bundle,
-      path.resolve(config.scripts.client.bundleoutput, `${bundle}.exports.js`),
-      path.resolve(config.scripts.client.bundleoutput),
-    )
-  }
+  // console.log(svc)
+  //
+  // const files: Map<string, string[]> = new Map<string, string[]>()
+  //
+  // for await (const r of scriptLoader.Finder(config.scripts.client.basedir)) {
+  //   const parsed = ParseBundleScriptFilename(r.filepath)
+  //
+  //   if (parsed.bundle !== '') {
+  //     const v = files.get(parsed.bundle) || [] as Array<string>
+  //     files.set(parsed.bundle, [r.filepath, ...v])
+  //   }
+  // }
+  //
+  // if (!files.size) {
+  //   return
+  // }
+  //
+  // // call bundlebuilder and packer? to create files
+  // const bb = new BundleBuilder()
+  //
+  // // files.forEach(async (filepaths, bundle) => {
+  // for await (const bundle of files.keys()) {
+  //   const filepaths = files.get(bundle)
+  //   bb.addBundle(bundle)
+  //
+  //   for await (const f of filepaths) {
+  //     const s = await scriptLoader.LoadScript({ filepath: f }, config.scripts.client.basedir)
+  //
+  //     s.forEach(async (script) => {
+  //       bb.registerScript2(script, f, bundle)
+  //     })
+  //   }
+  // }
+  //
+  // for await (const bundle of bb.getBundles()) {
+  //   bb.setStream(fs.createWriteStream(path.resolve(config.scripts.client.bundleoutput, `${bundle}.exports.js`)))
+  //   bb.generateImports(bundle)
+  //   bb.dumpToStream(bundle)
+  //
+  //   bb.buildWithBundler(
+  //     bundle,
+  //     path.resolve(config.scripts.client.bundleoutput, `${bundle}.exports.js`),
+  //     path.resolve(config.scripts.client.bundleoutput),
+  //   )
+  // }
 }
 
 export function Watcher (callback: WatchFn, cfg: WatcherConfig, opts = watcherOpts): void {

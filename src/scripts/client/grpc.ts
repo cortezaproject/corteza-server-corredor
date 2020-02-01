@@ -4,7 +4,7 @@ import grpc from 'grpc'
 import * as scriptLoader from '../../scripts/loader'
 import { BaseLogger } from 'pino'
 import { HandleException } from '../../grpc-server'
-import { Script, Service } from './'
+import { Service } from './'
 import fs from 'fs'
 import { ParseBundleFilename } from '../../support'
 
@@ -30,7 +30,7 @@ interface ListRequest {
 }
 
 interface ListResponse {
-  scripts: Script[];
+  scripts: unknown[];
 }
 
 export function Handlers (h: Service, loggerService: BaseLogger): object {
@@ -95,7 +95,13 @@ export function Handlers (h: Service, loggerService: BaseLogger): object {
       logger.debug({ filter }, 'returning list of scripts')
 
       try {
-        done(null, { scripts: h.List(filter) })
+        done(null, {
+          scripts: h.List(filter)
+            .map(s => ({
+              ...s,
+              updatedAt: s.updatedAt.toISOString(),
+            })),
+        })
       } catch (e) {
         logger.debug({ stack: e.stack }, e.message)
         HandleException(e, done, grpc.status.INTERNAL)
