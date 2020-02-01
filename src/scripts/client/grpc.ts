@@ -1,12 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 
 import grpc from 'grpc'
-import * as scriptLoader from '../../scripts/loader'
 import { BaseLogger } from 'pino'
 import { HandleException } from '../../grpc-server'
 import { Service } from './'
-import fs from 'fs'
-import { ParseBundleFilename } from '../../support'
 import { IsModifiedSince } from '../shared'
 
 interface BundleRequest {
@@ -45,42 +42,14 @@ export function Handlers (h: Service, loggerService: BaseLogger): object {
       const { name } = request
       const logger = loggerService.child({ rpc: 'Bundle' })
 
-      logger.debug({ name }, 'serving bundle')
-
-      // create bundle with webpack
-      // serve them here
-      const filepaths: string[] = []
-
-      for await (const r of scriptLoader.Finder(h.config.bundleoutput, new RegExp(/bundle\.js$/))) {
-        filepaths.push(r.filepath)
-      }
-
-      if (!filepaths.length) {
-        const r: BundleResponse = { bundles: [] }
-        done(null, r)
-      }
-
-      const r: BundleResponse = {
-        bundles: [],
-      }
-
-      filepaths.forEach((f: string) => {
-        const content = fs.readFileSync(f)
-        const { bundle, filename, ext } = ParseBundleFilename(f)
-
-        if (filename !== '' && bundle === name) {
-          const b: Bundle = {
-            name: bundle,
-            type: ext,
-            code: content.toString(),
-          }
-
-          r.bundles.push(b)
-        }
-      })
-
       try {
-        done(null, r)
+        done(null, {
+          bundles: [{
+            name,
+            type: 'scripts',
+            code: h.Bundle(name).toString(),
+          }],
+        })
       } catch (e) {
         logger.debug({ stack: e.stack }, e.message)
         HandleException(e, done, grpc.status.INTERNAL)
