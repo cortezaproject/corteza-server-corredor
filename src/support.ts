@@ -5,11 +5,9 @@ import * as scriptLoader from './scripts/loader'
 import { Script } from './scripts/shared'
 import * as serverScripts from './scripts/server'
 import * as clientScripts from './scripts/client'
-import { BundleBuilder } from './bundler'
 import watch from 'node-watch'
 import { debounce } from 'lodash'
-import fs from 'fs'
-import path from 'path'
+import * as bundle from './bundler/webpack'
 
 interface WatchFn {
     (): void;
@@ -106,11 +104,12 @@ export async function ReloadServerScripts (svc: serverScripts.Service): Promise<
 
   // Reload scripts every-time packages changes!
   logger.info('reloading server scripts')
-  return scriptLoader.Reloader(config.scripts.server.basedir)
+  return scriptLoader.ServerScriptReloader(config.scripts.server.basedir)
     .then((scripts: Script[]) => {
       const isValid = (s: Script): boolean => !!s.name && !!s.exec && s.errors.length === 0
       const vScripts = scripts.filter(isValid)
 
+      // Log errors on all invalid scripts
       scripts
         .filter(s => !isValid(s))
         .forEach(({ filepath, name, errors }) => {
@@ -119,6 +118,7 @@ export async function ReloadServerScripts (svc: serverScripts.Service): Promise<
           })
         })
 
+      // Let developer know about valid scripts loaded
       vScripts
         .forEach(
           ({ name, triggers }) =>
@@ -128,6 +128,7 @@ export async function ReloadServerScripts (svc: serverScripts.Service): Promise<
       // we might want to look at errors
       svc.Update(scripts)
 
+      // Summarize reloading stats
       logger.info('%d valid server scripts loaded (%d total)',
         vScripts.length,
         scripts.length,
@@ -135,18 +136,39 @@ export async function ReloadServerScripts (svc: serverScripts.Service): Promise<
     })
 }
 
-export async function ReloadClientScripts (svc: clientScripts.Service): Promise<void> {
+export async function ReloadAndBundleClientScripts (svc: clientScripts.Service): Promise<void> {
   if (!config.scripts.client.enabled) {
     return
   }
 
   logger.info('reloading client scripts')
 
-  return scriptLoader.Reloader(config.scripts.client.basedir)
+  return scriptLoader.ClientScriptReloader(config.scripts.client.basedir)
     .then((scripts: Script[]) => {
       const isValid = (s: Script): boolean => !!s.name && !!s.exec && s.errors.length === 0
       const vScripts = scripts.filter(isValid)
 
+      // Make bundles out of all valid scripts
+      const scriptListPerBundle = vScripts.reduce((bi, s) => {
+        // Split remaning path of the script
+        const { bundle } = s
+
+        if (!bi[bundle]) {
+          bi[bundle] = []
+        }
+
+        bi[bundle].push(s)
+
+        return bi
+      }, {} as { [bundle: string]: Script[] })
+
+      const bootloaderPerBundle = bundle.BootLoader(config.scripts.client.bundleOutputPath, scriptListPerBundle)
+      for (const b in bootloaderPerBundle) {
+        logger.debug({ bundle: b }, 'bundling client scripts')
+        bundle.Pack(b, bootloaderPerBundle[b], config.scripts.client.basedir, config.scripts.client.bundleOutputPath)
+      }
+
+      // Log errors on all invalid scripts
       scripts
         .filter(s => !isValid(s))
         .forEach(({ filepath, name, errors }) => {
@@ -155,6 +177,7 @@ export async function ReloadClientScripts (svc: clientScripts.Service): Promise<
           })
         })
 
+      // Let developer know about valid scripts loaded
       vScripts
         .forEach(
           ({ name, triggers }) =>
@@ -164,6 +187,7 @@ export async function ReloadClientScripts (svc: clientScripts.Service): Promise<
       // we might want to look at errors
       svc.Update(scripts)
 
+      // Summarize reloading stats
       logger.info('%d valid client scripts loaded (%d total)',
         vScripts.length,
         scripts.length,
