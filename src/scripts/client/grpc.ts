@@ -7,6 +7,7 @@ import { HandleException } from '../../grpc-server'
 import { Service } from './'
 import fs from 'fs'
 import { ParseBundleFilename } from '../../support'
+import { IsModifiedSince } from '../shared'
 
 interface BundleRequest {
   name: string;
@@ -20,6 +21,11 @@ interface Bundle {
   name: string;
   type: string;
   code: string;
+}
+
+interface ListRequestWrap {
+  request: ListRequest;
+  metadata: grpc.Metadata;
 }
 
 interface ListRequest {
@@ -81,7 +87,7 @@ export function Handlers (h: Service, loggerService: BaseLogger): object {
       }
     },
 
-    List ({ request }: { request: ListRequest }, done: grpc.sendUnaryData<ListResponse|null>): void {
+    List ({ request, metadata }: ListRequestWrap, done: grpc.sendUnaryData<ListResponse|null>): void {
       const { query, resourceType, eventTypes, bundle } = request
       const logger = loggerService.child({ rpc: 'List' })
 
@@ -92,7 +98,13 @@ export function Handlers (h: Service, loggerService: BaseLogger): object {
         bundle,
       }
 
-      logger.debug({ filter }, 'returning list of scripts')
+      if (!IsModifiedSince(h.lastUpdated, metadata)) {
+        logger.debug('client scripts older than requested by if-modified-since header')
+        done(null, { scripts: [] })
+        return
+      }
+
+      logger.debug({ filter }, 'returning list of client scripts')
 
       try {
         done(null, {

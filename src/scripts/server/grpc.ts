@@ -4,6 +4,7 @@ import { HandleException } from '../../grpc-server'
 import { Service } from './service'
 import { LogToArray } from '../log-to-array'
 import { corredor as exec } from '@cortezaproject/corteza-js'
+import { IsModifiedSince } from '../shared'
 
 interface KV {
   [_: string]: string;
@@ -154,19 +155,13 @@ export function Handlers (h: Service, loggerService: BaseLogger): object {
         eventTypes,
       }
 
-      const imsMD = metadata.get('if-modified-since')
-      const ifModifiedSince = (imsMD.length > 0) ? new Date(imsMD[0].toString()) : undefined
-
-      if (ifModifiedSince && h.lastUpdated <= ifModifiedSince) {
-        logger.debug({
-          ifModifiedSince: ifModifiedSince,
-          lastModified: h.lastUpdated,
-        }, 'scripts older than requested by if-modified-since header')
+      if (!IsModifiedSince(h.lastUpdated, metadata)) {
+        logger.debug('server scripts older than requested by if-modified-since header')
         done(null, { scripts: [] })
         return
       }
 
-      logger.debug({ filter, ifModifiedSince }, 'returning list of scripts')
+      logger.debug({ filter }, 'returning list of server scripts')
 
       try {
         done(null, {

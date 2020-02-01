@@ -1,4 +1,4 @@
-import { Script } from '../shared'
+import { GetLastUpdated, Script } from '../shared'
 import MakeFilterFn from '../filter'
 
 interface ListFilter {
@@ -20,6 +20,11 @@ export class Service {
    */
   constructor () {
     // void
+  }
+
+  // Returns date of the most recently updated script from the set
+  get lastUpdated (): Date {
+    return GetLastUpdated(this.scripts)
   }
 
   /**
