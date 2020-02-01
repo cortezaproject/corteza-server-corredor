@@ -13,15 +13,45 @@ export interface ScriptSecurity {
 }
 
 export interface Script {
+  // Script location
   filepath: string;
+
+  // Script reference, used by exec
   name: string;
+
+  // Display friendly script name
   label?: string;
+
+  // Description of a script, lorem ipsum
   description?: string;
+
+  // Security settings,
+  // run-as settings and simplifed RBAC (lit of roles that are allowed/denied to execute the script)
+  //
+  // run-as:
+  //   [C] ignored
+  //   [S] enforced
+  //
+  // deny/allow:
+  //   [C] used for filtering (who can see what) but ignored
+  //   [S] enforced for manual scripts, ignored for implicit
+  //
   security?: ScriptSecurity;
+
+  // When & what trigger this script
   triggers?: Trigger[];
+
+  // Code (function) to be executed
   exec?: ScriptFn;
+
+  // Errors detected when loading script
   errors?: string[];
+
+  // File modification time
   updatedAt?: Date;
+
+  // Script bundle
+  bundle?: string;
 }
 
 /**
