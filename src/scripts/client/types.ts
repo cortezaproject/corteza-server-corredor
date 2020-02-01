@@ -15,4 +15,5 @@ export interface Script {
     bundle: string;
     type: ScriptType;
     errors: string[];
+    triggers?: string[];
 }

@@ -159,27 +159,34 @@ export async function ReloadClientScripts (svc: clientScripts.Service): Promise<
     return
   }
 
-  console.log('FPS', files)
-
   // call bundlebuilder and packer? to create files
   const bb = new BundleBuilder()
 
-  files.forEach((filepaths, bundle) => {
-    bb.setBundle(bundle)
+  // files.forEach(async (filepaths, bundle) => {
+  for await (const bundle of files.keys()) {
+    const filepaths = files.get(bundle)
+    bb.addBundle(bundle)
 
-    filepaths.forEach((f) => {
-      bb.registerFile(f)
-    })
+    for await (const f of filepaths) {
+      const s = await scriptLoader.LoadScript({ filepath: f }, config.scripts.client.basedir)
 
+      s.forEach(async (script) => {
+        bb.registerScript2(script, f, bundle)
+      })
+    }
+  }
+
+  for await (const bundle of bb.getBundles()) {
     bb.setStream(fs.createWriteStream(path.resolve(config.scripts.client.bundleoutput, `${bundle}.exports.js`)))
-    bb.generateImports()
-    bb.dumpToStream()
+    bb.generateImports(bundle)
+    bb.dumpToStream(bundle)
 
     bb.buildWithBundler(
+      bundle,
       path.resolve(config.scripts.client.bundleoutput, `${bundle}.exports.js`),
       path.resolve(config.scripts.client.bundleoutput),
     )
-  })
+  }
 }
 
 export function Watcher (callback: WatchFn, cfg: WatcherConfig, opts = watcherOpts): void {
