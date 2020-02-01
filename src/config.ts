@@ -136,7 +136,7 @@ export const scripts = {
 
   server: {
     // location of server scripts
-    basedir: path.normalize(e.CORREDOR_SCRIPTS_SERVER_BASEDIR ?? path.join(scriptsBaseDir, 'src/server')),
+    basedir: path.resolve(e.CORREDOR_SCRIPTS_SERVER_BASEDIR ?? path.join(scriptsBaseDir, 'src/server')),
 
     enabled: isTrue(e.CORREDOR_SCRIPTS_SERVER_ENABLED) ?? true,
     watch: isTrue(e.CORREDOR_SCRIPTS_SERVER_WATCH) ?? true,
@@ -144,10 +144,11 @@ export const scripts = {
 
   client: {
     // location of client scripts
-    basedir: path.normalize(e.CORREDOR_SCRIPTS_CLIENT_BASEDIR ?? path.join(scriptsBaseDir, 'src/client')),
+    basedir: path.resolve(e.CORREDOR_SCRIPTS_CLIENT_BASEDIR ?? path.join(scriptsBaseDir, 'src/client')),
 
     enabled: isTrue(e.CORREDOR_SCRIPTS_CLIENT_ENABLED) ?? true,
     watch: isTrue(e.CORREDOR_SCRIPTS_CLIENT_WATCH) ?? true,
-    bundleoutput: path.normalize(e.CORREDOR_SCRIPTS_CLIENT_BASEDIR ?? path.join(scriptsBaseDir, 'dist/client')),
+
+    bundleOutputPath: path.resolve(e.CORREDOR_SCRIPTS_CLIENT_BUNDLE_OUTPUT_PATH ?? path.join(scriptsBaseDir, 'dist')),
   },
 }
