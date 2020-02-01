@@ -42,12 +42,19 @@ export function Handlers (h: Service, loggerService: BaseLogger): object {
       const { name } = request
       const logger = loggerService.child({ rpc: 'Bundle' })
 
+      let code = ''
+      try {
+        code = h.Bundle(name).toString()
+      } catch (e) {
+        logger.error('Could not load requested bundle', e)
+      }
+
       try {
         done(null, {
           bundles: [{
             name,
             type: 'scripts',
-            code: h.Bundle(name).toString(),
+            code,
           }],
         })
       } catch (e) {
