@@ -1,7 +1,7 @@
 import { describe, it } from 'mocha'
 import { expect } from 'chai'
 import { join } from 'path'
-import { LoadScript, ProcExports } from './loader'
+import { ClientScriptFilenameMatcher, LoadScript, ProcExports, ServerScriptFilenameMatcher } from './loader'
 import { Trigger } from './trigger'
 
 const baseScript = {
@@ -10,9 +10,36 @@ const baseScript = {
 }
 
 describe(__filename, () => {
+  describe('filename matchers', () => {
+    it('should match server script filename matchers', () => {
+      expect('simple.js').to.match(ServerScriptFilenameMatcher)
+      expect('longer/path/to/the/script.js').to.match(ServerScriptFilenameMatcher)
+      expect('not-jet-implemented.ts').not.to.match(ServerScriptFilenameMatcher)
+      expect('js.ts').not.to.match(ServerScriptFilenameMatcher)
+    })
+
+    it('should properly extract server script name', () => {
+      const { groups } = ServerScriptFilenameMatcher.exec('path/to/the/script.js')
+      expect(groups).to.have.property('name').equal('path/to/the/script')
+    })
+
+    it('should match client script filename matchers', () => {
+      expect('bundle/simple.js').to.match(ClientScriptFilenameMatcher)
+      expect('bundle/longer/path/to/the/script.js').to.match(ClientScriptFilenameMatcher)
+      expect('bundle/not-jet-implemented.ts').not.to.match(ClientScriptFilenameMatcher)
+      expect('bundle/js.ts').not.to.match(ClientScriptFilenameMatcher)
+    })
+
+    it('should properly extract client script name and bundle', () => {
+      const { groups } = ClientScriptFilenameMatcher.exec('bundle/script.js')
+      expect(groups).to.have.property('name').equal('bundle/script')
+      expect(groups).to.have.property('bundle').equal('bundle')
+    })
+  })
+
   describe('script loading', () => {
     it('should be able to load this file', async () => {
-      const loadedScripts = await LoadScript({ filepath: join(__dirname, '_test', 'sample.js') }, __dirname)
+      const loadedScripts = await LoadScript({ filepath: join(__dirname, '_test', 'sample.js') }, __dirname, ServerScriptFilenameMatcher)
       expect(loadedScripts).to.have.length.greaterThan(0)
     })
   })

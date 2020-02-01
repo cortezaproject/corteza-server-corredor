@@ -52,6 +52,9 @@ export interface Script {
 
   // Script bundle
   bundle?: string;
+
+  // Name of the exported symbol (default, ...)
+  exportName?: string;
 }
 
 /**

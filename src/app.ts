@@ -8,7 +8,7 @@ import * as serverScripts from './scripts/server'
 import * as clientScripts from './scripts/client'
 import * as gRPCServer from './grpc-server'
 import { EnvCheck } from './envcheck'
-import { InstallDependencies, ReloadClientScripts, ReloadServerScripts, Watcher } from './support'
+import { InstallDependencies, ReloadAndBundleClientScripts, ReloadServerScripts, Watcher } from './support'
 
 /**
  *
@@ -43,7 +43,7 @@ if (config.scripts.server.enabled) {
 async function reload (): Promise<unknown> {
   return Promise.all([
     ReloadServerScripts(serverScriptsService),
-    ReloadClientScripts(clientScriptsService),
+    ReloadAndBundleClientScripts(clientScriptsService),
   ])
 }
 
@@ -63,7 +63,7 @@ if (config.scripts.enabled) {
     // Setup serve & client script watchers
     // that will reload server-side scripts
     Watcher(() => ReloadServerScripts(serverScriptsService), config.scripts.server)
-    Watcher(() => ReloadClientScripts(clientScriptsService), config.scripts.client)
+    Watcher(() => ReloadAndBundleClientScripts(clientScriptsService), config.scripts.client)
   })
 } else {
   logger.warn('running without enabled script services')
