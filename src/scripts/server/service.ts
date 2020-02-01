@@ -11,7 +11,6 @@ interface ListFilter {
     eventTypes?: string[];
 }
 
-
 /**
  *
  */

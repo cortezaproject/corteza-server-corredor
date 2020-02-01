@@ -6,8 +6,7 @@ import { BaseLogger } from 'pino'
 import { HandleException } from '../../grpc-server'
 import { Script, Service } from './'
 import fs from 'fs'
-import path from 'path'
-import { ParseBundleFilename, ParseBundleScriptFilename } from '../../support'
+import { ParseBundleFilename } from '../../support'
 
 interface BundleRequest {
   name: string;

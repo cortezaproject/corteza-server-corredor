@@ -74,7 +74,8 @@ function match (f: ListFilter): ListFiterFn {
  *
  */
 export class Service {
-  public readonly config: Record<string, any>;
+  private scripts: Script[] = []
+  public readonly config: Record<string, any>
 
   /**
      * Service constructor
@@ -83,50 +84,20 @@ export class Service {
     this.config = config
   }
 
-    private scripts: Script[] = [
-      {
-        name: 'SomeFunctionWeCanCall',
-        label: 'dummy label for dummy function',
-        description: 'dummy description',
-        eventTypes: [],
-        type: ScriptType.function,
-        bundle: 'example',
-        errors: [],
-      },
-      {
-        name: 'style',
-        label: 'dummy label',
-        description: 'dummy description',
-        eventTypes: [],
-        type: ScriptType.style,
-        bundle: 'example',
-        errors: [],
-      },
-      {
-        name: 'VueComponent',
-        label: 'dummy label',
-        description: 'lorem ipsum',
-        eventTypes: [],
-        type: ScriptType.component,
-        bundle: 'example',
-        errors: [],
-      },
-    ];
+  /**
+   * Loads scripts
+   *
+   * @return {void}
+   */
+  Update (set: Script[]): void {
+    // Scripts loaded, replace set
+    this.scripts = set
+  }
 
-    /**
-     * Loads scripts
-     *
-     * @return {void}
-     */
-    Update (set: Script[]): void {
-      // Scripts loaded, replace set
-      this.scripts = set
-    }
-
-    /**
-     * Returns list of scripts
-     */
-    List (f: ListFilter = {}): Script[] {
-      return this.scripts.filter(match(f))
-    }
+  /**
+   * Returns list of scripts
+   */
+  List (f: ListFilter = {}): Script[] {
+    return this.scripts.filter(match(f))
+  }
 }
