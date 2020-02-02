@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-ignore */
-
 import grpc from 'grpc'
 import { BaseLogger } from 'pino'
 import { HandleException } from '../../grpc-server'
@@ -38,7 +36,7 @@ interface ListResponse {
 
 export function Handlers (h: Service, loggerService: BaseLogger): object {
   return {
-    async Bundle ({ request }: { request: BundleRequest }, done: grpc.sendUnaryData<BundleResponse|null>): void {
+    Bundle ({ request }: { request: BundleRequest }, done: grpc.sendUnaryData<BundleResponse|null>): void {
       const { name } = request
       const logger = loggerService.child({ rpc: 'Bundle' })
 
