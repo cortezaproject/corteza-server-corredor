@@ -6,12 +6,6 @@ interface Entry {
   [bundle: string]: string;
 }
 
-interface BundlerConfig {
-  entry: Entry;
-  context: string;
-  output: string;
-}
-
 interface BundledScripts {
   [bundle: string]: Script[];
 }
@@ -103,6 +97,16 @@ export function Register({ verbose = true, eventbus = undefined, uiHooks = undef
   return e
 }
 
+/**
+ * Bundles client scripts w/ webpack
+ *
+ * @param {string} name
+ * @param {string} entry
+ * @param {string} context
+ * @param {string} outputPath
+ *
+ * @constructor
+ */
 export function Pack (name, entry, context, outputPath): void {
   const cfg: webpack.Configuration = {
     // mode: 'production',
