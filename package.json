@@ -11,8 +11,8 @@
   "types": "dist/types.d.ts",
   "scripts": {
     "tsndev": "ts-node-dev --debounce 200 --transpileOnly -r esm",
-    "serve:dev": "yarn tsndev --respawn --ignore-watch node_modules --ignore-watch usr ./src/app.ts",
-    "serve": "ts-node -r esm ./src/app.ts",
+    "serve:dev": "yarn tsndev --respawn --ignore-watch node_modules --ignore-watch usr ./src/server.ts",
+    "serve": "ts-node -r esm ./src/server.ts",
     "lint": "eslint src/** --ext .js,.ts",
     "test:unit": "mocha",
     "test:unit:cc": "nyc mocha",
@@ -45,6 +45,7 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "esm": "^3.2.25",
+    "glob": "^7.1.6",
     "grpc": "^1.24.1",
     "lodash": "^4.17.15",
     "mocha": "^6.2.2",

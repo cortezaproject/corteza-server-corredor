@@ -180,11 +180,6 @@ You can change that if you need to test/alter proto buffers for development.
 | `./node_modules`
 | By default Corredor uses it's own directory for user scripts
 
-3+| CORREDOR_SCRIPTS_SERVER_BASEDIR
-| bool
-| scripts-basedir + +`./usr/server`
-| Location of server scritps
-
 3+| CORREDOR_SCRIPTS_SERVER_ENABLED
 | bool
 | `true`
@@ -194,11 +189,6 @@ You can change that if you need to test/alter proto buffers for development.
 | bool
 | `true`
 | Watch server scripts for changes and reload
-
-3+| CORREDOR_SCRIPTS_CLIENT_BASEDIR
-| bool
-| scripts-basedir + +`./usr/client`
-| Location of client scritps
 
 3+| CORREDOR_SCRIPTS_CLIENT_ENABLED
 | bool

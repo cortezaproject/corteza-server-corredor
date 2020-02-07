@@ -99,56 +99,69 @@ export const services = {
   },
 }
 
-const scriptsBaseDir = path.normalize(e.CORREDOR_SCRIPTS_BASEDIR ?? path.join(rootDir, 'usr'))
+export const execContext = {
+  cortezaServers: {
+    system: {
+      apiBaseURL: assembleBaseURL('system') ?? e.CORREDOR_EXEC_CTX_CORTEZA_SERVERS_SYSTEM_API_BASEURL,
+    },
 
-export const scripts = {
-  // where user scripts are
-  basedir: scriptsBaseDir,
-  enabled: true,
+    compose: {
+      apiBaseURL: assembleBaseURL('compose') ?? e.CORREDOR_EXEC_CTX_CORTEZA_SERVERS_COMPOSE_API_BASEURL,
+    },
+
+    messaging: {
+      apiBaseURL: assembleBaseURL('messaging') ?? e.CORREDOR_EXEC_CTX_CORTEZA_SERVERS_MESSAGING_API_BASEURL,
+    },
+  },
+}
+
+export const bundler = {
+  outputPath: path.resolve(e.CORREDOR_BUNDER_OUTPUT_PATH ?? '/tmp/corredor/bundler-dist'),
+  enabled: isTrue(e.CORREDOR_BUNDER_ENABLED) ?? true,
+}
+
+const extPath = path.normalize(e.CORREDOR_SCRIPTS_BASEDIR ?? path.join(rootDir, 'usr'))
+
+export const extensions = {
+  // Path to extensions
+  searchPaths: [
+    // search in all extension directories
+    path.join(extPath, 'src', '*'),
+
+    // if scripts are not nested under extension directory
+    path.join(extPath, 'src'),
+
+    // more search paths can be added here
+  ],
 
   dependencies: {
     // where to get script's dependencies from
-    packageJSON: e.CORREDOR_SCRIPTS_PACKAGE_JSON_FILE ?? path.join(scriptsBaseDir, 'package.json'),
+    packageJSON: e.CORREDOR_EXT_DEPENDENCIES_PACKAGE_JSON_FILE ?? path.join(extPath, 'package.json'),
 
     // where to install downloaded NPM packages
-    nodeModules: e.CORREDOR_SCRIPTS_NODE_MODULES_DIR ?? path.join(rootDir, 'node_modules'),
+    nodeModules: e.CORREDOR_EXT_DEPENDENCIES_NODE_MODULES_DIR ?? path.join(rootDir, 'node_modules'),
 
     // do we automatically update deps?
-    autoUpdate: isTrue(e.CORREDOR_SCRIPTS_AUTO_UPDATE_DEPENDENCIES) ?? true,
+    autoUpdate: isTrue(e.CORREDOR_EXT_DEPENDENCIES_AUTO_UPDATE) ?? true,
   },
 
-  // exec context
-  exec: {
-    cServers: {
-      system: {
-        apiBaseURL: assembleBaseURL('system') ?? e.CORREDOR_EXEC_CSERVERS_SYSTEM_API_BASEURL,
-      },
-
-      compose: {
-        apiBaseURL: assembleBaseURL('compose') ?? e.CORREDOR_EXEC_CSERVERS_COMPOSE_API_BASEURL,
-      },
-
-      messaging: {
-        apiBaseURL: assembleBaseURL('messaging') ?? e.CORREDOR_EXEC_CSERVERS_MESSAGING_API_BASEURL,
-      },
-    },
+  serverScripts: {
+    enabled: isTrue(e.CORREDOR_EXT_SERVER_SCRIPTS_ENABLED) ?? true,
+    watch: isTrue(e.CORREDOR_EXT_SERVER_SCRIPTS_WATCH) ?? true,
   },
 
-  server: {
-    // location of server scripts
-    basedir: path.resolve(e.CORREDOR_SCRIPTS_SERVER_BASEDIR ?? path.join(scriptsBaseDir, 'src/server')),
-
-    enabled: isTrue(e.CORREDOR_SCRIPTS_SERVER_ENABLED) ?? true,
-    watch: isTrue(e.CORREDOR_SCRIPTS_SERVER_WATCH) ?? true,
+  clientScripts: {
+    enabled: isTrue(e.CORREDOR_EXT_CLIENT_SCRIPTS_ENABLED) ?? true,
+    watch: isTrue(e.CORREDOR_EXT_CLIENT_SCRIPTS_WATCH) ?? true,
   },
 
-  client: {
-    // location of client scripts
-    basedir: path.resolve(e.CORREDOR_SCRIPTS_CLIENT_BASEDIR ?? path.join(scriptsBaseDir, 'src/client')),
-
-    enabled: isTrue(e.CORREDOR_SCRIPTS_CLIENT_ENABLED) ?? true,
-    watch: isTrue(e.CORREDOR_SCRIPTS_CLIENT_WATCH) ?? true,
-
-    bundleOutputPath: path.resolve(e.CORREDOR_SCRIPTS_CLIENT_BUNDLE_OUTPUT_PATH ?? '/tmp/corredor/client-scripts-dist'),
-  },
+  // vueComponents: {
+  //   enabled: isTrue(e.CORREDOR_EXT_VUE_COMPONENTS_ENABLED) ?? true,
+  //   watch: isTrue(e.CORREDOR_EXT_VUE_COMPONENTS_WATCH) ?? true,
+  // },
+  //
+  // styleSheets: {
+  //   enabled: isTrue(e.CORREDOR_EXT_STYLESHEETS_ENABLED) ?? true,
+  //   watch: isTrue(e.CORREDOR_EXT_STYLESHEETS_WATCH) ?? true,
+  // },
 }

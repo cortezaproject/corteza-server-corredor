@@ -88,7 +88,9 @@ export function encodeExecResult (args: object): KV {
   return enc
 }
 
-export function Handlers (h: Service, loggerService: BaseLogger): object {
+export function Handlers (h: Service, logger: BaseLogger): object {
+  logger = logger.child({ name: 'grpc.server-scripts' })
+
   return {
     Exec ({ request, metadata }: ExecRequestWrap, done: grpc.sendUnaryData<ExecResponse|null>): void {
       const started = Date.now()
@@ -97,17 +99,17 @@ export function Handlers (h: Service, loggerService: BaseLogger): object {
       const { name, args: eArgs } = request
 
       const [requestId] = metadata.get('x-request-id')
-      const logger = loggerService.child({ rpc: 'Exec', script: name, requestId })
+      const log = logger.child({ rpc: 'Exec', script: name, requestId })
 
       let dArgs: ExecArgsRaw = {}
 
       try {
         // Decode arguments
         // passed in as keys with JSON-encoded values
-        logger.debug({ eArgs }, 'encoded arguments')
+        log.debug({ eArgs }, 'encoded arguments')
         dArgs = decodeExecArguments(eArgs)
 
-        logger.debug('executing script %s', name)
+        log.debug('executing script %s', name)
       } catch (e) {
         HandleException(e, done, grpc.status.INVALID_ARGUMENT)
       }
@@ -122,32 +124,32 @@ export function Handlers (h: Service, loggerService: BaseLogger): object {
       const args = new exec.Args(dArgs)
 
       try {
-        h.Exec(name, args as exec.BaseArgs, scriptLogger).then((result) => {
+        h.exec(name, args as exec.BaseArgs, scriptLogger).then((result) => {
           const meta = new grpc.Metadata()
 
           // Map each log line from the executed function to the metadata
           logBuffer.serialize().forEach((l: string) => {
-            logger.debug(`${name} emitted log: ${l}`)
+            log.debug(`${name} emitted log: ${l}`)
             meta.add('log', l)
           })
 
           done(null, { result: encodeExecResult(result) }, meta)
-          logger.debug({
+          log.debug({
             duration: Date.now() - started,
           }, 'done')
         }).catch(e => {
-          logger.debug({ stack: e.stack }, e.message)
+          log.debug({ stack: e.stack }, e.message)
           HandleException(e, done, grpc.status.ABORTED)
         })
       } catch (e) {
-        logger.debug({ stack: e.stack }, e.message)
+        log.debug({ stack: e.stack }, e.message)
         HandleException(e, done, grpc.status.ABORTED)
       }
     },
 
     List ({ request, metadata }: ListRequestWrap, done: grpc.sendUnaryData<ListResponse|null>): void {
       const { query, resourceType, eventTypes } = request
-      const logger = loggerService.child({ rpc: 'List' })
+      const log = logger.child({ rpc: 'List' })
 
       const filter = {
         query,
@@ -156,23 +158,23 @@ export function Handlers (h: Service, loggerService: BaseLogger): object {
       }
 
       if (!IsModifiedSince(h.lastUpdated, metadata)) {
-        logger.debug('server scripts older than requested by if-modified-since header')
+        log.debug('server scripts older than requested by if-modified-since header')
         done(null, { scripts: [] })
         return
       }
 
-      logger.debug({ filter }, 'returning list of server scripts')
+      log.debug({ filter }, 'returning list of server scripts')
 
       try {
         done(null, {
-          scripts: h.List(filter)
+          scripts: h.list(filter)
             .map(s => ({
               ...s,
               updatedAt: s.updatedAt.toISOString(),
             })),
         })
       } catch (e) {
-        logger.debug({ stack: e.stack }, e.message)
+        log.debug({ stack: e.stack }, e.message)
         HandleException(e, done, grpc.status.INTERNAL)
       }
     },

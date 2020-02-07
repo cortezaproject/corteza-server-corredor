@@ -1,35 +1,38 @@
-/* eslint-disable no-unused-expressions,@typescript-eslint/no-empty-function,@typescript-eslint/ban-ts-ignore */
-
+import pino from 'pino'
 import { describe, it } from 'mocha'
 import { expect } from 'chai'
 import { Service } from '.'
 import { Trigger } from '../trigger'
 
-const serviceConfig = {
-  cServers: {
-    system: { apiBaseURL: 'unit-test' },
-    compose: { apiBaseURL: 'unit-test' },
-    messaging: { apiBaseURL: 'unit-test' },
-  },
+const baseScript = {
+  src: 'path/to/script',
+  name: 'scriptname',
+  updatedAt: new Date(),
 }
 
-const baseScript = {
-  name: 'scriptname',
-  filepath: 'path/to/script',
-}
+const svcCtorArgs = Object.freeze({
+  logger: pino({ level: 'silent' }),
+  config: {
+    cServers: {
+      system: { apiBaseURL: 'unit-test' },
+      compose: { apiBaseURL: 'unit-test' },
+      messaging: { apiBaseURL: 'unit-test' },
+    },
+  },
+})
 
 describe('scripts list', () => {
   describe('empty', () => {
     it('should be empty', () => {
-      const svc = new Service(serviceConfig)
-      expect(svc.List()).to.have.lengthOf(0)
+      const svc = new Service(svcCtorArgs)
+      expect(svc.list()).to.have.lengthOf(0)
     })
   })
 
   describe('filled', () => {
-    const svc = new Service(serviceConfig)
+    const svc = new Service(svcCtorArgs)
     beforeEach(() => {
-      svc.Update([
+      svc.update([
         {
           ...baseScript,
           label: 'label1',
@@ -64,35 +67,35 @@ describe('scripts list', () => {
     })
 
     it('should match all 3 with "abel"', () => {
-      expect(svc.List({ query: 'abel' })).to.have.lengthOf(3)
+      expect(svc.list({ query: 'abel' })).to.have.lengthOf(3)
     })
 
     it('should match 1 with labe1', () => {
-      expect(svc.List({ query: 'label1' })).to.have.lengthOf(1)
+      expect(svc.list({ query: 'label1' })).to.have.lengthOf(1)
     })
 
     it('should match all 3 with description', () => {
-      expect(svc.List({ query: 'deskr' })).to.have.lengthOf(3)
+      expect(svc.list({ query: 'deskr' })).to.have.lengthOf(3)
     })
 
     it('should match 2 with res2 for resource', () => {
-      expect(svc.List({ resourceType: 'res2' })).to.have.lengthOf(2)
+      expect(svc.list({ resourceType: 'res2' })).to.have.lengthOf(2)
     })
 
     it('should match none with re for resource', () => {
-      expect(svc.List({ resourceType: 're' })).to.have.lengthOf(0)
+      expect(svc.list({ resourceType: 're' })).to.have.lengthOf(0)
     })
 
     it('should match 2 with events', () => {
-      expect(svc.List({ eventTypes: ['afterMyThing'] })).to.have.lengthOf(2)
+      expect(svc.list({ eventTypes: ['afterMyThing'] })).to.have.lengthOf(2)
     })
 
     it('should match 1 with event', () => {
-      expect(svc.List({ eventTypes: ['beforeMyThing'] })).to.have.lengthOf(1)
+      expect(svc.list({ eventTypes: ['beforeMyThing'] })).to.have.lengthOf(1)
     })
 
     it('should match all with no events', () => {
-      expect(svc.List({ eventTypes: [] })).to.have.lengthOf(3)
+      expect(svc.list({ eventTypes: [] })).to.have.lengthOf(3)
     })
   })
 })

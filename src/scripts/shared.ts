@@ -1,21 +1,22 @@
 import grpc from 'grpc'
 import { Trigger } from './trigger'
-import { corredor as exec } from '@cortezaproject/corteza-js'
+import { ScriptFn, ScriptSecurity } from './types'
 
-export interface ScriptFn {
-  (args: exec.Args, ctx?: exec.Ctx): unknown;
-}
-
-export interface ScriptSecurity {
-  runAs?: string;
-  deny: string[];
-  allow: string[];
-}
-
-export interface Script {
+export interface ScriptFile {
   // Script location
-  filepath: string;
+  src: string;
 
+  // File modification time
+  updatedAt: Date;
+
+  // Errors detected when requiring the script
+  errors?: string[];
+
+  // Client script bundle
+  bundle?: string;
+}
+
+export interface Script extends ScriptFile {
   // Script reference, used by exec
   name: string;
 
@@ -26,15 +27,15 @@ export interface Script {
   description?: string;
 
   // Security settings,
-  // run-as settings and simplifed RBAC (lit of roles that are allowed/denied to execute the script)
+  // run-as settings and simplified RBAC (list of roles that are allowed/denied to execute the script)
   //
   // run-as:
-  //   [C] ignored
-  //   [S] enforced
+  //   For client scripts: ignored
+  //   For server scripts: enforced
   //
   // deny/allow:
-  //   [C] used for filtering (who can see what) but ignored
-  //   [S] enforced for manual scripts, ignored for implicit
+  //   For client scripts: used for filtering (who can see what) but ignored
+  //   For server scripts: enforced for manual scripts, ignored for implicit
   //
   security?: ScriptSecurity;
 
@@ -43,15 +44,6 @@ export interface Script {
 
   // Code (function) to be executed
   exec?: ScriptFn;
-
-  // Errors detected when loading script
-  errors?: string[];
-
-  // File modification time
-  updatedAt?: Date;
-
-  // Script bundle
-  bundle?: string;
 
   // Name of the exported symbol (default, ...)
   exportName?: string;

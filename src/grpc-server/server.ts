@@ -19,17 +19,20 @@ export type ServiceDefinition = Map<grpc.ServiceDefinition<unknown>, unknown>
  */
 export function Start ({ addr, certificates }: ServerConfig, logger: BaseLogger, services: ServiceDefinition): void {
   const server = new grpc.Server()
+  const log = logger.child({ name: 'gRPC' })
+
+  log.debug('starting server')
 
   const handle = (): void => {
     // Override signal handler with more severe approach
     process.on('SIGINT', () => {
-      logger.warn('forcing gRPC server to stop')
+      log.warn('forcing server to stop')
       server.forceShutdown()
     })
 
-    logger.debug('trying to stop gRPC server')
+    log.debug('trying to stop the server')
     server.tryShutdown(() => {
-      logger.info('gRPC server stopped')
+      log.info('server stopped')
     })
   }
 
@@ -57,10 +60,10 @@ export function Start ({ addr, certificates }: ServerConfig, logger: BaseLogger,
   }
 
   if (server.bind(addr, security) === 0) {
-    logger.error(`could not bind gRPC server to ${addr}`)
+    log.error(`could not bind to ${addr}`)
     return
   }
 
-  logger.info(`gRPC server running at ${addr}`)
+  log.info(`server running at ${addr}`)
   server.start()
 }
