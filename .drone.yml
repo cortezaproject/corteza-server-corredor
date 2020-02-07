@@ -12,7 +12,7 @@ steps:
       - yarn lint
       - yarn test:unit
 
-  - name: "Build production release image"
+  - name: "Build docker image"
     image: "plugins/docker"
     settings:
       auto_tag: true
@@ -20,5 +20,5 @@ steps:
       username: { from_secret: "docker_hub_username" }
       password: { from_secret: "docker_hub_password" }
     when:
-      ref: { include: [ "refs/tags/20??.*.*", "refs/heads/master", "refs/heads/preview" ] }
-      event: [ "push", "tag" ]
+      ref: { include: [ "refs/tags/20??.*.*", "refs/heads/master" ] }
+      event: [ "tag" ]
