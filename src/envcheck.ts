@@ -35,6 +35,19 @@ function scriptCheck (type: string, s): void {
   }
 }
 
+function clientBundleOutputCheck (path: string, s): void {
+  fs.mkdirSync(path, { recursive: true })
+
+  fs.access(path, fs.constants.W_OK, function (err) {
+    if (err) {
+      s.enabled = false
+      logger.error({ path, err }, 'can not configure client script bundle output location, not writable')
+    }
+
+    logger.debug({ path }, 'client scripts bundle location configured')
+  })
+}
+
 function depCheck (d): void {
   if (d.autoUpdate) {
     try {
@@ -72,6 +85,8 @@ export function EnvCheck (): void {
 
   scriptCheck('server', s.server)
   scriptCheck('client', s.client)
+
+  clientBundleOutputCheck(config.scripts.client.bundleOutputPath, s.client)
 
   depCheck(config.scripts.dependencies)
 }

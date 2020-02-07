@@ -149,6 +149,6 @@ export const scripts = {
     enabled: isTrue(e.CORREDOR_SCRIPTS_CLIENT_ENABLED) ?? true,
     watch: isTrue(e.CORREDOR_SCRIPTS_CLIENT_WATCH) ?? true,
 
-    bundleOutputPath: path.resolve(e.CORREDOR_SCRIPTS_CLIENT_BUNDLE_OUTPUT_PATH ?? path.join(scriptsBaseDir, 'dist')),
+    bundleOutputPath: path.resolve(e.CORREDOR_SCRIPTS_CLIENT_BUNDLE_OUTPUT_PATH ?? '/tmp/corredor/client-scripts-dist'),
   },
 }
