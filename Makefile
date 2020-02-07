@@ -1,13 +1,13 @@
 .PHONY: build push run
 
-TAG=latest
+TAG=$()
 IMAGE=cortezaproject/corteza-server-corredor
 
 build:
-	docker build --no-cache -t $(IMAGE):$(TAG) .
+	echo docker build --no-cache -t $(IMAGE):$(TAG) .
 
 push:
-	docker push $(IMAGE):$(TAG)
+	echo docker push $(IMAGE):$(TAG)
 
 run:
-	docker run --rm -it -e -P $(IMAGE):$(TAG)
+	echo docker run --rm -it -e -P $(IMAGE):$(TAG)
