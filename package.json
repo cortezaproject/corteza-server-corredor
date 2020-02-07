@@ -16,7 +16,7 @@
     "lint": "eslint src/** --ext .js,.ts",
     "test:unit": "mocha",
     "test:unit:cc": "nyc mocha",
-    "cdeps": "yarn upgrade corteza-js corteza-protobuf"
+    "update:protobuf": "yarn upgrade corteza-protobuf"
   },
   "dependencies": {
     "@cortezaproject/corteza-js": ">2020.3.0-alpha",
@@ -33,7 +33,7 @@
     "axios": "^0.19.1",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
-    "corteza-protobuf": "cortezaproject/corteza-protobuf.git#master",
+    "corteza-protobuf": "cortezaproject/corteza-protobuf.git#develop",
     "dotenv": "8.2.0",
     "download-npm-package": "^3.1.12",
     "eslint": "6.8.0",

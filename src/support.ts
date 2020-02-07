@@ -8,6 +8,9 @@ import * as clientScripts from './scripts/client'
 import watch from 'node-watch'
 import { debounce } from 'lodash'
 import * as bundle from './bundler/webpack'
+import * as gRPCServer from './grpc-server'
+import path from 'path'
+import grpc from 'grpc'
 
 interface WatchFn {
     (): void;
@@ -139,4 +142,19 @@ export function Watcher (callback: WatchFn, cfg: WatcherConfig, opts = watcherOp
 
   const watcher = watch(cfg.basedir, opts, debounce(() => callback(), 500))
   process.on('SIGINT', watcher.close)
+}
+
+export function ProtobufDefinitions (): Promise<grpc.GrpcObject> {
+  return gRPCServer
+    .LoadDefinitions(path.join(config.protobuf.path, '/service-corredor.proto'))
+    .then(({ corredor }) => {
+      const has = (svc: string): boolean => Object.hasOwnProperty.call(corredor, svc)
+
+      if (!corredor || !has('ServerScripts') || !has('ClientScripts')) {
+        logger.error('Invalid or incompatible protobuf files')
+        process.exit(1)
+      }
+
+      return corredor as grpc.GrpcObject
+    })
 }

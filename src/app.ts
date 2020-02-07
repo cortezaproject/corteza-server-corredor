@@ -8,7 +8,13 @@ import * as serverScripts from './scripts/server'
 import * as clientScripts from './scripts/client'
 import * as gRPCServer from './grpc-server'
 import { EnvCheck } from './envcheck'
-import { InstallDependencies, ReloadAndBundleClientScripts, ReloadServerScripts, Watcher } from './support'
+import {
+  InstallDependencies,
+  ProtobufDefinitions,
+  ReloadAndBundleClientScripts,
+  ReloadServerScripts,
+  Watcher,
+} from './support'
 
 /**
  *
@@ -40,6 +46,31 @@ if (config.scripts.server.enabled) {
   serverScriptsService = new serverScripts.Service(config.scripts.exec)
 }
 
+ProtobufDefinitions()
+  .then(corredor => {
+    const serviceDefinitions: gRPCServer.ServiceDefinition = new Map()
+    serviceDefinitions.set(
+      // @ts-ignore
+      corredor.ServerScripts.service,
+      serverScripts.Handlers(
+        serverScriptsService,
+        logger.child({ system: 'gRPC', service: 'ServerScripts' }),
+      ),
+    )
+
+    serviceDefinitions.set(
+      // @ts-ignore
+      corredor.ClientScripts.service,
+      clientScripts.Handlers(
+        clientScriptsService,
+        logger.child({ system: 'gRPC', service: 'ClientScripts' }),
+      ),
+    )
+
+    logger.debug('starting gRPC server')
+    gRPCServer.Start(config.server, logger, serviceDefinitions)
+  })
+
 async function reload (): Promise<unknown> {
   return Promise.all([
     ReloadServerScripts(serverScriptsService),
@@ -69,28 +100,4 @@ if (config.scripts.enabled) {
   logger.warn('running without enabled script services')
 }
 
-gRPCServer.LoadDefinitions(path.join(config.protobuf.path, '/service-corredor.proto')).then((
-  { corredor },
-) => {
-  const serviceDefinitions: gRPCServer.ServiceDefinition = new Map()
-  serviceDefinitions.set(
-    // @ts-ignore
-    corredor.ServerScripts.service,
-    serverScripts.Handlers(
-      serverScriptsService,
-      logger.child({ system: 'gRPC', service: 'ServerScripts' }),
-    ),
-  )
 
-  serviceDefinitions.set(
-    // @ts-ignore
-    corredor.ClientScripts.service,
-    clientScripts.Handlers(
-      clientScriptsService,
-      logger.child({ system: 'gRPC', service: 'ClientScripts' }),
-    ),
-  )
-
-  logger.debug('starting gRPC server')
-  gRPCServer.Start(config.server, logger, serviceDefinitions)
-})
