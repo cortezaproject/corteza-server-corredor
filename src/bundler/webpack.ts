@@ -1,4 +1,4 @@
-import webpack, { Stats } from 'webpack'
+import webpack from 'webpack'
 import { Script } from '../scripts/shared'
 import fs from 'fs'
 
@@ -122,7 +122,7 @@ export function Pack (name, entry, context, outputPath): void {
     },
   }
 
-  webpack(cfg).run((err: Error, stats: Stats) => {
+  webpack(cfg).run((err: Error) => {
     if (err) return console.error(err)
   })
 }

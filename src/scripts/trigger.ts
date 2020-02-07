@@ -22,7 +22,6 @@ interface UIProp {
   value: string;
 }
 
-
 function distinct (arr: string[]): string[] {
   return arr.filter((n, i) => arr.indexOf(n) === i)
 }
