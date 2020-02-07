@@ -38,6 +38,18 @@ export async function InstallDependencies (): Promise<deps.PackageInstallStatus[
   return deps.Install(logger, config.scripts.dependencies)
 }
 
+/**
+ * Reloads server scripts
+ *
+ * Note: NOOP when server scripts are disabled
+ *
+ * Function calls script loader (see loader.ts) and loads all available server scripts
+ * It logs (warn) all errors on all scripts and (debug) valid scripts
+ *
+ * Server scripts service is then updated with the new list of scripts.
+ *
+ * @param svc - Server scripts service
+ */
 export async function ReloadServerScripts (svc: serverScripts.Service): Promise<void> {
   if (!config.scripts.server.enabled) {
     return
@@ -45,7 +57,7 @@ export async function ReloadServerScripts (svc: serverScripts.Service): Promise<
 
   // Reload scripts every-time packages changes!
   logger.info('reloading server scripts')
-  return scriptLoader.ServerScriptReloader(config.scripts.server.basedir)
+  return scriptLoader.ServerScriptLoader(config.scripts.server.basedir)
     .then((scripts: Script[]) => {
       const isValid = (s: Script): boolean => !!s.name && !!s.exec && s.errors.length === 0
       const vScripts = scripts.filter(isValid)
@@ -77,13 +89,28 @@ export async function ReloadServerScripts (svc: serverScripts.Service): Promise<
     })
 }
 
+/**
+ * Reloads client scripts
+ *
+ * Note: NOOP when client scripts are disabled
+ *
+ * Function calls script loader (see loader.ts) and loads all available client scripts
+ *
+ * Valid scripts (w/o errors) and packed into browser bundles with webpack.
+ *
+ * It logs (warn) all errors on all scripts and (debug) valid scripts.
+ *
+ * Client scripts service is then updated with the new list of scripts.
+ *
+ * @param svc - Server scripts service
+ */
 export async function ReloadAndBundleClientScripts (svc: clientScripts.Service): Promise<void> {
   if (!config.scripts.client.enabled) {
     return
   }
 
   logger.info('reloading client scripts')
-  return scriptLoader.ClientScriptReloader(config.scripts.client.basedir)
+  return scriptLoader.ClientScriptLoader(config.scripts.client.basedir)
     .then((scripts: Script[]) => {
       const isValid = (s: Script): boolean => !!s.name && !!s.exec && s.errors.length === 0
       const vScripts = scripts.filter(isValid)

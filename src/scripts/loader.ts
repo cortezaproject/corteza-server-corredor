@@ -4,8 +4,8 @@ import { promises as fs } from 'fs'
 import path from 'path'
 import logger from '../logger'
 
-export const ClientScriptFilenameMatcher = /^(?<name>(?<bundle>.+)\/.+)\.js$/
-export const ServerScriptFilenameMatcher = /^(?<name>.+)\.js$/
+export const ClientScriptFilenameMatcher = /^(?<name>(?<bundle>.+)\/.+)(?!\.test)\.js$/
+export const ServerScriptFilenameMatcher = /^(?<name>.+)(?!\.test)\.js$/
 
 interface RawScript {
   filepath: string;
@@ -179,7 +179,7 @@ export async function LoadScript ({ filepath }: RawScript, basepath: string, pat
   return ss
 }
 
-async function reloader (basedir: string, pathPatten: RegExp): Promise<Script[]> {
+async function loader (basedir: string, pathPatten: RegExp): Promise<Script[]> {
   const pp: Script[] = []
 
   for await (const r of Finder(basedir, pathPatten)) {
@@ -189,10 +189,10 @@ async function reloader (basedir: string, pathPatten: RegExp): Promise<Script[]>
   return pp
 }
 
-export async function ClientScriptReloader (basedir: string): Promise<Script[]> {
-  return reloader(basedir, ClientScriptFilenameMatcher)
+export async function ClientScriptLoader (basedir: string): Promise<Script[]> {
+  return loader(basedir, ClientScriptFilenameMatcher)
 }
 
-export async function ServerScriptReloader (basedir: string): Promise<Script[]> {
-  return reloader(basedir, ServerScriptFilenameMatcher)
+export async function ServerScriptLoader (basedir: string): Promise<Script[]> {
+  return loader(basedir, ServerScriptFilenameMatcher)
 }
