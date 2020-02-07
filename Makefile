@@ -1,13 +1,17 @@
 .PHONY: build push run
 
-TAG=$()
-IMAGE=cortezaproject/corteza-server-corredor
+TAG    := $(shell git describe --tags --abbrev=0)
+IMAGE  := cortezaproject/corteza-server-corredor
+DOCKER := docker
 
 build:
-	echo docker build --no-cache -t $(IMAGE):$(TAG) .
+	$(DOCKER) build --no-cache -t $(IMAGE):$(TAG) .
+
+cached-build:
+	$(DOCKER) build -t $(IMAGE):$(TAG) .
 
 push:
-	echo docker push $(IMAGE):$(TAG)
+	$(DOCKER) push $(IMAGE):$(TAG)
 
 run:
-	echo docker run --rm -it -e -P $(IMAGE):$(TAG)
+	$(DOCKER) run --rm -it --env-file .env -P $(IMAGE):$(TAG)
