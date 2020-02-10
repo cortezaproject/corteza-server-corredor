@@ -1,10 +1,10 @@
 import grpc from 'grpc'
 import pino, { BaseLogger } from 'pino'
-import { HandleException } from '../../grpc-server'
-import { Service } from './service'
-import { LogToArray } from '../log-to-array'
+import { HandleException } from '../grpc-server'
+import { Service } from '../scripts/server/service'
+import { LogToArray } from '../scripts/log-to-array'
 import { corredor as exec } from '@cortezaproject/corteza-js'
-import { IsModifiedSince } from '../shared'
+import IsModifiedSince from './shared/is-modified-since'
 
 interface KV {
   [_: string]: string;
@@ -88,7 +88,7 @@ export function encodeExecResult (args: object): KV {
   return enc
 }
 
-export function Handlers (h: Service, logger: BaseLogger): object {
+export default function Handler (h: Service, logger: BaseLogger): object {
   logger = logger.child({ name: 'grpc.server-scripts' })
 
   return {

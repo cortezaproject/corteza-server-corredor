@@ -1,9 +1,8 @@
 import grpc from 'grpc'
 import { BaseLogger } from 'pino'
-import { HandleException } from '../../grpc-server'
-import { Service } from './'
-import { IsModifiedSince } from '../shared'
-import logger from '../../config'
+import { HandleException } from '../grpc-server'
+import { Service } from '../scripts/client'
+import IsModifiedSince from './shared/is-modified-since'
 
 interface BundleRequest {
   name: string;
@@ -35,7 +34,7 @@ interface ListResponse {
   scripts: unknown[];
 }
 
-export function Handlers (h: Service, logger: BaseLogger): object {
+export default function Handler (h: Service, logger: BaseLogger): object {
   logger = logger.child({ name: 'grpc.client-scripts' })
 
   return {

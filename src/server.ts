@@ -7,6 +7,8 @@ import * as deps from './scripts/deps'
 import * as serverScripts from './scripts/server'
 import * as clientScripts from './scripts/client'
 import * as gRPCServer from './grpc-server'
+import clientScriptHandler from './grpc-handlers/client-scripts'
+import serverScriptHandler from './grpc-handlers/server-scripts'
 import EnvCheck from './check'
 import Loader from './loader/loader'
 
@@ -59,7 +61,7 @@ gRPCServer
     serviceDefinitions.set(
       // @ts-ignore
       corredor.ServerScripts.service,
-      serverScripts.Handlers(
+      serverScriptHandler(
         serverScriptsService,
         logger.child({ name: 'gRPC.ServerScripts' }),
       ),
@@ -68,7 +70,7 @@ gRPCServer
     serviceDefinitions.set(
       // @ts-ignore
       corredor.ClientScripts.service,
-      clientScripts.Handlers(
+      clientScriptHandler(
         clientScriptsService,
         logger.child({ name: 'gRPC.ClientScripts' }),
       ),
