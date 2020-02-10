@@ -1,7 +1,7 @@
 import grpc from 'grpc'
 import { BaseLogger } from 'pino'
 import { HandleException } from '../grpc-server'
-import { Service } from '../scripts/client'
+import Service from '../services/client-scripts'
 import IsModifiedSince from './shared/is-modified-since'
 
 interface BundleRequest {
@@ -80,16 +80,16 @@ export default function Handler (h: Service, logger: BaseLogger): object {
         return
       }
 
-      log.debug({ filter }, 'returning list of client scripts')
+      const scripts = h.list(filter)
+        .map(s => ({
+          ...s,
+          updatedAt: s.updatedAt.toISOString(),
+        }))
+
+      log.debug({ filter, total: scripts.length }, 'returning list of client scripts')
 
       try {
-        done(null, {
-          scripts: h.list(filter)
-            .map(s => ({
-              ...s,
-              updatedAt: s.updatedAt.toISOString(),
-            })),
-        })
+        done(null, { scripts })
       } catch (e) {
         log.debug({ stack: e.stack }, e.message)
         HandleException(e, done, grpc.status.INTERNAL)

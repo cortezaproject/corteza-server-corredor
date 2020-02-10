@@ -1,7 +1,7 @@
 import grpc from 'grpc'
 import pino, { BaseLogger } from 'pino'
 import { HandleException } from '../grpc-server'
-import { Service } from '../scripts/server/service'
+import Service from '../services/server-scripts'
 import { LogToArray } from '../scripts/log-to-array'
 import { corredor as exec } from '@cortezaproject/corteza-js'
 import IsModifiedSince from './shared/is-modified-since'
@@ -163,16 +163,16 @@ export default function Handler (h: Service, logger: BaseLogger): object {
         return
       }
 
-      log.debug({ filter }, 'returning list of server scripts')
+      const scripts = h.list(filter)
+        .map(s => ({
+          ...s,
+          updatedAt: s.updatedAt.toISOString(),
+        }))
+
+      log.debug({ filter, total: scripts.length }, 'returning list of server scripts')
 
       try {
-        done(null, {
-          scripts: h.list(filter)
-            .map(s => ({
-              ...s,
-              updatedAt: s.updatedAt.toISOString(),
-            })),
-        })
+        done(null, { scripts })
       } catch (e) {
         log.debug({ stack: e.stack }, e.message)
         HandleException(e, done, grpc.status.INTERNAL)

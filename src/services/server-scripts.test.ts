@@ -1,12 +1,12 @@
 import { describe, it } from 'mocha'
 import { expect } from 'chai'
-import { Service } from '.'
-import { Trigger } from '../trigger'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import pino from 'pino'
 // ^ for some peculiar reason, IDE is not happy with this import
+import ServerScripts from './server-scripts'
+import { Trigger } from '../scripts/trigger'
 
 const baseScript = {
   src: 'path/to/script',
@@ -28,13 +28,13 @@ const svcCtorArgs = Object.freeze({
 describe('scripts list', () => {
   describe('empty', () => {
     it('should be empty', () => {
-      const svc = new Service(svcCtorArgs)
+      const svc = new ServerScripts(svcCtorArgs)
       expect(svc.list()).to.have.lengthOf(0)
     })
   })
 
   describe('filled', () => {
-    const svc = new Service(svcCtorArgs)
+    const svc = new ServerScripts(svcCtorArgs)
     beforeEach(() => {
       svc.update([
         {

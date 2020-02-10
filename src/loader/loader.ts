@@ -2,8 +2,8 @@ import fs from 'fs'
 import path from 'path'
 import glob from 'glob'
 import Expand from './expand'
-import { Script } from '../scripts/shared'
 import { File, FileType } from './types'
+import { Script } from '../types'
 
 /**
  * Utility function for flatting w/ Array.reduce
@@ -32,7 +32,9 @@ export default class Loader {
   basePaths (): string[] {
     return this.searchPaths
       // run all paths through glob
-      .map(sp => glob.sync(path.join(sp, this.required)))
+      // by appending path.sep at the end of the search string, we tell
+      // glob we're only interested in directories
+      .map(sp => glob.sync(path.join(sp, this.required) + path.sep))
 
       // flatten glob results (expanding search paths) of each search path
       .reduce(flatten, [])
@@ -49,11 +51,19 @@ export default class Loader {
     // existing entries with scripts from the later search-paths
     const uniq = new Map<string, File>()
 
+    const opt = {
+      // do not descend into node_modules. ever.
+      ignore: '**/node_modules/**',
+
+      // and we're only interested in files
+      nodir: true,
+    }
+
     this.basePaths()
       .map(base =>
         glob
           // glob over base + pattern strings
-          .sync(path.join(base, this.pattern))
+          .sync(path.join(base, this.pattern), opt)
 
           // exclude out all files we do not want (eg: tests)
           .filter(filepath => !this.exclude.test(filepath))
@@ -65,7 +75,7 @@ export default class Loader {
             // filename w/o search-path prefix
             // we're using this to remove duplicates and for script identification
             ref:
-              src.substring(base.length - this.required.length),
+              path.sep + src.substring(base.length - this.required.length - 1),
 
             updatedAt:
               fs.statSync(src).mtime,
@@ -80,6 +90,9 @@ export default class Loader {
   }
 
   scripts (): Array<Script> {
-    return this.files().map(Expand).reduce(flatten, [])
+    return this
+      .files()
+      .map(Expand)
+      .reduce(flatten, [])
   }
 }

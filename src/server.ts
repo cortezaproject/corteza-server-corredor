@@ -3,14 +3,16 @@
 import path from 'path'
 import logger from './logger'
 import * as config from './config'
-import * as deps from './scripts/deps'
-import * as serverScripts from './scripts/server'
-import * as clientScripts from './scripts/client'
 import * as gRPCServer from './grpc-server'
-import clientScriptHandler from './grpc-handlers/client-scripts'
-import serverScriptHandler from './grpc-handlers/server-scripts'
+import ClientScriptsHandler from './grpc-handlers/client-scripts'
+import ServerScriptsHandler from './grpc-handlers/server-scripts'
+import ClientScriptsService from './services/client-scripts'
+import ServerScriptsService from './services/server-scripts'
+import DependenciesService from './services/dependencies'
 import EnvCheck from './check'
-import Loader from './loader/loader'
+import ScriptLoader from './loader'
+import { Watcher } from './types'
+import watch from 'node-watch'
 
 /**
  *
@@ -29,27 +31,49 @@ import Loader from './loader/loader'
 
 EnvCheck()
 
-// <search-path>/client-scripts/<bundle>/<path-to-script>/*.js
-const clientScriptsLoader = new Loader(config.extensions.searchPaths, 'client-scripts', path.join('*', '**', '*.js'))
-// <search-path>/server-scripts/<path-to-script>/*.js
-const serverScriptsLoader = new Loader(config.extensions.searchPaths, 'server-scripts', path.join('**', '*.js'))
+const { searchPaths } = config.extensions
 
-let clientScriptsService: clientScripts.Service
-let serverScriptsService: serverScripts.Service
+// <search-path>/client-scripts/<bundle>/<path-to-script>/*.js
+const clientScriptsLoader = new ScriptLoader(searchPaths, 'client-scripts', path.join('*', '**', '*.js'))
+// <search-path>/server-scripts/<path-to-script>/*.js
+const serverScriptsLoader = new ScriptLoader(searchPaths, 'server-scripts', path.join('**', '*.js'))
+
+let clientScriptsService: ClientScriptsService
+let serverScriptsService: ServerScriptsService
+let dependenciesService: DependenciesService
+
+const watchers: Array<Watcher> = []
 
 if (config.extensions.clientScripts.enabled) {
-  clientScriptsService = new clientScripts.Service({
+  clientScriptsService = new ClientScriptsService({
     logger,
     loader: clientScriptsLoader,
     config: { bundler: config.bundler },
   })
+
+  watchers.push(clientScriptsService)
 }
 
 if (config.extensions.serverScripts.enabled) {
-  serverScriptsService = new serverScripts.Service({
+  serverScriptsService = new ServerScriptsService({
     logger,
     loader: serverScriptsLoader,
     config: { cServers: config.execContext.cortezaServers },
+  })
+
+  watchers.push(serverScriptsService)
+}
+
+if (config.extensions.dependencies.autoUpdate) {
+  dependenciesService = new DependenciesService({
+    logger,
+    searchPaths,
+  })
+
+  dependenciesService.watch(packageJSON => {
+    // @todo can we be more selective about what should be reloaded
+    serverScriptsService.process()
+    clientScriptsService.process()
   })
 }
 
@@ -61,7 +85,7 @@ gRPCServer
     serviceDefinitions.set(
       // @ts-ignore
       corredor.ServerScripts.service,
-      serverScriptHandler(
+      ServerScriptsHandler(
         serverScriptsService,
         logger.child({ name: 'gRPC.ServerScripts' }),
       ),
@@ -70,7 +94,7 @@ gRPCServer
     serviceDefinitions.set(
       // @ts-ignore
       corredor.ClientScripts.service,
-      clientScriptHandler(
+      ClientScriptsHandler(
         clientScriptsService,
         logger.child({ name: 'gRPC.ClientScripts' }),
       ),
@@ -79,47 +103,11 @@ gRPCServer
     gRPCServer.Start(config.server, logger, serviceDefinitions)
   })
   .catch(e => {
-    logger.warn({ name: 'gRPC' }, 'could not start gRPC server: ', e.message)
+    logger.warn('could not start gRPC server:', e.message)
   })
 
-// Loads/Reloads all extensions in parallel
-async function reloadExtensions (): Promise<unknown> {
-  return Promise.all([
-    clientScriptsService.process(),
-    serverScriptsService.process(),
-  ])
-}
+serverScriptsService.process()
+clientScriptsService.process()
 
-async function installDepsAndReloadExt (): Promise<unknown> {
-  if (!config.extensions.dependencies.autoUpdate) {
-    return
-  }
-
-  logger.info('installing dependencies from %s', config.extensions.dependencies.packageJSON)
-  deps
-    .Install(logger, config.extensions.dependencies)
-    .then(() => reloadExtensions())
-}
-
-const ecs = config.extensions.clientScripts
-const ess = config.extensions.serverScripts
-
-if (ecs.enabled || ess.enabled) {
-  // App entry point
-  installDepsAndReloadExt().then(() => {
-    if (config.extensions.dependencies.autoUpdate) {
-      // Setup dependency watcher that installs
-      // dependencies on change & reloads server-scripts
-      return deps.Watcher(config.extensions.dependencies.packageJSON, installDepsAndReloadExt)
-    }
-  }).then(() => {
-    // Setup serve & client script watchers
-    // that will reload server-side scripts
-    reloadExtensions()
-
-    serverScriptsService.watch()
-    clientScriptsService.watch()
-  })
-} else {
-  logger.warn('running without enabled script services')
-}
+console.log('watchers', watchers.length)
+watchers.forEach(w => w.watch())

@@ -1,10 +1,11 @@
-import MakeFilterFn from '../filter'
+import MakeFilterFn from './shared/filter'
 import { corredor as exec } from '@cortezaproject/corteza-js'
 import { BaseLogger } from 'pino'
-import { GetLastUpdated, Script } from '../shared'
-import { Loader } from '../../loader'
 import watch from 'node-watch'
 import { debounce } from 'lodash'
+import { Script } from '../types'
+import GetLastUpdated from './shared/get-last-updated'
+import Loader from '../loader'
 
 interface ListFilter {
     query?: string;
@@ -21,7 +22,7 @@ interface CtorArgs {
 /**
  *
  */
-export class Service {
+export default class ServerScripts {
   protected scripts: Script[] = [];
   protected readonly config: exec.Config;
   protected readonly log: BaseLogger;
@@ -33,7 +34,7 @@ export class Service {
   constructor ({ logger, config, loader }: CtorArgs) {
     this.config = config
     this.loader = loader
-    this.log = logger.child({ name: 'scripts.server.service' })
+    this.log = logger.child({ name: 'services.server-scripts' })
     this.log.debug('initializing')
   }
 
@@ -100,23 +101,21 @@ export class Service {
     this.log.info({ searchPaths: this.loader.searchPaths }, 'reloading server scripts')
 
     const scripts = this.loader.scripts()
-    const isValid = (s: Script): boolean => !!s.name && !!s.exec && s.errors.length === 0
+    const isValid = (s: Script): boolean => s && !!s.name && !!s.exec && s.errors.length === 0
     const vScripts = scripts.filter(isValid)
 
     // Log errors on all invalid scripts
     scripts
       .filter(s => !isValid(s))
-      .forEach(({ src, name, errors }) => {
+      .forEach(({ src, errors }) => {
         errors.forEach(error => {
-          this.log.warn({ src, scriptName: name }, 'script error: %s', error)
+          this.log.warn({ src }, 'script error: %s', error)
         })
       })
 
     // Let developer know about valid scripts loaded
     vScripts
-      .forEach(
-        ({ name, triggers }) =>
-          this.log.debug({ scriptName: name, triggers: triggers.length }, 'script ready'))
+      .forEach(({ src }) => this.log.debug({ src }, 'script ready'))
 
     // All scripts (even invalid ones) are given to server scripts service
     // we might want to look at errors
@@ -136,7 +135,10 @@ export class Service {
         delay: 200,
         filter: /\.js$/,
       },
-      debounce(() => this.process(), 500),
+      debounce(() => {
+        this.log.debug('change detected')
+        this.process()
+      }, 500),
     ).close)
   }
 }

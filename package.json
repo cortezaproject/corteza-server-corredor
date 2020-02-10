@@ -35,7 +35,6 @@
     "chai-as-promised": "^7.1.1",
     "corteza-protobuf": "cortezaproject/corteza-protobuf.git#develop",
     "dotenv": "8.2.0",
-    "download-npm-package": "^3.1.12",
     "eslint": "6.8.0",
     "eslint-config-standard": "^14.1.0",
     "eslint-import-resolver-typescript": "^2.0.0",

@@ -25,7 +25,7 @@ export default function CommonPath (paths: string[]): string {
   // you want to rething your filesystem organisation
   const minIndex = splits.map(split => split.length).reduce((pv, cv) => cv < pv ? cv : pv, 42)
 
-  const min = (() => {
+  const min = ((): string => {
     for (let i = 0; i < minIndex; i++) {
       for (let splIndex = 1; splIndex < splits.length; splIndex++) {
         if (splits[0][i] !== splits[splIndex][i]) {

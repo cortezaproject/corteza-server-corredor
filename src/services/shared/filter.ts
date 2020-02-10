@@ -1,4 +1,4 @@
-import { Script } from './shared'
+import { Script } from '../../types'
 
 interface ListFilter {
     query?: string;

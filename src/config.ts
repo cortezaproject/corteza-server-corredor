@@ -126,10 +126,10 @@ export const extensions = {
   // Path to extensions
   searchPaths: [
     // search in all extension directories
-    path.join(extPath, 'src', '*'),
+    path.join(extPath, '*'),
 
     // if scripts are not nested under extension directory
-    path.join(extPath, 'src'),
+    path.join(extPath),
 
     // more search paths can be added here
   ],

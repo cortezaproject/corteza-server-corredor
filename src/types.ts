@@ -1,6 +1,5 @@
-import grpc from 'grpc'
-import { Trigger } from './trigger'
-import { ScriptFn, ScriptSecurity } from './types'
+import { corredor as exec } from '@cortezaproject/corteza-js'
+import { Trigger } from './scripts/trigger'
 
 export interface ScriptFile {
   // Script location
@@ -49,19 +48,16 @@ export interface Script extends ScriptFile {
   exportName?: string;
 }
 
-/**
- * Filters and reduces list of script and returns yungest one
- *
- * @param {Array<{ updatedAt?: Date }>} scripts
- * @param {Date}                        fallback
- * @return {Date} latest updatedAt from the array of scripts
- */
-export function GetLastUpdated (scripts: Array<{ updatedAt?: Date }>, fallback = new Date('0000-01-01')): Date {
-  return scripts
-    .map(({ updatedAt }) => updatedAt)
-    .filter(updatedAt => updatedAt)
-    .reduce((last, updatedAt) => {
-      return last < updatedAt ? updatedAt : last
-    }, fallback)
+export interface ScriptSecurity {
+  runAs?: string;
+  deny: string[];
+  allow: string[];
 }
 
+export interface ScriptFn {
+  (args: exec.Args, ctx?: exec.Ctx): unknown;
+}
+
+export interface Watcher {
+  watch (): void;
+}

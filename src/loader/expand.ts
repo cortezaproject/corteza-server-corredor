@@ -1,7 +1,5 @@
-import { Script } from '../scripts/shared'
-import logger from '../logger'
 import { Make as MakeTriggers } from '../scripts/trigger'
-import { ScriptFn, ScriptSecurity } from '../scripts/types'
+import { Script, ScriptFn, ScriptSecurity } from '../types'
 import { File } from './types'
 
 interface RawScriptSecurity {
@@ -9,6 +7,10 @@ interface RawScriptSecurity {
   allow: string|string[];
   deny: string|string[];
 }
+
+const excludedExports = [
+  '__esModule',
+]
 
 function resolveSecurity ({ allow, deny, runAs }: RawScriptSecurity): ScriptSecurity|null {
   if (!allow && !deny && !runAs) {
@@ -73,6 +75,8 @@ export function ProcExports (s: Script, def: {[_: string]: unknown}): Script {
 
 /**
  * Load (via require) src from File and generate set of Script objects (one for each valid export)
+ *
+ * It captures possible errors and
  */
 export default function Expand ({ src, ref, updatedAt }: File): Script[] {
   try {
@@ -85,28 +89,31 @@ export default function Expand ({ src, ref, updatedAt }: File): Script[] {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     exports = require(src)
   } catch (e) {
-    logger.error(e)
-    throw e
-  }
-
-  const ss: Script[] = []
-
-  for (const exportName of Object.getOwnPropertyNames(exports)) {
-    const script: Script = {
+    return [{
       src,
       updatedAt,
-      exportName,
-      name: `${ref}:${exportName}`,
-      errors: [],
-    }
-
-    if (typeof exports[exportName] !== 'object') {
-      script.errors.push('expecting an object with script definition (exec, triggers)')
-      continue
-    }
-
-    ss.push(ProcExports(script, exports[exportName]))
+      name: ref,
+      errors: [e.toString()],
+    } as Script]
   }
 
-  return ss
+  return Object
+    .getOwnPropertyNames(exports)
+    .filter((e) => !excludedExports.includes(e))
+    .map(exportName => {
+      const script: Script = {
+        src,
+        updatedAt,
+        exportName,
+        name: `${ref}:${exportName}`,
+        errors: [],
+      }
+
+      if (typeof exports[exportName] !== 'object') {
+        script.errors.push('expecting an object with script definition (exec, triggers)')
+        return script
+      }
+
+      return ProcExports(script, exports[exportName])
+    })
 }

@@ -1,13 +1,14 @@
-import { GetLastUpdated, Script } from '../shared'
-import MakeFilterFn from '../filter'
+import MakeFilterFn from './shared/filter'
 import fs from 'fs'
 import path from 'path'
-import * as config from '../../config'
-import * as bundle from '../../bundler/webpack'
+import * as config from '../config'
+import * as bundle from '../bundler/webpack'
 import { BaseLogger } from 'pino'
-import { CommonPath, Loader } from '../../loader'
+import Loader, { CommonPath } from '../loader'
 import watch from 'node-watch'
 import { debounce } from 'lodash'
+import GetLastUpdated from './shared/get-last-updated'
+import { Script } from '../types'
 
 interface ListFilter {
     query?: string;
@@ -32,7 +33,7 @@ interface Config {
 /**
  *
  */
-export class Service {
+export default class ClientScripts {
   private scripts: Script[] = []
   private readonly config: Config
   protected readonly log: BaseLogger;
@@ -44,7 +45,7 @@ export class Service {
   constructor ({ logger, config, loader }: CtorArgs) {
     this.config = config
     this.loader = loader
-    this.log = logger.child({ name: 'scripts.client.service' })
+    this.log = logger.child({ name: 'services.client-scripts' })
     this.log.debug('initializing')
   }
 
@@ -122,21 +123,20 @@ export class Service {
     // Log errors on all invalid scripts
     scripts
       .filter(s => !isValid(s))
-      .forEach(({ src, name, errors }) => {
+      .forEach(({ src, errors }) => {
         errors.forEach(error => {
-          this.log.warn({ src, scriptName: name }, 'script error: %s', error)
+          this.log.warn({ src }, error)
         })
       })
 
     // Let developer know about valid scripts loaded
     vScripts
-      .forEach(
-        ({ name, triggers }) =>
-          this.log.debug({ scriptName: name, triggers: triggers.length }, 'script ready'))
+      .forEach(({ src }) => this.log.debug({ src }, 'script ready'))
 
     // All scripts (even invalid ones) are given to client scripts service
     // we might want to look at errors
     this.update(scripts)
+    console.log('loaded scripts', scripts.length)
 
     // Summarize reloading stats
     this.log.info({ valid: vScripts.length, total: scripts.length }, 'processed')
@@ -152,7 +152,10 @@ export class Service {
         delay: 200,
         filter: /\.js$/,
       },
-      debounce(() => this.process(), 500),
+      debounce(() => {
+        this.log.debug('change detected')
+        this.process()
+      }, 500),
     ).close)
   }
 }
