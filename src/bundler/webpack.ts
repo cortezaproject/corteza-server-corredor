@@ -1,6 +1,6 @@
 import webpack from 'webpack'
-import { Script } from '../scripts/shared'
 import fs from 'fs'
+import { Script } from '../types'
 
 interface Entry {
   [bundle: string]: string;
@@ -53,7 +53,7 @@ function mapToScript(name, exportedScript) {
 `)
 
     // Load each script and map it to the list
-    ss.forEach((s: Script) => {
+    ss.forEach((s) => {
       entry.write(`mapToScript('${s.name}', require('${s.src}').${s.exportName});\n`)
     })
 

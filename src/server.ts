@@ -12,7 +12,6 @@ import DependenciesService from './services/dependencies'
 import EnvCheck from './check'
 import ScriptLoader from './loader'
 import { Watcher } from './types'
-import watch from 'node-watch'
 
 /**
  *
@@ -70,7 +69,7 @@ if (config.extensions.dependencies.autoUpdate) {
     searchPaths,
   })
 
-  dependenciesService.watch(packageJSON => {
+  dependenciesService.watch(() => {
     // @todo can we be more selective about what should be reloaded
     serverScriptsService.process()
     clientScriptsService.process()
@@ -109,5 +108,4 @@ gRPCServer
 serverScriptsService.process()
 clientScriptsService.process()
 
-console.log('watchers', watchers.length)
 watchers.forEach(w => w.watch())

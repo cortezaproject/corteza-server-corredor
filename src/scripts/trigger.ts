@@ -129,7 +129,7 @@ export class Trigger {
     return new Trigger({ ...this, constraints })
   }
 
-  uiOpt (name: string, value: string): Trigger {
+  uiProp (name: string, value: string): Trigger {
     const t = this ?? new Trigger()
     return new Trigger({ ...t, uiProps: [...t.uiProps, { name, value }] })
   }
