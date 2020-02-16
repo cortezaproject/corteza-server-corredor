@@ -73,9 +73,7 @@ export default class ServerScripts {
       return Promise.reject(new Error('can not run uninitialized script'))
     }
 
-    if (script.exec as exec.ScriptExecFn) {
-      return exec.Exec(script.exec as exec.ScriptExecFn, args, log, this.config)
-    }
+    return exec.Exec(script as exec.ExecutableScript, args, new exec.Ctx(args, log, { config: this.config }))
   }
 
   /**
