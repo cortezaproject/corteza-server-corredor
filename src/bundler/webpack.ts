@@ -27,7 +27,7 @@ export function BootLoader (outputPath: string, bs: BundledScripts): Entry {
     const ss = bs[bundle]
 
     // Destination for boot loader & entry point for bundler (webpack)
-    e[bundle] = `${outputPath}/.${bundle}.js`
+    e[bundle] = `${outputPath}/${bundle}.client-scripts.src.js`
 
     const entry = fs.createWriteStream(e[bundle])
 
@@ -60,7 +60,7 @@ function mapToScript(name, exportedScript) {
     // Script registration function
     // Iterates over all known scripts and registers it to eventbus & uiHooks.
     entry.write(`
-export function Register({ verbose = true, eventbus = undefined, uiHooks = undefined } = {}) {
+export function Register({ verbose = true, eventbus = undefined, uiHooks = undefined, exec = () => {} } = {}) {
   if (scripts.length == 0) {
     if (verbose) console.debug('no scripts to register')
   }
@@ -81,7 +81,7 @@ export function Register({ verbose = true, eventbus = undefined, uiHooks = undef
             t.scriptName = s.name
             try {
               if (verbose) console.debug('registering script', s.name)
-              eventbus.Register(ev => serverScriptHandler(api, ev, s.name), t)
+              eventbus.Register(ev => exec(s, ev), t)
             } catch (e) {
               console.error(e)
             }
@@ -108,6 +108,7 @@ export function Register({ verbose = true, eventbus = undefined, uiHooks = undef
  * @constructor
  */
 export function Pack (name, entry, context, outputPath): void {
+  const type = 'client-scripts'
   const cfg: webpack.Configuration = {
     // mode: 'production',
     mode: 'development',
@@ -115,7 +116,7 @@ export function Pack (name, entry, context, outputPath): void {
     entry,
     context,
     output: {
-      filename: name + '.js',
+      filename: `${name}.${type}.js`,
       library: name + 'ClientScripts',
       libraryTarget: 'this',
       path: outputPath,

@@ -44,7 +44,7 @@ export default function Handler (h: Service, logger: BaseLogger): object {
 
       let code = ''
       try {
-        code = h.getBundle(name).toString()
+        code = h.getBundle(name, 'client-scripts').toString()
       } catch (e) {
         log.error('Could not load requested bundle', e)
       }
@@ -53,7 +53,7 @@ export default function Handler (h: Service, logger: BaseLogger): object {
         done(null, {
           bundles: [{
             name,
-            type: 'scripts',
+            type: 'client-scripts',
             code,
           }],
         })

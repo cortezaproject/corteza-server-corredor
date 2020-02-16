@@ -64,8 +64,8 @@ export default class ClientScripts {
     this.scripts = set
   }
 
-  getBundle (name: string): Buffer {
-    return fs.readFileSync(path.join(this.config.bundler.outputPath, name + '.js'))
+  getBundle (name: string, type: string): Buffer {
+    return fs.readFileSync(path.join(this.config.bundler.outputPath, `${name}.${type}.js`))
   }
 
   /**
@@ -98,7 +98,7 @@ export default class ClientScripts {
     // Make bundles out of all valid scripts
     const scriptListPerBundle = vScripts.reduce((bi, s) => {
       // Extract bundle name from path -- expecting to be 1st subdirectory under 'client-scripts'
-      const [, bundle] = s.name.split(path.sep, 2)
+      const [,, bundle] = s.name.split(path.sep, 3)
 
       if (!bi[bundle]) {
         bi[bundle] = []
@@ -136,7 +136,6 @@ export default class ClientScripts {
     // All scripts (even invalid ones) are given to client scripts service
     // we might want to look at errors
     this.update(scripts)
-    console.log('loaded scripts', scripts.length)
 
     // Summarize reloading stats
     this.log.info({ valid: vScripts.length, total: scripts.length }, 'processed')
