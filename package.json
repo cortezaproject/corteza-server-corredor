@@ -16,7 +16,7 @@
     "lint": "eslint src/** --ext .js,.ts",
     "test:unit": "mocha",
     "test:unit:cc": "nyc mocha",
-    "update:protobuf": "yarn upgrade corteza-protobuf"
+    "cdeps": "yarn upgrade @cortezaproject/corteza-js @cortezaproject/corteza-protobuf"
   },
   "dependencies": {
     "@cortezaproject/corteza-js": ">2020.3.0-alpha",
