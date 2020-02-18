@@ -86,7 +86,7 @@ export const logger = {
 }
 
 export const protobuf = {
-  path: path.normalize(e.CORREDOR_CORTEZA_PROTOBUF_PATH ?? path.join(rootDir, 'node_modules/corteza-protobuf')),
+  path: path.normalize(e.CORREDOR_CORTEZA_PROTOBUF_PATH ?? path.join(rootDir, 'node_modules/@cortezaproject/corteza-protobuf')),
 }
 
 export const services = {
