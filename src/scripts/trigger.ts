@@ -172,17 +172,15 @@ export function Make (t: unknown): Trigger[] {
     // Execute trigger callback to convert to array of triggers
     // and overwrite the function with definition
     if (isGenerator(t)) {
-      tt = [...t(new Trigger())]
+      t = [...t(new Trigger())]
     } else {
-      tt = t(new Trigger())
+      t = t(new Trigger())
     }
+  }
 
-    if (!tt) {
-      tt = []
-    }
-  } else if (Array.isArray(t)) {
+  if (Array.isArray(t)) {
     tt = [...t]
-  } else if (t instanceof Trigger) {
+  } else {
     tt = [t]
   }
 
