@@ -164,21 +164,10 @@ You can change that if you need to test/alter proto buffers for development.
 | `true`
 | Should corredor auto update dependencies every time scripts are refreshed?
 
-
-3+| CORREDOR_SCRIPTS_BASEDIR
+3+| CORREDOR_EXT_SEARCH_PATHS
 | string
-| `./usr`
-| Base directory for user scripts
-
-3+| CORREDOR_SCRIPTS_PACKAGE_JSON_FILE
-| string
-| `package.json`
-|
-
-3+| CORREDOR_SCRIPTS_NODE_MODULES_DIR
-| string
-| `./node_modules`
-| By default Corredor uses it's own directory for user scripts
+| `./usr/*:./usr`
+| List of paths (colon delimited) where Corredor should search for scripts
 
 3+| CORREDOR_SCRIPTS_SERVER_ENABLED
 | bool

@@ -120,27 +120,16 @@ export const bundler = {
   enabled: isTrue(e.CORREDOR_BUNDER_ENABLED) ?? true,
 }
 
-const extPath = path.normalize(e.CORREDOR_SCRIPTS_BASEDIR ?? path.join(rootDir, 'usr'))
+const extensionsSearchPaths = (e.CORREDOR_EXT_SEARCH_PATHS ?? './usr/*:./usr')
+  .trim()
+  .split(/[:]+/)
+  .filter(p => p.length > 0)
 
 export const extensions = {
   // Path to extensions
-  searchPaths: [
-    // search in all extension directories
-    path.join(extPath, '*'),
-
-    // if scripts are not nested under extension directory
-    path.join(extPath),
-
-    // more search paths can be added here
-  ],
+  searchPaths: extensionsSearchPaths,
 
   dependencies: {
-    // where to get script's dependencies from
-    packageJSON: e.CORREDOR_EXT_DEPENDENCIES_PACKAGE_JSON_FILE ?? path.join(extPath, 'package.json'),
-
-    // where to install downloaded NPM packages
-    nodeModules: e.CORREDOR_EXT_DEPENDENCIES_NODE_MODULES_DIR ?? path.join(rootDir, 'node_modules'),
-
     // do we automatically update deps?
     autoUpdate: isTrue(e.CORREDOR_EXT_DEPENDENCIES_AUTO_UPDATE) ?? true,
   },

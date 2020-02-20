@@ -30,13 +30,15 @@ ENV CORREDOR_ADDR=0.0.0.0:80
 ENV CORREDOR_SERVER_CERTIFICATES_ENABLED=false
 ENV CORREDOR_SCRIPTS_AUTO_UPDATE_DEPENDENCIES=false
 ENV CORREDOR_LOG_PRETTY=true
+ENV CORREDOR_EXT_SEARCH_PATHS=/corredor/corteza-ext/*:/corredor/usr/*:/corredor/usr
 
-
-# Client & server scripts location
-RUN mkdir -p /corredor/usr/src/client /corredor/usr/src/server
+# Client & server scripts location for user scripts & extensions
+RUN mkdir -p /corredor/usr
+RUN mkdir -p /corredor/corteza-ext
+VOLUME /corredor/corteza-ext
 VOLUME /corredor/usr
 
-# TLS certificates should be placed here if TSL certs are enabled
+# TLS certificates should be placed here if CORREDOR_SERVER_CERTIFICATES_ENABLED
 VOLUME /corredor/certs
 
 EXPOSE 80
