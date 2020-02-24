@@ -50,7 +50,9 @@ if (config.extensions.clientScripts.enabled) {
     config: { bundler: config.bundler },
   })
 
-  watchers.push(clientScriptsService)
+  if (config.extensions.clientScripts.watch) {
+    watchers.push(clientScriptsService)
+  }
 }
 
 if (config.extensions.serverScripts.enabled) {
@@ -60,7 +62,9 @@ if (config.extensions.serverScripts.enabled) {
     config: { cServers: config.execContext.cortezaServers },
   })
 
-  watchers.push(serverScriptsService)
+  if (config.extensions.serverScripts.watch) {
+    watchers.push(serverScriptsService)
+  }
 }
 
 if (config.extensions.dependencies.autoUpdate) {
@@ -69,7 +73,7 @@ if (config.extensions.dependencies.autoUpdate) {
     searchPaths,
   })
 
-  dependenciesService.watch(() => {
+  dependenciesService.watch((filename) => {
     // @todo can we be more selective about what should be reloaded
     serverScriptsService.process()
     clientScriptsService.process()
