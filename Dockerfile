@@ -10,7 +10,8 @@ RUN apk add --no-cache \
     cairo-dev \
     jpeg-dev \
     pango-dev \
-    giflib-dev
+    giflib-dev \
+    curl
 
 # Install app & support §&files
 COPY *.json *.js yarn.lock LICENSE README.adoc ./
@@ -19,6 +20,14 @@ RUN yarn install --production --non-interactive --no-progress --emoji false
 
 # Copy the app (so that yarn install can be cached)
 COPY src ./src
+COPY scripts ./scripts
+
+# Get ready
+RUN mkdir -p /corredor/usr /corredor/corteza-ext /corredor/usr && \
+    BRANCH=develop sh ./scripts/extensions.sh
+
+
+########################################################################################################################
 
 # GRPC's env-vars
 # https://github.com/grpc/grpc/blob/master/doc/environment_variables.md
@@ -26,15 +35,23 @@ ENV GRPC_VERBOSITY=ERROR
 
 # Set Corredor's default ENV values
 ENV CORREDOR_ENVIRONMENT=prod
+ENV CORREDOR_LOG_PRETTY=false
+ENV CORREDOR_LOG_LEVEL=info
+ENV CORREDOR_LOG_ENABLED=true
+
 ENV CORREDOR_ADDR=0.0.0.0:80
+
 ENV CORREDOR_SERVER_CERTIFICATES_ENABLED=false
+
 ENV CORREDOR_SCRIPTS_AUTO_UPDATE_DEPENDENCIES=false
-ENV CORREDOR_LOG_PRETTY=true
+ENV CORREDOR_EXT_SERVER_SCRIPTS_WATCH=false
+ENV CORREDOR_EXT_CLIENT_SCRIPTS_WATCH=false
+
 ENV CORREDOR_EXT_SEARCH_PATHS=/corredor/corteza-ext/*:/corredor/usr/*:/corredor/usr
 
+########################################################################################################################
+
 # Client & server scripts location for user scripts & extensions
-RUN mkdir -p /corredor/usr
-RUN mkdir -p /corredor/corteza-ext
 VOLUME /corredor/corteza-ext
 VOLUME /corredor/usr
 
