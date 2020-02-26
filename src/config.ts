@@ -47,6 +47,23 @@ function assembleBaseURL (service: string): string|undefined {
     .replace('{service}', service)
 }
 
+/**
+ * Discovers/generates frontend baseURL from environmental variables & given service
+ *
+ * @param {string} service
+ * @returns {string|undefined}
+ */
+function discoverFrontendBaseURL (): string {
+  return undefined ??
+    // Try to get this from the backend provision variable
+    e.PROVISION_SETTINGS_AUTH_FRONTEND_URL_BASE ??
+
+    // Fallback
+    `https://${e.DOMAIN || e.HOSTNAME || e.HOST || 'local.cortezaproject.org'}`
+      // If we've recycled hostname for the API somehow, let's cut it off
+      .replace('api.', '')
+}
+
 export const env = (e.CORREDOR_ENVIRONMENT ?? e.CORREDOR_ENV ?? e.NODE_ENV ?? 'prod').trim().toLowerCase()
 
 export const isDevelopment = env.indexOf('dev') === 0
@@ -112,6 +129,12 @@ export const execContext = {
     messaging: {
       apiBaseURL: assembleBaseURL('messaging') ?? e.CORREDOR_EXEC_CTX_CORTEZA_SERVERS_MESSAGING_API_BASEURL,
     },
+  },
+
+  frontend: {
+    baseURL:
+      e.CORREDOR_EXEC_CTX_FRONTEND_BASEURL ??
+      discoverFrontendBaseURL(),
   },
 }
 

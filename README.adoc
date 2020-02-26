@@ -225,7 +225,11 @@ When starting up Corredor, you can see how Base URLs are set for each service.
 | (assembled from baseurl template)
 | Set to a custom Base URL if you want to override value generated with `CORREDOR_EXEC_CSERVERS_API_BASEURL_TEMPLATE`.
 
-_Recognised by Corredor._
+3+| CORREDOR_EXEC_CTX_FRONTEND_BASEURL
+| string
+| (can use PROVISION_SETTINGS_AUTH_FRONTEND_URL_BASE or falls back to DOMAIN, HOSTNAME and HOST variables)
+| Provide frontend base URL info for scripts (accessible through context).
+
 |===
 
 #### Corteza API

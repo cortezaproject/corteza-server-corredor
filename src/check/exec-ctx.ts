@@ -3,6 +3,7 @@ import { execContext } from '../config'
 
 export default function (): void {
   const csCtx = execContext.cortezaServers
+  const feCtx = execContext.frontend
 
   const log = logger.child({ name: 'check' })
 
@@ -10,4 +11,5 @@ export default function (): void {
   log.debug(csCtx.system, 'configuring cServer system API')
   log.debug(csCtx.compose, 'configuring cServer compose API')
   log.debug(csCtx.messaging, 'configuring cServer messaging API')
+  log.debug(feCtx, 'frontend settings')
 }

@@ -56,10 +56,12 @@ if (config.extensions.clientScripts.enabled) {
 }
 
 if (config.extensions.serverScripts.enabled) {
+  const { cortezaServers: cServers, frontend } = config.execContext
+
   serverScriptsService = new ServerScriptsService({
     logger,
     loader: serverScriptsLoader,
-    config: { cServers: config.execContext.cortezaServers },
+    config: { cServers, frontend },
   })
 
   if (config.extensions.serverScripts.watch) {
