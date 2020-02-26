@@ -1,9 +1,9 @@
 # Corteza Corredor
 
-Corredor is an automation script runner.
+Corredor is an automation script runner and bundler.
 It loads and processes scripts it has access and offers them to Corteza backend server on request.
 
-It starts a gRPC server with 2 simple services:
+It starts a gRPC server with 2 services:
  - Server scripts with list and exec procedures
  - Client scripts with list and bundle procedures
 
@@ -15,7 +15,7 @@ Corredor loads and monitors user scripts in the configured location
 
 These scripts are executed by Corredor directly or indirectly by the Corteza backend server.
 Scripts are not jailed or virtualized and run in the same context as the main Corredor app.
-This will probably be changed in the future to prevent scripts doing actions such as stopping the whole Corredor server
+This will probably be changed in the future to prevent scripts doing destructive actions such as stopping the Corredor server or similar.
 
 Make sure your scripts are audited and making changes where they should.
 Last line of defense is (Docker) container, where the Corredor application is running.
