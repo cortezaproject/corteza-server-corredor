@@ -17,12 +17,12 @@ function isTrue (input: string|undefined): boolean|undefined {
 }
 
 /**
- * Discovers/generates baseURL from environmental variables & given service
+ * Discovers/generates API baseURL from environmental variables & given service
  *
  * @param {string} service
  * @returns {string|undefined}
  */
-function assembleBaseURL (service: string): string|undefined {
+function discoverApiBaseURL (service: string): string|undefined {
   const host =
       e.CORREDOR_EXEC_CSERVERS_API_HOST ??
       // DOMAIN will be present in the standard configuration
@@ -119,15 +119,21 @@ export const services = {
 export const execContext = {
   cortezaServers: {
     system: {
-      apiBaseURL: assembleBaseURL('system') ?? e.CORREDOR_EXEC_CTX_CORTEZA_SERVERS_SYSTEM_API_BASEURL,
+      apiBaseURL:
+        e.CORREDOR_EXEC_CTX_CORTEZA_SERVERS_SYSTEM_API_BASEURL ??
+        discoverApiBaseURL('system'),
     },
 
     compose: {
-      apiBaseURL: assembleBaseURL('compose') ?? e.CORREDOR_EXEC_CTX_CORTEZA_SERVERS_COMPOSE_API_BASEURL,
+      apiBaseURL:
+        e.CORREDOR_EXEC_CTX_CORTEZA_SERVERS_COMPOSE_API_BASEURL ??
+        discoverApiBaseURL('compose'),
     },
 
     messaging: {
-      apiBaseURL: assembleBaseURL('messaging') ?? e.CORREDOR_EXEC_CTX_CORTEZA_SERVERS_MESSAGING_API_BASEURL,
+      apiBaseURL:
+        e.CORREDOR_EXEC_CTX_CORTEZA_SERVERS_MESSAGING_API_BASEURL ??
+        discoverApiBaseURL('messaging'),
     },
   },
 
