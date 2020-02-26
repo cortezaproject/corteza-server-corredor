@@ -52,7 +52,6 @@ ENV CORREDOR_EXT_SEARCH_PATHS=/corredor/corteza-ext/*:/corredor/usr/*:/corredor/
 ########################################################################################################################
 
 # Client & server scripts location for user scripts & extensions
-VOLUME /corredor/corteza-ext
 VOLUME /corredor/usr
 
 # TLS certificates should be placed here if CORREDOR_SERVER_CERTIFICATES_ENABLED
