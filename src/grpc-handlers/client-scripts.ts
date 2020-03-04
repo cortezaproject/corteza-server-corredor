@@ -75,7 +75,6 @@ export default function Handler (h: Service, logger: BaseLogger): object {
       }
 
       if (!IsModifiedSince(h.lastUpdated, metadata)) {
-        log.debug('client scripts older than requested by if-modified-since header')
         done(null, { scripts: [] })
         return
       }
