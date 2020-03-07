@@ -15,7 +15,7 @@ interface BundledScripts {
  * @param bs
  * @constructor
  */
-export function BootLoader (outputPath: string, bs: BundledScripts): Entry {
+function BootLoader (outputPath: string, bs: BundledScripts): Entry {
   const e: Entry = {}
 
   for (const bundle in bs) {
@@ -107,7 +107,7 @@ export function Register({ verbose = true, eventbus = undefined, uiHooks = undef
  *
  * @constructor
  */
-export function Pack (name, entry, context, outputPath): void {
+function Pack (name, entry, context, outputPath): void {
   const type = 'client-scripts'
   const cfg: webpack.Configuration = {
     // mode: 'production',
@@ -126,4 +126,9 @@ export function Pack (name, entry, context, outputPath): void {
   webpack(cfg).run((err: Error) => {
     if (err) return console.error(err)
   })
+}
+
+export default {
+  BootLoader,
+  Pack,
 }
