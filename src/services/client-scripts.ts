@@ -2,7 +2,7 @@ import MakeFilterFn from './shared/filter'
 import fs from 'fs'
 import path from 'path'
 import * as config from '../config'
-import * as bundle from '../bundler/webpack'
+import { clientScripts as clientScriptsBundler } from '../bundler'
 import { BaseLogger } from 'pino'
 import Loader, { CommonPath } from '../loader'
 import watch from 'node-watch'
@@ -109,7 +109,7 @@ export default class ClientScripts {
       return bi
     }, {} as { [bundle: string]: Script[] })
 
-    const bootloaderPerBundle = bundle.BootLoader(config.bundler.outputPath, scriptListPerBundle)
+    const bootloaderPerBundle = clientScriptsBundler.BootLoader(config.bundler.outputPath, scriptListPerBundle)
     for (const bnd in bootloaderPerBundle) {
       // Find longest common path for all scripts in the bundle
       // @see https://webpack.js.org/configuration/entry-context/#context
@@ -117,7 +117,7 @@ export default class ClientScripts {
 
       this.log.debug({ bundle: bnd }, 'bundling client scripts')
 
-      bundle.Pack(bnd, bootloaderPerBundle[bnd], ctx, config.bundler.outputPath)
+      clientScriptsBundler.Pack(bnd, bootloaderPerBundle[bnd], ctx, config.bundler.outputPath)
     }
 
     // Log errors on all invalid scripts
