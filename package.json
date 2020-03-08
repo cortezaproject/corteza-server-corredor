@@ -10,9 +10,9 @@
   "main": "dist/app.js",
   "types": "dist/types.d.ts",
   "scripts": {
-    "tsndev": "ts-node-dev --debounce 200 --transpileOnly -r esm",
-    "serve:dev": "yarn tsndev --respawn --ignore-watch node_modules --ignore-watch usr ./src/server.ts",
-    "serve": "ts-node -r esm ./src/server.ts",
+    "serve:dev": "ts-node-dev --debounce 200 --transpileOnly --respawn --ignore-watch node_modules --ignore-watch usr --ignore-watch dist ./src/server.ts",
+    "build": "tsc",
+    "serve": "node ./dist/server.js",
     "lint": "eslint src/** --ext .js,.ts",
     "test:unit": "mocha",
     "test:unit:cc": "nyc mocha",
