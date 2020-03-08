@@ -88,11 +88,15 @@ export default class ClientScripts {
    *
    * Client scripts service is then updated with the new list of scripts.
    */
-  process (): void {
+  async process (): Promise<void> {
+    if (!this.loader) {
+      this.log.debug('no loader: processing disabled')
+    }
+
     this.log.info({ searchPaths: this.loader.searchPaths }, 'reloading client scripts')
 
-    const scripts = this.loader.scripts()
-    const isValid = (s: Script): boolean => !!s.name && !!s.exec && s.errors.length === 0
+    const scripts = await this.loader.scripts()
+    const isValid = (s: Script): boolean => s.errors.length === 0
     const vScripts = scripts.filter(isValid)
 
     // Make bundles out of all valid scripts

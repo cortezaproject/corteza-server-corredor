@@ -111,7 +111,9 @@ gRPCServer
     logger.warn('could not start gRPC server:', e.message)
   })
 
-serverScriptsService.process()
-clientScriptsService.process()
+Promise.all([
+  serverScriptsService.process(),
+  clientScriptsService.process(),
+])
 
 watchers.forEach(w => w.watch())
