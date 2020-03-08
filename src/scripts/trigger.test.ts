@@ -2,14 +2,14 @@
 
 import { describe, it } from 'mocha'
 import { expect } from 'chai'
-import { Make, Trigger } from './trigger'
+import Make, { Trigger } from './trigger'
 
 describe('trigger making', () => {
   // sample trigger
   const st = new Trigger()
 
   describe('from array', () => {
-    it('should return empty array on empty empty array', () => {
+    it('should return empty array on empty array', () => {
       expect(Make([])).is.deep.eq([])
     })
 

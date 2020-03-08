@@ -1,11 +1,7 @@
 const defaultResource = 'system'
 
-/**
- * Using this for function testing
- */
-const generatorSample = function * (): unknown { yield undefined }
-const isGenerator = (t): boolean => {
-  return (typeof t === 'function') && (t.constructor === generatorSample.constructor)
+function isIterable<T> (o: any): o is Iterable<T> {
+  return typeof o === 'object' && typeof o[Symbol.iterator] === 'function'
 }
 
 interface Constraint {
@@ -165,16 +161,16 @@ export class Trigger {
 /**
  * Makes triggers out of an input params
  */
-export function Make (t: unknown): Trigger[] {
+export default function Make (t: unknown): Trigger[] {
   let tt = []
 
   if (typeof t === 'function') {
     // Execute trigger callback to convert to array of triggers
     // and overwrite the function with definition
-    if (isGenerator(t)) {
-      t = [...t(new Trigger())]
-    } else {
-      t = t(new Trigger())
+    t = t(new Trigger())
+
+    if (isIterable(t)) {
+      t = [...t]
     }
   }
 
