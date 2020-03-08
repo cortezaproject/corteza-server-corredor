@@ -1,9 +1,9 @@
 import fs from 'fs'
 import path from 'path'
 import glob from 'glob'
-import Expand from './expand'
 import { File, FileType } from './types'
 import { Script } from '../types'
+import ScriptParser from '../scripts/parser'
 
 /**
  * Utility function for flatting w/ Array.reduce
@@ -89,10 +89,24 @@ export default class Loader {
     return [...uniq.values()]
   }
 
-  scripts (): Array<Script> {
-    return this
+  scripts (): Promise<Array<Script>> {
+    return Promise.all(this
       .files()
-      .map(Expand)
-      .reduce(flatten, [])
+      .map(async ({ src, ref, updatedAt }): Promise<Script> => {
+        let script: Partial<Script>
+        try {
+          script = await new ScriptParser(fs.readFileSync(src), { src }).parse()
+        } catch (e) {
+          script = { errors: [e.toString()] }
+        }
+
+        return {
+          src,
+          name: `${ref}:default`,
+          updatedAt,
+          errors: [],
+          ...script,
+        }
+      }))
   }
 }
