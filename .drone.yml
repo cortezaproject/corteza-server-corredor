@@ -34,5 +34,3 @@ steps:
       - refs/tags/20??.6.*
       - refs/tags/20??.9.*
       - refs/tags/20??.12.*
-
-
