@@ -15,7 +15,7 @@ function BootLoader (outputPath: string, ss: Array<Script>): string {
 
   // Find and merge scripts (in scripts array we have static data
   // with processed, expanded props like security, triggers etc.
-  entry.write(`const m = new Map();`)
+  entry.write('const m = new Map();')
 
   // Load each script and map it to the list
   ss.forEach((s) => {
