@@ -6,19 +6,33 @@ type: docker
 steps:
   - name: "Quality Control"
     image: node:12.14-alpine
+    environment:
+      C_PKG: ${C_FLAVOUR}-server-corredor
     commands:
       - apk add git
-      - yarn install
+      - yarn install --non-interactive --no-progress --emoji false
       - yarn lint
       - yarn test:unit
 
-  - name: "Build docker image"
-    image: "plugins/docker"
-    settings:
-      auto_tag: true
-      repo: "${DRONE_REPO_NAMESPACE}/${DRONE_REPO_NAME}"
-      username: { from_secret: "docker_hub_username" }
-      password: { from_secret: "docker_hub_password" }
+
+  - name: "Build"
+    image: node:12.14-alpine
+    environment:
+      C_PKG: ${C_FLAVOUR}-server-corredor
+    commands:
+    - mkdir "${C_PKG}"
+    - yarn global add modclean
+    - yarn install --production --non-interactive --no-progress --emoji false
+    - modclean --run --no-progress --error-halt
+    - yarn build
+    - mv dist node_modules "${C_PKG}"
+    - tar -czf "${C_PKG}-${DRONE_TAG}.tar.gz" ${C_PKG}
     when:
-      ref: { include: [ "refs/tags/20??.*.*", "refs/heads/master" ] }
-      event: [ "tag" ]
+      event: [ tag ]
+      ref:
+      - refs/tags/20??.3.*
+      - refs/tags/20??.6.*
+      - refs/tags/20??.9.*
+      - refs/tags/20??.12.*
+
+
