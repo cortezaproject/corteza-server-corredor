@@ -1,6 +1,6 @@
 const defaultResource = 'system'
 
-function isIterable<T> (o: any): o is Iterable<T> {
+function isIterable<T> (o: unknown): o is Iterable<T> {
   return typeof o === 'object' && typeof o[Symbol.iterator] === 'function'
 }
 

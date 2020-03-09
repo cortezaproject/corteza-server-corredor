@@ -75,7 +75,7 @@ if (config.extensions.dependencies.autoUpdate) {
     searchPaths,
   })
 
-  dependenciesService.watch((filename) => {
+  dependenciesService.watch(() => {
     // @todo can we be more selective about what should be reloaded
     serverScriptsService.process()
     clientScriptsService.process()
