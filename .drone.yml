@@ -6,8 +6,6 @@ type: docker
 steps:
   - name: "Quality Control"
     image: node:12.14-alpine
-    environment:
-      C_PKG: ${C_FLAVOUR}-server-corredor
     commands:
       - apk add git
       - yarn install --non-interactive --no-progress --emoji false
@@ -17,16 +15,18 @@ steps:
 
   - name: "Build"
     image: node:12.14-alpine
-    environment:
-      C_PKG: ${C_FLAVOUR}-server-corredor
     commands:
-    - mkdir "${C_PKG}"
+    - apk add git
     - yarn global add modclean
     - yarn install --production --non-interactive --no-progress --emoji false
+    # doing node modules cleanup
+    # since we can not run std. build
     - modclean --run --no-progress --error-halt
     - yarn build
-    - mv dist node_modules "${C_PKG}"
-    - tar -czf "${C_PKG}-${DRONE_TAG}.tar.gz" ${C_PKG}
+    - mkdir corteza-server-corredor
+    - mv dist node_modules corteza-server-corredor
+    - tar -czf "corteza-server-corredor-${DRONE_TAG}.tar.gz" corteza-server-corredor
+    - du -h "corteza-server-corredor-${DRONE_TAG}.tar.gz"
     when:
       event: [ tag ]
       ref:
