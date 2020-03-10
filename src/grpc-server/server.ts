@@ -18,7 +18,12 @@ export type ServiceDefinition = Map<grpc.ServiceDefinition<unknown>, unknown>
  * Initializes the server
  */
 export function Start ({ addr, certificates }: ServerConfig, logger: BaseLogger, services: ServiceDefinition): void {
-  const server = new grpc.Server()
+  const server = new grpc.Server({
+    // setting this to 16mB
+    // @todo should be configurable
+    'grpc.max_receive_message_length': 2 << 23,
+    'grpc.max_send_message_length': 2 << 23,
+  })
   const log = logger.child({ name: 'gRPC' })
 
   log.debug('starting server')
