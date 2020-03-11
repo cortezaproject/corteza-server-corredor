@@ -119,13 +119,18 @@ export default class ServerScripts {
         return scripts.filter(isValid)
       })
       // bundle all valid scripts
-      .then(scripts =>
-        serverScriptsBundler.Pack(
+      .then(scripts => {
+        // Let developer know about valid scripts loaded
+        scripts
+          .forEach(({ src }) => this.log.debug({ src }, 'script ready'))
+
+
+        return serverScriptsBundler.Pack(
           serverScriptsBundler.BootLoader(config.bundler.outputPath, scripts),
           CommonPath(scripts.map(s => s.src)),
           config.bundler.outputPath,
-        ),
-      )
+        )
+      })
       .then(bundle => {
         // Update scripts on the service with
         // props (just exec() fn in most cases) from the bundled scripts
