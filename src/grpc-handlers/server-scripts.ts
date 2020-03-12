@@ -106,7 +106,7 @@ export default function Handler (h: Service, logger: BaseLogger): object {
       try {
         // Decode arguments
         // passed in as keys with JSON-encoded values
-        log.debug({ eArgs }, 'encoded arguments')
+        // log.debug({ eArgs }, 'encoded arguments')
         dArgs = decodeExecArguments(eArgs)
 
         log.debug('executing script %s', name)
