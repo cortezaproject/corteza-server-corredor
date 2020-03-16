@@ -75,7 +75,7 @@ if (config.extensions.dependencies.autoUpdate) {
     searchPaths,
   })
 
-  dependenciesService.watch((filename) => {
+  dependenciesService.watch(() => {
     // @todo can we be more selective about what should be reloaded
     serverScriptsService.process()
     clientScriptsService.process()
@@ -111,7 +111,9 @@ gRPCServer
     logger.warn('could not start gRPC server:', e.message)
   })
 
-serverScriptsService.process()
-clientScriptsService.process()
+Promise.all([
+  serverScriptsService.process(),
+  clientScriptsService.process(),
+])
 
 watchers.forEach(w => w.watch())

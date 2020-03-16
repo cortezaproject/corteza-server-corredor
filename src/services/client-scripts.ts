@@ -2,7 +2,7 @@ import MakeFilterFn from './shared/filter'
 import fs from 'fs'
 import path from 'path'
 import * as config from '../config'
-import * as bundle from '../bundler/webpack'
+import { clientScripts as clientScriptsBundler } from '../bundler'
 import { BaseLogger } from 'pino'
 import Loader, { CommonPath } from '../loader'
 import watch from 'node-watch'
@@ -88,11 +88,15 @@ export default class ClientScripts {
    *
    * Client scripts service is then updated with the new list of scripts.
    */
-  process (): void {
+  async process (): Promise<void> {
+    if (!this.loader) {
+      this.log.debug('no loader: processing disabled')
+    }
+
     this.log.info({ searchPaths: this.loader.searchPaths }, 'reloading client scripts')
 
-    const scripts = this.loader.scripts()
-    const isValid = (s: Script): boolean => !!s.name && !!s.exec && s.errors.length === 0
+    const scripts = await this.loader.scripts()
+    const isValid = (s: Script): boolean => s.errors.length === 0
     const vScripts = scripts.filter(isValid)
 
     // Make bundles out of all valid scripts
@@ -109,7 +113,7 @@ export default class ClientScripts {
       return bi
     }, {} as { [bundle: string]: Script[] })
 
-    const bootloaderPerBundle = bundle.BootLoader(config.bundler.outputPath, scriptListPerBundle)
+    const bootloaderPerBundle = clientScriptsBundler.BootLoader(config.bundler.outputPath, scriptListPerBundle)
     for (const bnd in bootloaderPerBundle) {
       // Find longest common path for all scripts in the bundle
       // @see https://webpack.js.org/configuration/entry-context/#context
@@ -117,7 +121,7 @@ export default class ClientScripts {
 
       this.log.debug({ bundle: bnd }, 'bundling client scripts')
 
-      bundle.Pack(bnd, bootloaderPerBundle[bnd], ctx, config.bundler.outputPath)
+      clientScriptsBundler.Pack(bnd, bootloaderPerBundle[bnd], ctx, config.bundler.outputPath)
     }
 
     // Log errors on all invalid scripts

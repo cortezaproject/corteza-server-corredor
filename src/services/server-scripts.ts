@@ -1,11 +1,13 @@
 import MakeFilterFn from './shared/filter'
 import { corredor as exec } from '@cortezaproject/corteza-js'
+import * as config from '../config'
 import { BaseLogger } from 'pino'
 import watch from 'node-watch'
 import { debounce } from 'lodash'
 import { Script } from '../types'
 import GetLastUpdated from './shared/get-last-updated'
-import Loader from '../loader'
+import Loader, { CommonPath } from '../loader'
+import { serverScripts as serverScriptsBundler } from '../bundler'
 
 interface ListFilter {
     query?: string;
@@ -86,41 +88,66 @@ export default class ServerScripts {
   /**
    * Processes server scripts from loader
    *
+   * Note: NOOP when client scripts are disabled
+   *
    * Function calls script loader and loads all available server scripts
    * It logs (warn) all errors on all scripts and (debug) valid scripts
    *
    * Server scripts service is then updated with the new list of scripts.
    */
-  process (): void {
+  async process (): Promise<void> {
     if (!this.loader) {
       this.log.debug('no loader: processing disabled')
     }
 
     this.log.info({ searchPaths: this.loader.searchPaths }, 'reloading server scripts')
+    const isValid = (s: Script): boolean => s.errors.length === 0
 
-    const scripts = this.loader.scripts()
-    const isValid = (s: Script): boolean => s && !!s.name && !!s.exec && s.errors.length === 0
-    const vScripts = scripts.filter(isValid)
+    this.loader.scripts()
+      .then(scripts => {
+        this.update(scripts)
 
-    // Log errors on all invalid scripts
-    scripts
-      .filter(s => !isValid(s))
-      .forEach(({ src, errors }) => {
-        errors.forEach(error => {
-          this.log.warn({ src }, 'script error: %s', error)
-        })
+        // Log errors on all invalid scripts
+        scripts
+          .filter(s => !isValid(s))
+          .forEach(({ src, errors }) => {
+            errors.forEach(error => {
+              this.log.warn({ src }, 'script error: %s', error)
+            })
+          })
+
+        return scripts.filter(isValid)
       })
+      // bundle all valid scripts
+      .then(scripts => {
+        // Let developer know about valid scripts loaded
+        scripts
+          .forEach(({ src }) => this.log.debug({ src }, 'script ready'))
 
-    // Let developer know about valid scripts loaded
-    vScripts
-      .forEach(({ src }) => this.log.debug({ src }, 'script ready'))
 
-    // All scripts (even invalid ones) are given to server scripts service
-    // we might want to look at errors
-    this.update(scripts)
-
-    // Summarize reloading stats
-    this.log.info({ valid: vScripts.length, total: scripts.length }, 'processed')
+        return serverScriptsBundler.Pack(
+          serverScriptsBundler.BootLoader(config.bundler.outputPath, scripts),
+          CommonPath(scripts.map(s => s.src)),
+          config.bundler.outputPath,
+        )
+      })
+      .then(bundle => {
+        // Update scripts on the service with
+        // props (just exec() fn in most cases) from the bundled scripts
+        const m = serverScriptsBundler.Load(bundle)
+        for (let s = 0; s < this.scripts.length; s++) {
+          const { src } = this.scripts[s]
+          if (m.has(src)) {
+            this.scripts[s] = { ...m.get(src), ...this.scripts[s] }
+          }
+        }
+      })
+      .finally(() => {
+        this.log.info({
+          valid: this.scripts.filter(isValid).length,
+          total: this.scripts.length,
+        }, 'processed')
+      })
   }
 
   watch (): void {

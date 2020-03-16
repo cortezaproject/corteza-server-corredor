@@ -1,4 +1,4 @@
-FROM node:12.14-alpine
+FROM node:12.14-alpine AS build
 
 # Create app directory
 WORKDIR /corredor
@@ -14,18 +14,25 @@ RUN apk add --no-cache \
     curl
 
 # Install app & support §&files
-COPY *.json *.js yarn.lock LICENSE README.adoc ./
+COPY *.json *.js yarn.lock LICENSE README.adoc /corredor/
 
-RUN yarn install --production --non-interactive --no-progress --emoji false
+RUN cd /corredor && yarn install --production --non-interactive --no-progress --emoji false
 
 # Copy the app (so that yarn install can be cached)
-COPY src ./src
-COPY scripts ./scripts
+COPY ./src /corredor/src/
+COPY ./scripts /corredor/scripts/
 
 # Get ready
-RUN mkdir -p /corredor/usr /corredor/corteza-ext /corredor/usr && \
-    BRANCH=develop sh ./scripts/extensions.sh
+RUN mkdir -p /corredor/usr /corredor/corteza-ext /corredor/usr \
+ && ls /corredor/scripts \
+ && BRANCH=develop sh /corredor/scripts/extensions.sh \
+ && yarn build
 
+FROM node:12.14-alpine
+
+COPY --from=build /corredor /
+
+WORKDIR /corredor
 
 ########################################################################################################################
 
@@ -59,4 +66,4 @@ VOLUME /corredor/certs
 
 EXPOSE 80
 ENTRYPOINT ["/usr/local/bin/yarn"]
-CMD [ "serve"]
+CMD ["serve"]
