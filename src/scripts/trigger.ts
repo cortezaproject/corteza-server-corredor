@@ -137,11 +137,12 @@ export class Trigger {
   private deferred (eventType: string, value: string[]): Trigger {
     const t = this ?? new Trigger()
 
-    // Do not procede if this was called on incompatible trigger
+    // Not allow to be combined with other event types
     if (t.eventTypes.length > 0 && t.eventTypes.find(e => e === eventType)) {
       throw SyntaxError('not allowed to combine interval with other event types')
     }
 
+    // Not allow to be combined with other resource types
     if (t.resourceTypes.length > 0 && t.resourceTypes.find(e => e.indexOf(':') > -1)) {
       throw SyntaxError('not allowed to use interval on non-service resources')
     }
@@ -158,7 +159,7 @@ export class Trigger {
       resourceTypes.push(defaultResource)
     }
 
-    return new Trigger({ ...this, resourceTypes: resourceTypes, events: [eventType], constraints })
+    return new Trigger({ ...this, resourceTypes: resourceTypes, eventTypes: [eventType], constraints })
   }
 }
 
