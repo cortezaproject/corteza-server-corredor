@@ -104,6 +104,7 @@ export default class Loader {
           src,
           name: `${ref}:default`,
           updatedAt,
+          triggers: [],
           errors: [],
           ...script,
         }

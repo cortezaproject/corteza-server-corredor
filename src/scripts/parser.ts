@@ -90,11 +90,11 @@ export default class ScriptParser {
       s.description = o.description
     }
 
-    if (Object.prototype.hasOwnProperty.call(o, 'triggers')) {
-      s.triggers = MakeTrigger(o.triggers) ?? []
-    } else {
+    if (!Object.prototype.hasOwnProperty.call(o, 'triggers')) {
       throw new SyntaxError('triggers definition missing')
     }
+
+    s.triggers = MakeTrigger(o.triggers) ?? []
 
     if (!s.triggers || s.triggers.length === 0) {
       throw new SyntaxError('no triggers defined')
