@@ -1,13 +1,11 @@
 import MakeFilterFn from './shared/filter'
 import { corredor as exec } from '@cortezaproject/corteza-js'
-import * as config from '../config'
 import { BaseLogger } from 'pino'
 import watch from 'node-watch'
 import { debounce } from 'lodash'
 import { Script } from '../types'
 import GetLastUpdated from './shared/get-last-updated'
 import Loader, { CommonPath } from '../loader'
-import { serverScripts as serverScriptsBundler } from '../bundler'
 
 interface ListFilter {
     query?: string;
@@ -118,28 +116,10 @@ export default class ServerScripts {
 
         return scripts.filter(isValid)
       })
-      // bundle all valid scripts
       .then(scripts => {
-        // Let developer know about valid scripts loaded
-        scripts
-          .forEach(({ src }) => this.log.debug({ src }, 'script ready'))
-
-
-        return serverScriptsBundler.Pack(
-          serverScriptsBundler.BootLoader(config.bundler.outputPath, scripts),
-          CommonPath(scripts.map(s => s.src)),
-          config.bundler.outputPath,
-        )
-      })
-      .then(bundle => {
-        // Update scripts on the service with
-        // props (just exec() fn in most cases) from the bundled scripts
-        const m = serverScriptsBundler.Load(bundle)
         for (let s = 0; s < this.scripts.length; s++) {
           const { src } = this.scripts[s]
-          if (m.has(src)) {
-            this.scripts[s] = { ...m.get(src), ...this.scripts[s] }
-          }
+          this.scripts[s] = { ...this.require(src), ...this.scripts[s] }
         }
       })
       .finally(() => {
@@ -165,5 +145,14 @@ export default class ServerScripts {
         this.process()
       }, 500),
     ).close)
+  }
+
+  protected require (src): Script {
+    delete require.cache[src]
+    try {
+      return require(src).default
+    } catch (e) {
+      this.log.warn({ src }, e)
+    }
   }
 }

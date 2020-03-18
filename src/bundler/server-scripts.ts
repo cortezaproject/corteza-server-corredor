@@ -32,6 +32,11 @@ function BootLoader (outputPath: string, ss: Array<Script>): string {
 /**
  * Bundles server scripts w/ webpack
  *
+ * Currently not used because it causes issues with fontkit:
+ * https://github.com/foliojs/fontkit/issues/67
+ *
+   * Proposed solutions (adt. webpack config rules) do not help.
+ *
  * @param {string} entry
  * @param {string} context
  * @param {string} outputPath
