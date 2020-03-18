@@ -67,6 +67,7 @@ function Pack (entry, context, outputPath): Promise<string> {
 }
 
 function Load (path): Map<string, Partial<Script>> {
+  delete require.cache[require.resolve(path)]
   return require(path).default
 }
 

@@ -148,11 +148,11 @@ export default class ServerScripts {
   }
 
   protected require (src): Script {
-    delete require.cache[src]
+    delete require.cache[require.resolve(src)]
     try {
       return require(src).default
     } catch (error) {
-      this.log.warn({ src }, 'could not require() script: %s', error)
+      this.log.warn({ src }, 'could not require() script: %s', error.stack)
     }
   }
 }
