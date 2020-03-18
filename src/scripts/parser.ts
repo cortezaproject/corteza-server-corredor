@@ -21,11 +21,6 @@ export default class ScriptParser {
   }
 
   async parse (): Promise<Partial<Script>> {
-    // const walk = (n: ts.Node, l = 0) => {
-    //   console.log(' '.repeat(l), ts.SyntaxKind[n.kind])
-    //   n.forEachChild(n => walk(n, l + 1))
-    // }
-    // this.source.forEachChild(n => walk(n, 0))
     return this.findDefaultExport(this.source)
       .then(n => this.parseDefaultExport(n))
       .then(def => this.parseExportedObject(def))
@@ -56,6 +51,14 @@ export default class ScriptParser {
     })
   }
 
+  /**
+   * Evaluates extracted default export and returns result
+   *
+   * This is needed so we can safely parse all scripts, even if they are
+   * completely broken or import large modules.
+   *
+   * @param n
+   */
   protected parseDefaultExport (n: ts.Node): {[_: string]: unknown} {
     const source = n.getText(this.source)
 
