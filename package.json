@@ -11,8 +11,7 @@
   "types": "dist/types.d.ts",
   "scripts": {
     "serve:dev": "ts-node-dev --debounce 200 --transpileOnly --respawn --ignore-watch node_modules --ignore-watch usr --ignore-watch dist ./src/server.ts",
-    "build": "tsc",
-    "serve": "node ./dist/server.js",
+    "serve": "ts-node ./src/server.ts",
     "lint": "eslint src/** --ext .js,.ts",
     "test:unit": "mocha",
     "test:unit:cc": "nyc mocha",
