@@ -9,7 +9,21 @@ It starts a gRPC server with 2 services:
 
 See https://github.com/cortezaproejct/corteza-protobuf[protobuf service definition] for details.
 
-Corredor loads and monitors user scripts in the configured location
+Corredor loads and monitors user scripts in the configured locations.
+
+
+## Main responsibilities
+
+. Watch and (re)load script dependencies (defined in standard package.json file)
+. Watch and bundle client scripts with webpack
+. Watch and reload server scripts
+. Listen for gRPC requests, provide list of client and server scripts,
+  serve client script bundles and execute server side scripts
+
+.Roadmap
+- pull git repositories (with scripts)
+- automatically run unit tests for scripts
+- secret and configuration management (key-value store)
 
 ## Server scripts
 
@@ -17,7 +31,7 @@ These scripts are executed by Corredor directly or indirectly by the Corteza bac
 Scripts are not jailed or virtualized and run in the same context as the main Corredor app.
 This will probably be changed in the future to prevent scripts doing destructive actions such as stopping the Corredor server or similar.
 
-Make sure your scripts are audited and making changes where they should.
+Make sure your scripts are audited and accessing only limited data and making only changes they should.
 Last line of defense is (Docker) container, where the Corredor application is running.
 
 ## Client scripts (WIP)
@@ -28,16 +42,19 @@ This bundles (each Corteza frontend app has one bundle) is loaded alongside the 
 
 Boot loader makes sure that all client scripts are properly registered in the event bus and executed in right order and in the right context
 
-Make sure your scripts are audited and properly coded.
+Make sure your scripts are audited and accessing only limited data and making only changes they should.
 
 ## Running Corredor in production
 
 ```
-@todo how to run docker
+docker run --rm -it \
+  cortezaproject/corteza-server-corredor:latest
 ```
 
 ```
-@todo how to mount user scripts
+docker run --rm -it \
+ --volume $(pwd)./custom-scripts:/corredor/usr:ro \
+ cortezaproject/corteza-server-corredor:latest
 ```
 
 
@@ -46,19 +63,31 @@ Make sure your scripts are audited and properly coded.
 Corredor uses YARN for package management.
 If you insist on using npm, make sure correct package versions are installed (yarn uses `yarn.lock` to keep track of exact versions used).
 
- 1. `yarn` to install dependencies
- 2. `yarn serve:dev` to start the development server (restarts when files change)
- 3. `yarn test:unit` to run all unit tests (add `--watch` watch files for changes and restart)
+. `yarn` to install dependencies
+. `yarn serve:dev` to start the development server (restarts when files change)
+. `yarn test:unit` to run all unit tests (add `--watch` watch files for changes and restart)
 
 .Note on Corredor's `package.json`
 You'll see majority of development dependencies under dependencies key.
 This is intentional as we want to access certain packages in non-dev mode as well (bundling client scripts with webpack, Typescript compiling, running unit tests)
 
-.Note on running the app and bundling Corredor's application code
-We're doing some funky stuff, importing code on the fly and (by default) Webpack does not like that.
-It transpiles loading logic (see `src/loader.ts`) in a way that it does not find the user scripts any more.
-Until this problem is resolved, app code (`./src/**`) can not be compiled (ts => js) and properly bundled and application is ran via `ts-node` tool.
+.Running server with ts-node
+We're running corredor server with ts-node, source code is not transpiled with tsc nor bundled with rollup or webpack.
 
+Reasons for these decisions:
+
+. We need to support server-side scripts
+  These scripts are imported and executed in the same runtime as Corredor
+  Scripts can import other libs and modules
+. This behaviour (importing, executing, loading external modules)
+  should be same in production and development
+. scripts can have (multiple) package.json with defined dependencies that
+  need to be loaded and included
+. one of the possible approaches is to bundle server-side scripts with tools like
+  webpack or rollup.
+  To date, we were not able to construct a feasible solution.
+  - webpack issues: https://github.com/foliojs/fontkit/issues/67.
+  - rollup issues: issues with inclusion of external dependencies.
 
 ### Environmental variables
 
