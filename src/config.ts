@@ -1,4 +1,6 @@
 import path from 'path'
+import { NodeOptions as SentryOptions } from '@sentry/node'
+
 
 // Read .env into process.ENV.*
 require('dotenv').config()
@@ -100,6 +102,16 @@ export const logger = {
 
   // Log level
   level: e.CORREDOR_LOG_LEVEL ?? (isDevelopment ? 'trace' : 'info'),
+}
+
+// See https://docs.sentry.io/clients/node/config/ for details
+export const sentry: SentryOptions = {
+  enabled: !!e.SENTRY_DSN,
+  dsn: e.SENTRY_DSN,
+  serverName: e.SENTRY_SERVERNAME,
+  release: e.SENTRY_RELEASE,
+  dist: e.SENTRY_DIST,
+  environment: e.SENTRY_ENVIRONMENT,
 }
 
 export const protobuf = {

@@ -5,7 +5,8 @@ import watch from 'node-watch'
 import { debounce } from 'lodash'
 import { Script } from '../types'
 import GetLastUpdated from './shared/get-last-updated'
-import Loader, { CommonPath } from '../loader'
+import Loader from '../loader'
+import * as Sentry from '@sentry/node'
 
 interface ListFilter {
     query?: string;
@@ -152,6 +153,7 @@ export default class ServerScripts {
     try {
       return require(src).default
     } catch (error) {
+      Sentry.captureException(error)
       this.log.warn({ src }, 'could not require() script: %s', error.stack)
     }
   }

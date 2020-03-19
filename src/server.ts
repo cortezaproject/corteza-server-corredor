@@ -9,9 +9,12 @@ import ServerScriptsHandler from './grpc-handlers/server-scripts'
 import ClientScriptsService from './services/client-scripts'
 import ServerScriptsService from './services/server-scripts'
 import DependenciesService from './services/dependencies'
+import * as Sentry from '@sentry/node'
 import EnvCheck from './check'
 import ScriptLoader from './loader'
 import { Watcher } from './types'
+
+Sentry.init(config.sentry)
 
 EnvCheck()
 
@@ -62,8 +65,12 @@ if (config.extensions.dependencies.autoUpdate) {
 
   dependenciesService.watch(() => {
     // @todo can we be more selective about what should be reloaded
-    serverScriptsService.process()
-    clientScriptsService.process()
+    try {
+      serverScriptsService.process()
+      clientScriptsService.process()
+    } catch (e) {
+      Sentry.captureException(e)
+    }
   })
 }
 
@@ -93,12 +100,17 @@ gRPCServer
     gRPCServer.Start(config.server, logger, serviceDefinitions)
   })
   .catch(e => {
+    Sentry.captureException(e)
     logger.warn('could not start gRPC server:', e.message)
   })
 
-Promise.all([
-  serverScriptsService.process(),
-  clientScriptsService.process(),
-])
+try {
+  Promise.all([
+    serverScriptsService.process(),
+    clientScriptsService.process(),
+  ])
 
-watchers.forEach(w => w.watch())
+  watchers.forEach(w => w.watch())
+} catch (e) {
+  Sentry.captureException(e)
+}
