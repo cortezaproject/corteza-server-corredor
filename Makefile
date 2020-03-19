@@ -24,11 +24,12 @@ test:
 
 build:
 	modclean --run --no-progress --error-halt
-	$(YARN) build
+#	$(YARN) build
 
 release:
 	@ mkdir -p .tmp/$(APP)
-	@ cp -r $(RELEASE_EXTRA_FILES) $(BUILD_DEST_DIR) node_modules .tmp/$(APP)/
+#	@ cp -r $(RELEASE_EXTRA_FILES) $(BUILD_DEST_DIR) node_modules .tmp/$(APP)/
+	@ cp -r $(RELEASE_EXTRA_FILES) package.json .eslintrc.js .mocharc.js tsconfig.json yarn.lock src node_modules .tmp/$(APP)/
 	@ tar -C .tmp -czf $(RELEASE_NAME) $(APP)
 
 upload: $(RELEASE_PKEY)
