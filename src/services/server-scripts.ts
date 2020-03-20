@@ -53,6 +53,29 @@ export default class ServerScripts {
   }
 
   /**
+   * Returns executable script (or throws error)
+   *
+   * @param name
+   */
+  getExecutable (name: string): exec.ExecutableScript {
+    const script: Script|undefined = this.scripts.find((s) => s.name === name)
+
+    if (script === undefined) {
+      throw new Error('script not found')
+    }
+
+    if (script.errors && script.errors.length > 0) {
+      throw new Error('can not run script with initialization errors')
+    }
+
+    if (!script.exec || !(script.exec as exec.ScriptExecFn)) {
+      throw new Error('can not run uninitialized script')
+    }
+
+    return script as exec.ExecutableScript
+  }
+
+  /**
    * Finds and executes the script using current configuration, passed arguments and logger
    *
    * @param name Name of the script
@@ -60,21 +83,11 @@ export default class ServerScripts {
    * @param log Exec logger to capture and proxy all log.* and console.* calls
    */
   async exec (name: string, args: exec.BaseArgs, log: BaseLogger): Promise<object> {
-    const script: Script|undefined = this.scripts.find((s) => s.name === name)
-
-    if (script === undefined) {
-      return Promise.reject(new Error('script not found'))
-    }
-
-    if (script.errors && script.errors.length > 0) {
-      return Promise.reject(new Error('can not run script with initialization errors'))
-    }
-
-    if (!script.exec || !(script.exec as exec.ScriptExecFn)) {
-      return Promise.reject(new Error('can not run uninitialized script'))
-    }
-
-    return exec.Exec(script as exec.ExecutableScript, args, new exec.Ctx(args, log, { config: this.config }))
+    return exec.Exec(
+      this.getExecutable(name),
+      args,
+      new exec.Ctx(args, log, { config: this.config }),
+    )
   }
 
   /**

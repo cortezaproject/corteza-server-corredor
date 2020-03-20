@@ -3,6 +3,7 @@ import { BaseLogger } from 'pino'
 import { HandleException } from '../grpc-server'
 import Service from '../services/client-scripts'
 import IsModifiedSince from './shared/is-modified-since'
+import * as Sentry from '@sentry/node'
 
 interface BundleRequest {
   name: string;
@@ -58,8 +59,7 @@ export default function Handler (h: Service, logger: BaseLogger): object {
           }],
         })
       } catch (e) {
-        log.debug({ stack: e.stack }, e.message)
-        HandleException(e, done, grpc.status.INTERNAL)
+        HandleException(log, e, done, grpc.status.INTERNAL)
       }
     },
 
@@ -90,8 +90,7 @@ export default function Handler (h: Service, logger: BaseLogger): object {
       try {
         done(null, { scripts })
       } catch (e) {
-        log.debug({ stack: e.stack }, e.message)
-        HandleException(e, done, grpc.status.INTERNAL)
+        HandleException(log, e, done, grpc.status.INTERNAL)
       }
     },
   }

@@ -5,6 +5,7 @@ import Service from '../services/server-scripts'
 import { LogToArray } from '../scripts/log-to-array'
 import { corredor as exec } from '@cortezaproject/corteza-js'
 import IsModifiedSince from './shared/is-modified-since'
+import * as Sentry from '@sentry/node'
 
 interface KV {
   [_: string]: string;
@@ -101,6 +102,14 @@ export default function Handler (h: Service, logger: BaseLogger): object {
       const [requestId] = metadata.get('x-request-id')
       const log = logger.child({ rpc: 'Exec', script: name, requestId })
 
+      Sentry.configureScope(scope => {
+        if (requestId) {
+          scope.setTag('requestId', requestId.toString())
+        }
+
+        scope.setTag('script', name)
+      })
+
       let dArgs: ExecArgsRaw = {}
 
       try {
@@ -111,7 +120,7 @@ export default function Handler (h: Service, logger: BaseLogger): object {
 
         log.debug('executing script %s', name)
       } catch (e) {
-        HandleException(e, done, grpc.status.INVALID_ARGUMENT)
+        HandleException(log, e, done, grpc.status.INVALID_ARGUMENT)
       }
 
       // global console replacement,
@@ -122,6 +131,12 @@ export default function Handler (h: Service, logger: BaseLogger): object {
       // Cast some of the common argument types
       // from plain javascript object to proper classes
       const args = new exec.Args(dArgs)
+
+      try {
+        h.getExecutable(name)
+      } catch (e) {
+        HandleException(log, e, done, grpc.status.NOT_FOUND)
+      }
 
       try {
         h.exec(name, args as exec.BaseArgs, scriptLogger).then((result) => {
@@ -138,12 +153,15 @@ export default function Handler (h: Service, logger: BaseLogger): object {
             duration: Date.now() - started,
           }, 'done')
         }).catch(e => {
-          log.debug({ stack: e.stack }, e.message)
-          HandleException(e, done, grpc.status.ABORTED)
+          if (e instanceof Error && e.message === 'Aborted') {
+            HandleException(log, e, done, grpc.status.ABORTED)
+          } else {
+            HandleException(log, e, done, grpc.status.UNKNOWN)
+          }
+
         })
       } catch (e) {
-        log.debug({ stack: e.stack }, e.message)
-        HandleException(e, done, grpc.status.ABORTED)
+        HandleException(log, e, done, grpc.status.INTERNAL)
       }
     },
 
@@ -173,8 +191,7 @@ export default function Handler (h: Service, logger: BaseLogger): object {
       try {
         done(null, { scripts })
       } catch (e) {
-        log.debug({ stack: e.stack }, e.message)
-        HandleException(e, done, grpc.status.INTERNAL)
+        HandleException(log, e, done, grpc.status.INTERNAL)
       }
     },
   }
