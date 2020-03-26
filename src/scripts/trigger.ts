@@ -1,21 +1,10 @@
+import { Constraint } from '@cortezaproject/corteza-js/dist/eventbus/shared'
+import { UIProp } from './types'
+
 const defaultResource = 'system'
 
 function isIterable<T> (o: unknown): o is Iterable<T> {
   return typeof o === 'object' && typeof o[Symbol.iterator] === 'function'
-}
-
-interface Constraint {
-  name?:
-      string;
-  op?:
-      string;
-  value:
-      string[];
-}
-
-interface UIProp {
-  name: string;
-  value: string;
 }
 
 function distinct (arr: string[]): string[] {
@@ -87,12 +76,14 @@ export class Trigger {
     })
   }
 
-  at (...intervals: string[]): Trigger {
-    return (this ?? new Trigger()).deferred('onTimestamp', intervals)
+  at (...timestamps: string[]): Trigger {
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    return deferred('timestamp', ...timestamps)
   }
 
   every (...intervals: string[]): Trigger {
-    return (this ?? new Trigger()).deferred('onInterval', intervals)
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    return deferred('interval', ...intervals)
   }
 
   where (...aa: unknown[]): Trigger {
@@ -129,34 +120,6 @@ export class Trigger {
     const t = this ?? new Trigger()
     return new Trigger({ ...t, uiProps: [...t.uiProps, { name, value }] })
   }
-
-  private deferred (eventType: string, value: string[]): Trigger {
-    const t = this ?? new Trigger()
-
-    // Not allow to be combined with other event types
-    if (t.eventTypes.length > 0 && t.eventTypes.find(e => e === eventType)) {
-      throw SyntaxError('not allowed to combine interval with other event types')
-    }
-
-    // Not allow to be combined with other resource types
-    if (t.resourceTypes.length > 0 && t.resourceTypes.find(e => e.indexOf(':') > -1)) {
-      throw SyntaxError('not allowed to use interval on non-service resources')
-    }
-
-    let constraints: Constraint[] = t.constraints
-    if (constraints.length > 0) {
-      constraints[0].value.push(...value)
-    } else {
-      constraints = [{ value }]
-    }
-
-    const { resourceTypes } = this
-    if (resourceTypes.length === 0) {
-      resourceTypes.push(defaultResource)
-    }
-
-    return new Trigger({ ...this, resourceTypes: resourceTypes, eventTypes: [eventType], constraints })
-  }
 }
 
 /**
@@ -182,4 +145,12 @@ export default function Make (t: unknown): Trigger[] {
   }
 
   return tt.filter(t => t instanceof Trigger)
+}
+
+function deferred (name: string, ...value: string[]): Trigger {
+  return new Trigger({
+    resourceTypes: [defaultResource],
+    eventTypes: eventize('on', [name]),
+    constraints: [{ name, value }],
+  })
 }

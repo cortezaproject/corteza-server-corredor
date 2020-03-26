@@ -58,11 +58,11 @@ describe('trigger making', () => {
   })
 
   describe('deferred', () => {
-    it('shoud make deferred trigger with type & resource', () => {
+    it('should make deferred trigger with type & resource', () => {
       expect(Make(({ every }) => every('* * * * *'))).to.deep.eq([{
         eventTypes: ['onInterval'],
         resourceTypes: ['system'],
-        constraints: [{ value: ['* * * * *'] }],
+        constraints: [{ name: 'interval', value: ['* * * * *'] }],
         uiProps: [],
       }])
     })

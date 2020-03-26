@@ -1,6 +1,7 @@
 import * as ts from 'typescript'
 import vm from 'vm'
 import { Script, ScriptSecurity } from '../types'
+import MakeIterator from './iterator'
 import MakeTrigger from './trigger'
 
 interface RawScriptSecurity {
@@ -93,14 +94,21 @@ export default class ScriptParser {
       s.description = o.description
     }
 
-    if (!Object.prototype.hasOwnProperty.call(o, 'triggers')) {
-      throw new SyntaxError('triggers definition missing')
-    }
+    const hasTriggers = !Object.prototype.hasOwnProperty.call(o, 'triggers')
+    const hasIterator = !Object.prototype.hasOwnProperty.call(o, 'iterator')
 
-    s.triggers = MakeTrigger(o.triggers) ?? []
-
-    if (!s.triggers || s.triggers.length === 0) {
-      throw new SyntaxError('no triggers defined')
+    if (Object.prototype.hasOwnProperty.call(o, 'iterator') && o.iterator) {
+      s.iterator = MakeIterator(o.iterator) ?? undefined
+      if (!s.iterator) {
+        throw new SyntaxError('iterator not defined')
+      }
+    } else if (Object.prototype.hasOwnProperty.call(o, 'triggers') && o.triggers) {
+      s.triggers = MakeTrigger(o.triggers) ?? []
+      if (!s.triggers || s.triggers.length === 0) {
+        throw new SyntaxError('triggers not defined')
+      }
+    } else {
+      throw new SyntaxError('triggers or iterator definition missing')
     }
 
     if (!Object.prototype.hasOwnProperty.call(o, 'exec')) {

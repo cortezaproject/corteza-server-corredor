@@ -1,5 +1,6 @@
 import { corredor as exec } from '@cortezaproject/corteza-js'
 import { Trigger } from './scripts/trigger'
+import { Iterator } from './scripts/iterator'
 
 export interface ScriptFile {
   // Script location
@@ -40,6 +41,9 @@ export interface Script extends ScriptFile {
 
   // When & what trigger this script
   triggers?: Trigger[];
+
+  // Configured iterator
+  iterator?: Iterator;
 
   // Code (function) to be executed
   exec?: ScriptFn;
