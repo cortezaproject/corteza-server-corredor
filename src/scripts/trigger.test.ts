@@ -58,11 +58,42 @@ describe('trigger making', () => {
   })
 
   describe('deferred', () => {
-    it('shoud make deferred trigger with type & resource', () => {
+    it('should make deferred trigger with type & resource', () => {
       expect(Make(({ every }) => every('* * * * *'))).to.deep.eq([{
         eventTypes: ['onInterval'],
         resourceTypes: ['system'],
-        constraints: [{ value: ['* * * * *'] }],
+        constraints: [{ name: 'interval', value: ['* * * * *'] }],
+        uiProps: [],
+      }])
+    })
+  })
+
+  describe('forEach', () => {
+    const filter = { module: 'foo', query: 'bar', limit: 42 }
+
+    it('should make forEach from manual', () => {
+      expect(Make(({ on }) => on('manual').forEach('compose:record', filter))).to.deep.eq([{
+        eventTypes: ['onManual'],
+        resourceTypes: ['compose:record'],
+        constraints: [
+          { name: 'module', value: ['foo'] },
+          { name: 'query', value: ['bar'] },
+          { name: 'limit', value: ['42'] },
+        ],
+        uiProps: [],
+      }])
+    })
+
+    it('should make forEach from deferred', () => {
+      expect(Make(({ every }) => every('* * * * *').forEach('compose:record', filter))).to.deep.eq([{
+        eventTypes: ['onInterval'],
+        resourceTypes: ['compose:record'],
+        constraints: [
+          { name: 'interval', value: ['* * * * *'] },
+          { name: 'module', value: ['foo'] },
+          { name: 'query', value: ['bar'] },
+          { name: 'limit', value: ['42'] },
+        ],
         uiProps: [],
       }])
     })
