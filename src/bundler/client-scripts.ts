@@ -54,7 +54,7 @@ function mapToScript(name, exportedScript) {
 
     // Load each script and map it to the list
     ss.forEach((s) => {
-      entry.write(`mapToScript('${s.name}', require('${s.src}').${s.exportName});\n`)
+      entry.write(`mapToScript('${s.name}', require('${s.src}').default);\n`)
     })
 
     // Script registration function
