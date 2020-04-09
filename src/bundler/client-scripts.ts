@@ -78,9 +78,11 @@ export function Register({ verbose = true, eventbus = undefined, uiHooks = undef
       .forEach(s => {
         (s.triggers || [])
           .forEach(t => {
+            // Assign script name to handler/trigger:
+            // when triggering scripts manually we always trigger a specific script
             t.scriptName = s.name
             try {
-              if (verbose) console.debug('registering script', s.name)
+              if (verbose) console.debug('registering script', s.name, { script: s })
               eventbus.Register(ev => exec(s, ev), t)
             } catch (e) {
               console.error(e)
