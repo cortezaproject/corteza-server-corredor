@@ -161,10 +161,21 @@ export const bundler = {
   enabled: isTrue(e.CORREDOR_BUNDER_ENABLED) ?? true,
 }
 
-const extensionsSearchPaths = (e.CORREDOR_EXT_SEARCH_PATHS ?? './usr/*:./usr')
+
+
+
+
+const extensionsSearchPaths = (e.CORREDOR_EXT_SEARCH_PATHS ?? [path.join('usr'), path.join('usr', '*')].join(':'))
   .trim()
   .split(/[:]+/)
   .filter(p => p.length > 0)
+  .map(p => {
+    if (!p.startsWith('/')) {
+      return path.join(rootDir, p)
+    }
+
+    return p
+  })
 
 export const extensions = {
   // Path to extensions

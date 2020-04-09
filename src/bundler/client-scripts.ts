@@ -57,42 +57,6 @@ function mapToScript(name, exportedScript) {
       entry.write(`mapToScript('${s.name}', require('${s.src}').default);\n`)
     })
 
-    // Script registration function
-    // Iterates over all known scripts and registers it to eventbus & uiHooks.
-    entry.write(`
-export function Register({ verbose = true, eventbus = undefined, uiHooks = undefined, exec = () => {} } = {}) {
-  if (scripts.length == 0) {
-    if (verbose) console.debug('no scripts to register')
-  }
-
-  if (verbose) console.debug('registering bundled client scripts')
-  
-  if (uiHooks !== undefined) {
-    if (verbose) console.debug('registering UI hooks')
-    uiHooks.Register(...scripts.entries())
-  }
-  
-  if (eventbus !== undefined) {
-    if (verbose) console.debug('registering eventbus handlers')
-    scripts
-      .forEach(s => {
-        (s.triggers || [])
-          .forEach(t => {
-            // Assign script name to handler/trigger:
-            // when triggering scripts manually we always trigger a specific script
-            t.scriptName = s.name
-            try {
-              if (verbose) console.debug('registering script', s.name, { script: s })
-              eventbus.Register(ev => exec(s, ev), t)
-            } catch (e) {
-              console.error(e)
-            }
-          })
-      })
-  }
-}
-`)
-
     entry.close()
   }
 
