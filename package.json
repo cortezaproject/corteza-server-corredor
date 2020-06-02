@@ -18,7 +18,7 @@
     "cdeps": "yarn add @cortezaproject/corteza-js https://github.com/cortezaproject/corteza-protobuf#develop"
   },
   "dependencies": {
-    "@cortezaproject/corteza-js": "^2020.3.0-rc.21",
+    "@cortezaproject/corteza-js": "^2020.3.0-rc.30",
     "@cortezaproject/corteza-protobuf": "https://github.com/cortezaproject/corteza-protobuf#develop",
     "@grpc/proto-loader": "^0.5.1",
     "@istanbuljs/nyc-config-typescript": "^0.1.3",
@@ -46,7 +46,9 @@
     "esm": "^3.2.25",
     "glob": "^7.1.6",
     "grpc": "^1.24.1",
+    "kind-of": "^6.0.3",
     "lodash": "^4.17.15",
+    "minimalist": "^1.0.0",
     "mocha": "^6.2.2",
     "moment": "^2.24.0",
     "node-watch": "^0.6.3",
@@ -54,6 +56,7 @@
     "nyc": "^14.1.1",
     "pino": "5.16.0",
     "pino-pretty": "^3.5.0",
+    "serialize-javascript": "^3.1.0",
     "sinon": "7.4.1",
     "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "^3.7.5",
