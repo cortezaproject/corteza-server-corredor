@@ -89,15 +89,16 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@cortezaproject/corteza-js@^2020.3.0-rc.31":
-  version "2020.3.0-rc.31"
-  resolved "https://registry.yarnpkg.com/@cortezaproject/corteza-js/-/corteza-js-2020.3.0-rc.31.tgz#16d0541f977c5068d7f5826e12e9d1140d3f3d62"
-  integrity sha512-CMDFR1SZgWRcj81WFKaUJLiehi8lFkeR0oFIX+gkXV/NEer+qz+o26NxKvtvLpUtPok+4Xy7gdPnLlrc801H8A==
+"@cortezaproject/corteza-js@^2020.6.1":
+  version "2020.6.1"
+  resolved "https://registry.yarnpkg.com/@cortezaproject/corteza-js/-/corteza-js-2020.6.1.tgz#1775054bfe5622a0e57dc9c729854ee4a9aa90b1"
+  integrity sha512-64nMYRkh5g3dvTbZxE2EOBjw8GCtugG+ZWvK33mDc35sdrg87XH3P7RZik49f/Kn7HIWezTy/lVvJDboW8EQdQ==
   dependencies:
     axios "^0.19.1"
     chart.js "^2.7.3"
     hex-rgb "^4.1.0"
     lodash "^4.17.15"
+    minimalist "^1.0.0"
     minimatch "^3.0.4"
     moment "^2.24.0"
     numeral "^2.0.6"
