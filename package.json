@@ -1,7 +1,7 @@
 {
   "name": "corteza-server-corredor",
   "description": "Corteza Automation Script Runner",
-  "version": "2020.12.0-rc.1",
+  "version": "2020.12.0-rc.2",
   "license": "Apache-2.0",
   "contributors": [
     "Denis Arh <denis.arh@crust.tech>"
