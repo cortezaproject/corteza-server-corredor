@@ -15,10 +15,10 @@
     "lint": "eslint src/** --ext .js,.ts",
     "test:unit": "mocha",
     "test:unit:cc": "nyc mocha",
-    "cdeps": "yarn add @cortezaproject/corteza-js https://github.com/cortezaproject/corteza-protobuf#develop"
+    "cdeps": "yarn upgrade @cortezaproject/corteza-js https://github.com/cortezaproject/corteza-protobuf#develop"
   },
   "dependencies": {
-    "@cortezaproject/corteza-js": "^2020.12.0-rc.1",
+    "@cortezaproject/corteza-js": "^2020.12.0-rc.2",
     "@cortezaproject/corteza-protobuf": "https://github.com/cortezaproject/corteza-protobuf#develop",
     "@grpc/proto-loader": "^0.5.1",
     "@istanbuljs/nyc-config-typescript": "^0.1.3",

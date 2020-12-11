@@ -89,18 +89,18 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@cortezaproject/corteza-js@^2020.12.0-rc.1":
-  version "2020.12.0-rc.1"
-  resolved "https://registry.yarnpkg.com/@cortezaproject/corteza-js/-/corteza-js-2020.12.0-rc.1.tgz#7e867075a1de5f434f8940cee54cdfc4ce87f369"
-  integrity sha512-AKC2UW4rDm4/1zP8+5EdmiFL5ELktZxYoFxpW8zeiZqXzayHHo8w58PZQhK2OLvYaStHppak4WYGVXKSHVXfuA==
+"@cortezaproject/corteza-js@^2020.12.0-rc.2":
+  version "2020.12.0-rc.2"
+  resolved "https://registry.yarnpkg.com/@cortezaproject/corteza-js/-/corteza-js-2020.12.0-rc.2.tgz#5edef803f0fa5a1b7e173eb5d363e597d0519db1"
+  integrity sha512-BlLhcvjIDBVzWrUb8EdXcUeFohUF7a9cztfMiCdDsSAm1Lia9G/tKJ4YbjfzqkP+05Qt6UtS//+ajIVhhfgywA==
   dependencies:
     axios "^0.19.1"
-    chart.js "^2.7.3"
+    chart.js "2.9.3"
     hex-rgb "^4.1.0"
     lodash "^4.17.15"
     minimalist "^1.0.0"
     minimatch "^3.0.4"
-    moment "^2.24.0"
+    moment "2.25.3"
     numeral "^2.0.6"
     pino "^5.16.0"
     ts-sinon "^1.0.25"
@@ -1237,7 +1237,7 @@ chardet@^0.7.0:
   resolved "https://registry.yarnpkg.com/chardet/-/chardet-0.7.0.tgz#90094849f0937f2eedc2425d0d28a9e5f0cbad9e"
   integrity sha512-mT8iDcrh03qDGRRmoA2hmBJnxpllMR+0/0qlzjqZES6NdiWDcZkCNAk4rPFZ9Q85r27unkiNNg8ZOiwZXBHwcA==
 
-chart.js@^2.7.3:
+chart.js@2.9.3:
   version "2.9.3"
   resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-2.9.3.tgz#ae3884114dafd381bc600f5b35a189138aac1ef7"
   integrity sha512-+2jlOobSk52c1VU6fzkh3UwqHMdSlgH1xFv9FKMqHiNCpXsGPQa/+81AFa+i3jZ253Mq9aAycPwDjnn1XbRNNw==
@@ -3686,7 +3686,7 @@ mocha@^6.2.2:
     yargs-parser "13.1.2"
     yargs-unparser "1.6.0"
 
-moment@^2.10.2:
+moment@2.25.3, moment@^2.10.2:
   version "2.25.3"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.25.3.tgz#252ff41319cf41e47761a1a88cab30edfe9808c0"
   integrity sha512-PuYv0PHxZvzc15Sp8ybUCoQ+xpyPWvjOuK72a5ovzp2LI32rJXOiIfyoFoYvG3s6EwwrdkMyWuRiEHSZRLJNdg==
