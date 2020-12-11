@@ -94,9 +94,6 @@ export default class ScriptParser {
       s.description = o.description
     }
 
-    const hasTriggers = !Object.prototype.hasOwnProperty.call(o, 'triggers')
-    const hasIterator = !Object.prototype.hasOwnProperty.call(o, 'iterator')
-
     if (Object.prototype.hasOwnProperty.call(o, 'iterator') && o.iterator) {
       s.iterator = MakeIterator(o.iterator) ?? undefined
       if (!s.iterator) {
