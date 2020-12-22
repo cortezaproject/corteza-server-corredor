@@ -7,7 +7,7 @@ It starts a gRPC server with 2 services:
  - Server scripts with list and exec procedures
  - Client scripts with list and bundle procedures
 
-See https://github.com/cortezaproejct/corteza-protobuf[protobuf service definition] for details.
+See https://github.com/cortezaproject/corteza-protobuf[protobuf service definition] for details.
 
 Corredor loads and monitors user scripts in the configured locations.
 
