@@ -58,7 +58,7 @@
     "pino-pretty": "^3.5.0",
     "serialize-javascript": "^3.1.0",
     "sinon": "7.4.1",
-    "ts-node-dev": "^1.0.0-pre.44",
+    "ts-node-dev": "^1.0.0",
     "typescript": "^3.7.5",
     "webpack": "^4.41.2"
   },
