@@ -93,12 +93,12 @@
     lodash "^4.17.19"
     to-fast-properties "^2.0.0"
 
-"@cortezaproject/corteza-js@^2020.12.0":
-  version "2020.12.0"
-  resolved "https://registry.yarnpkg.com/@cortezaproject/corteza-js/-/corteza-js-2020.12.0.tgz#1bf6560cac84941bf3d5955e3dfac9c5fbeb9eb4"
-  integrity sha512-jOteWf1u3Rbsf3QyqdIYFhJ3eGlgF9zeUINcW0WOgQfyEKhTWUtxSCLcl/jjYLD70hO3rbUPMSMKm5VmSR19CQ==
+"@cortezaproject/corteza-js@^2020.12.1":
+  version "2020.12.1"
+  resolved "https://registry.yarnpkg.com/@cortezaproject/corteza-js/-/corteza-js-2020.12.1.tgz#49d62b7aca5eebc2c8811db539bd237c454b40ae"
+  integrity sha512-6ltIQw1oW1Pq4GWb1UNpoS8OWwE1Nph52+Anu9yQGmod10+X4A2OI0qvIGg82b+9UEh8yH5t3wLACTar/XIJ5g==
   dependencies:
-    axios "^0.19.1"
+    axios "^0.21.1"
     chart.js "2.9.3"
     hex-rgb "^4.1.0"
     lodash "^4.17.15"
@@ -909,6 +909,13 @@ axios@^0.19.1:
   integrity sha512-fjgm5MvRHLhx+osE2xoekY70AhARk3a6hkN+3Io1jc00jtquGvxYlKlsFUhmUET0V5te6CcZI7lcv2Ym61mjHA==
   dependencies:
     follow-redirects "1.5.10"
+
+axios@^0.21.1:
+  version "0.21.1"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.1.tgz#22563481962f4d6bde9a76d516ef0e5d3c09b2b8"
+  integrity sha512-dKQiRHxGD9PPRIUNIWvZhPTPpl1rf/OxTYKsqKUDjBwYylTvV7SjSHJb9ratfyzM6wCdLCOYLzs73qpg5c4iGA==
+  dependencies:
+    follow-redirects "^1.10.0"
 
 balanced-match@^1.0.0:
   version "1.0.0"
@@ -2382,6 +2389,11 @@ follow-redirects@1.5.10:
   integrity sha512-0V5l4Cizzvqt5D44aTXbFZz+FtyXV1vrDN6qrelxtfYQKW0KO0W2T/hkE8xvGa/540LkZlkaUjO4ailYTFtHVQ==
   dependencies:
     debug "=3.1.0"
+
+follow-redirects@^1.10.0:
+  version "1.13.1"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.13.1.tgz#5f69b813376cee4fd0474a3aba835df04ab763b7"
+  integrity sha512-SSG5xmZh1mkPGyKzjZP8zLjltIfpW32Y5QpdNJyjcfGxK3qo3NDDkZOZSFiGn1A6SclQxY9GzEwAHQ3dmYRWpg==
 
 for-in@^1.0.2:
   version "1.0.2"
