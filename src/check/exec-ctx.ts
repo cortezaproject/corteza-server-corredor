@@ -13,17 +13,12 @@ export default function (): void {
   log.debug(csCtx.compose, 'configuring cServer compose API')
   log.debug(csCtx.messaging, 'configuring cServer messaging API')
 
-  const authEndpoint = `${csCtx.system.apiBaseURL}/auth/`
   const versionEndpoint = csCtx.system.apiBaseURL
     .replace('api/system', 'version')
     .replace('system', 'version')
 
   axios
-    .get(authEndpoint)
-    .catch((r) => {
-      log.error(`check your Corteza API settings: expecting valid response for ${authEndpoint} got: ${r}`)
-    })
-    .then(() => axios.get(versionEndpoint))
+    .get(versionEndpoint)
     .then(({ data: { response } }) => {
       log.info(response, `Assuming valid Corteza API at ${csCtx.system.apiBaseURL}`)
     })
