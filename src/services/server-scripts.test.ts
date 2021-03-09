@@ -20,7 +20,6 @@ const svcCtorArgs = Object.freeze({
     cServers: {
       system: { apiBaseURL: 'unit-test' },
       compose: { apiBaseURL: 'unit-test' },
-      messaging: { apiBaseURL: 'unit-test' },
     },
   },
 })

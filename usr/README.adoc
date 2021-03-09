@@ -13,16 +13,10 @@ usr/
 
     src/
         client/ <3>
-            auth/
-                index.ts <2>
-
             admin/
                 index.ts <2>
 
             compose/
-                index.ts <2>
-
-            messaging/
                 index.ts <2>
 
             shared/ <1>

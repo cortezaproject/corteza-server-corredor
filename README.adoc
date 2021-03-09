@@ -232,7 +232,7 @@ When starting up Corredor, you can see how Base URLs are set for each service.
 3+| CORREDOR_EXEC_CSERVERS_API_BASEURL_TEMPLATE
 | string
 | `https://api.{host}/{service}`
-| Template to assemble base url for system, compose and messaging REST API (`CORREDOR_EXEC_CSERVERS_*\_API_BASEURL`).
+| Template to assemble base url for system, compose REST API (`CORREDOR_EXEC_CSERVERS_*\_API_BASEURL`).
 
 Default value assumes corredor is running in monolith setup.
 If you are running subsystems in separated services, you can set this to `https://api.{service}.{host}`.
@@ -245,11 +245,6 @@ When starting up Corredor, you can see how Base URLs are set for each service.
 | Set to a custom Base URL if you want to override value generated with `CORREDOR_EXEC_CSERVERS_API_BASEURL_TEMPLATE`.
 
 3+| CORREDOR_EXEC_CTX_CORTEZA_SERVERS_COMPOSE_API_BASEURL
-| string
-| (assembled from baseurl template)
-| Set to a custom Base URL if you want to override value generated with `CORREDOR_EXEC_CSERVERS_API_BASEURL_TEMPLATE`.
-
-3+| CORREDOR_EXEC_CTX_CORTEZA_SERVERS_MESSAGING_API_BASEURL
 | string
 | (assembled from baseurl template)
 | Set to a custom Base URL if you want to override value generated with `CORREDOR_EXEC_CSERVERS_API_BASEURL_TEMPLATE`.
