@@ -94,9 +94,9 @@
     to-fast-properties "^2.0.0"
 
 "@cortezaproject/corteza-js@^2021.3.0":
-  version "2021.3.3"
-  resolved "https://registry.yarnpkg.com/@cortezaproject/corteza-js/-/corteza-js-2021.3.3.tgz#40127c40fe5fdf4e98982f1ceebc30b937c4cf8e"
-  integrity sha512-GvKNkfdb/3lhUkOdjXCIEXrehawzTXQU8KHeeiskFMaF+i1QhK/hidTV/OCjKzfrC8OL6kAAnXg/65MiZnbOdg==
+  version "2021.3.4"
+  resolved "https://registry.yarnpkg.com/@cortezaproject/corteza-js/-/corteza-js-2021.3.4.tgz#0f6aec46e1c299ec89a37f23ec13cbd6fd4ffc19"
+  integrity sha512-f8jzrny2PHW2k6Eo0n2JImkSZuv8+zuY0aQZmOpeBeugnxjCpkXYkPbfv+OyqYcrxS+dfNi6lmG0u7xxXtBKZw==
   dependencies:
     axios "^0.21.1"
     chart.js "2.9.3"
@@ -348,9 +348,9 @@
     "@types/chai" "*"
 
 "@types/chai@*":
-  version "4.2.16"
-  resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.2.16.tgz#f09cc36e18d28274f942e7201147cce34d97e8c8"
-  integrity sha512-vI5iOAsez9+roLS3M3+Xx7w+WRuDtSmF8bQkrbcIJ2sC1PcDgVoA0WGpa+bIrJ+y8zqY2oi//fUctkxtIcXJCw==
+  version "4.2.17"
+  resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.2.17.tgz#85f9f0610f514b22a94125d441f73eef65bde5cc"
+  integrity sha512-LaiwWNnYuL8xJlQcE91QB2JoswWZckq9A4b+nMPq8dt8AP96727Nb3X4e74u+E3tm4NLTILNI9MYFsyVc30wSA==
 
 "@types/chai@^4.2.6":
   version "4.2.14"
@@ -393,9 +393,9 @@
   integrity sha512-J32dgx2hw8vXrSbu4ZlVhn1Nm3GbeCFNw2FWL8S5QKucHGY0cyNwjdQdO+KMBZ4wpmC7KhLCiNsdk1RFRIYUQQ==
 
 "@types/node@^11.15.20":
-  version "11.15.52"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-11.15.52.tgz#5579c11b77e08c72720c46f7c379df8ff7fad73a"
-  integrity sha512-fLxyEL5bGfxKJVlnA03LIhNF9Mjcc5h1m/98vCxJYEfhG+qrlKet7u57NKGqws6rZLQHVlWNDJJyouC7HNHWPQ==
+  version "11.15.53"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-11.15.53.tgz#24b35ba006338dc60b133f9a637995e1c5a4e069"
+  integrity sha512-X4K0pwvbFZ7+x5wyJUSROj4TJvyXxL0MY4OaxyphfEfgw+0DdYDltyqTX14LiYTIQdY49sDA/MabdtYc973yFg==
 
 "@types/node@^13.7.0":
   version "13.13.34"
