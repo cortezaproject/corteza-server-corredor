@@ -1,7 +1,6 @@
 import path from 'path'
 import { NodeOptions as SentryOptions } from '@sentry/node'
 
-
 // Read .env into process.ENV.*
 require('dotenv').config()
 
@@ -71,7 +70,7 @@ export const env = (e.CORREDOR_ENVIRONMENT ?? e.CORREDOR_ENV ?? e.NODE_ENV ?? 'p
 export const isDevelopment = env.indexOf('dev') === 0
 export const isProduction = !isDevelopment
 
-const certPath = e.CORREDOR_SERVER_CERTIFICATES_PATH ?? '/certs'
+const certPath = e.CORREDOR_SERVER_CERTIFICATES_PATH ?? '/corredor/certs'
 
 // Server settings
 // CORREDOR_ADDR is used by the API as well to configure gRPC client connection
@@ -154,10 +153,6 @@ export const bundler = {
   outputPath: path.resolve(e.CORREDOR_BUNDER_OUTPUT_PATH ?? '/tmp/corredor/bundler-dist'),
   enabled: isTrue(e.CORREDOR_BUNDER_ENABLED) ?? true,
 }
-
-
-
-
 
 const extensionsSearchPaths = (e.CORREDOR_EXT_SEARCH_PATHS ?? [path.join('usr'), path.join('usr', '*')].join(':'))
   .trim()
