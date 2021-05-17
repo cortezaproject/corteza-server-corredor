@@ -7,11 +7,12 @@
     "Denis Arh <denis.arh@crust.tech>"
   ],
   "private": true,
-  "main": "dist/app.js",
+  "main": "dist/server.js",
   "types": "dist/types.d.ts",
   "scripts": {
     "serve:dev": "ts-node-dev --debounce 200 --transpile-only --respawn --ignore-watch node_modules --ignore-watch usr --ignore-watch dist ./src/server.ts",
     "serve": "ts-node ./src/server.ts",
+    "build": "rimraf ./dist && tsc",
     "lint": "eslint src/** --ext .js,.ts",
     "test:unit": "mocha",
     "test:unit:cc": "nyc mocha",
@@ -67,6 +68,7 @@
     "**/**/moment": "2.25.3"
   },
   "devDependencies": {
+    "rimraf": "^3.0.2",
     "source-map-support": "^0.5.16",
     "ts-loader": "^6.2.1",
     "ts-node": "^8.6.2"
