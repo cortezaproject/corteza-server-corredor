@@ -94,9 +94,9 @@
     to-fast-properties "^2.0.0"
 
 "@cortezaproject/corteza-js@^2021.6.0-rc.1":
-  version "2021.6.0-rc.2"
-  resolved "https://registry.yarnpkg.com/@cortezaproject/corteza-js/-/corteza-js-2021.6.0-rc.2.tgz#c593fbf1f91bf16f1f6c1db8ea24a1748fd122ca"
-  integrity sha512-zKOXXdzJDuVbB4FuZPVK7llG1OzY1348EA/B4RC1i55CQQxXU4rT/Kr0vIhKRgSnvaavhQeXorxXgRgPtAD7BA==
+  version "2021.6.0-rc.3"
+  resolved "https://registry.yarnpkg.com/@cortezaproject/corteza-js/-/corteza-js-2021.6.0-rc.3.tgz#84d165fdb7e3cb261b2317be571c0a43874f10f5"
+  integrity sha512-1i0c/wyjbN5k2BpjmqUK/7erd7eqlIyB40AQcWLmulPLUwD0CpymJnW1Q63BjlUeXtt5L2DUyQZyxTH5JXJKIw==
   dependencies:
     axios "^0.21.1"
     chart.js "2.9.3"
@@ -348,9 +348,9 @@
     "@types/chai" "*"
 
 "@types/chai@*":
-  version "4.2.18"
-  resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.2.18.tgz#0c8e298dbff8205e2266606c1ea5fbdba29b46e4"
-  integrity sha512-rS27+EkB/RE1Iz3u0XtVL5q36MGDWbgYe7zWiodyKNUnthxY0rukK5V36eiUCtCisB7NN8zKYH6DO2M37qxFEQ==
+  version "4.2.19"
+  resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.2.19.tgz#80f286b515897413c7a35bdda069cc80f2344233"
+  integrity sha512-jRJgpRBuY+7izT7/WNXP/LsMO9YonsstuL+xuvycDyESpoDoIAsMd7suwpB4h9oEWB+ZlPTqJJ8EHomzNhwTPQ==
 
 "@types/chai@^4.2.6":
   version "4.2.14"
