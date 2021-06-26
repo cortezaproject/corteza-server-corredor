@@ -158,7 +158,6 @@ export default function Handler (h: Service, logger: BaseLogger): object {
           } else {
             HandleException(log, e, done, grpc.status.UNKNOWN)
           }
-
         })
       } catch (e) {
         HandleException(log, e, done, grpc.status.INTERNAL)

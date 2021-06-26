@@ -15,3 +15,6 @@ coverage
 *.njsproj
 *.sln
 *.sw*
+
+/.act*
+/workflow

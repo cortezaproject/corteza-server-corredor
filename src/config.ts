@@ -1,7 +1,6 @@
 import path from 'path'
 import { NodeOptions as SentryOptions } from '@sentry/node'
 
-
 // Read .env into process.ENV.*
 require('dotenv').config()
 
@@ -154,10 +153,6 @@ export const bundler = {
   outputPath: path.resolve(e.CORREDOR_BUNDER_OUTPUT_PATH ?? '/tmp/corredor/bundler-dist'),
   enabled: isTrue(e.CORREDOR_BUNDER_ENABLED) ?? true,
 }
-
-
-
-
 
 const extensionsSearchPaths = (e.CORREDOR_EXT_SEARCH_PATHS ?? [path.join('usr'), path.join('usr', '*')].join(':'))
   .trim()
