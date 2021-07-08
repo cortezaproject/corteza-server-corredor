@@ -130,7 +130,7 @@ export default class ServerScripts {
 
         return scripts.filter(isValid)
       })
-      .then(scripts => {
+      .then(() => {
         for (let s = 0; s < this.scripts.length; s++) {
           const { src } = this.scripts[s]
           this.scripts[s] = { ...this.require(src), ...this.scripts[s] }
