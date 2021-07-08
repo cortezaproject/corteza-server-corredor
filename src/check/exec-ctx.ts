@@ -8,7 +8,6 @@ export default function (): void {
 
   const log = logger.child({ name: 'check' })
 
-
   log.debug(csCtx.system, 'configuring cServer system API')
   log.debug(csCtx.compose, 'configuring cServer compose API')
 
@@ -26,8 +25,6 @@ export default function (): void {
     })
 
   log.info('checking API endpoints')
-
-
 
   log.debug(feCtx, 'frontend settings')
 }

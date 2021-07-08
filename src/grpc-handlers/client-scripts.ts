@@ -3,7 +3,6 @@ import { BaseLogger } from 'pino'
 import { HandleException } from '../grpc-server'
 import Service from '../services/client-scripts'
 import IsModifiedSince from './shared/is-modified-since'
-import * as Sentry from '@sentry/node'
 
 interface BundleRequest {
   name: string;
