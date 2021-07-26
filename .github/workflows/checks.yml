@@ -19,4 +19,4 @@ jobs:
           key: ${{ runner.OS }}-node-${{ hashFiles('**/yarn.lock') }}
           restore-keys: ${{ runner.OS }}-node-
       - run: make dep
-      - run: make test
+#      - run: make test
