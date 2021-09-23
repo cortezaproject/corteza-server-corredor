@@ -94,9 +94,9 @@
     to-fast-properties "^2.0.0"
 
 "@cortezaproject/corteza-js@^2021.9.0-dev.1":
-  version "2021.9.0-dev.4"
-  resolved "https://registry.yarnpkg.com/@cortezaproject/corteza-js/-/corteza-js-2021.9.0-dev.4.tgz#30efb182115e7eb585b46a4f8de65a5740222745"
-  integrity sha512-xtqV4qhjFGb6P7VATh7i37H/4ug51GWRdeQi7hBR+xATiSxy56289wtYVZlUAmHwffgwENvo93KQupIpLifmKA==
+  version "2021.9.0-dev.5"
+  resolved "https://registry.yarnpkg.com/@cortezaproject/corteza-js/-/corteza-js-2021.9.0-dev.5.tgz#c0ab45fba8de2ea0f89324bb6f186adb8bcfc2e2"
+  integrity sha512-4OFi88QrtMpFe2F7q4WQ0ywx1hzc+L2pLf3gS0K+vUjpF+Yn6IFYhh4CYKvsDe31mgvZUJ2d5whqDvCh0T4X/Q==
   dependencies:
     axios "^0.21.1"
     chart.js "2.9.3"
@@ -348,9 +348,9 @@
     "@types/chai" "*"
 
 "@types/chai@*":
-  version "4.2.21"
-  resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.2.21.tgz#9f35a5643129df132cf3b5c1ec64046ea1af0650"
-  integrity sha512-yd+9qKmJxm496BOV9CMNaey8TWsikaZOwMRwPHQIjcOJM9oV+fi9ZMNw3JsVnbEEbo2gRTDnGEBv8pjyn67hNg==
+  version "4.2.22"
+  resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.2.22.tgz#47020d7e4cf19194d43b5202f35f75bd2ad35ce7"
+  integrity sha512-tFfcE+DSTzWAgifkjik9AySNqIyNoYwmR+uecPwwD/XRNfvOjmC/FjCxpiUGDkDVDphPfCUecSQVFw+lN3M3kQ==
 
 "@types/chai@^4.2.6":
   version "4.2.14"
@@ -425,9 +425,9 @@
     "@types/sinon" "*"
 
 "@types/sinon@*":
-  version "10.0.2"
-  resolved "https://registry.yarnpkg.com/@types/sinon/-/sinon-10.0.2.tgz#f360d2f189c0fd433d14aeb97b9d705d7e4cc0e4"
-  integrity sha512-BHn8Bpkapj8Wdfxvh2jWIUoaYB/9/XhsL0oOvBfRagJtKlSl9NWPcFOz2lRukI9szwGxFtYZCTejJSqsGDbdmw==
+  version "10.0.3"
+  resolved "https://registry.yarnpkg.com/@types/sinon/-/sinon-10.0.3.tgz#2d17cf53f42981e8ebd3e2339dade748b0da742a"
+  integrity sha512-XUaFuUOQ3A/r6gS1qCU/USMleascaqGeQpGR1AZ5JdRtBPlzijRzKsik1TuGzvdtPA0mdq42JqaJmJ+Afg1LJg==
   dependencies:
     "@sinonjs/fake-timers" "^7.1.0"
 
@@ -439,9 +439,9 @@
     "@types/sinonjs__fake-timers" "*"
 
 "@types/sinonjs__fake-timers@*":
-  version "6.0.3"
-  resolved "https://registry.yarnpkg.com/@types/sinonjs__fake-timers/-/sinonjs__fake-timers-6.0.3.tgz#79df6f358ae8f79e628fe35a63608a0ea8e7cf08"
-  integrity sha512-E1dU4fzC9wN2QK2Cr1MLCfyHM8BoNnRFvuf45LYMPNDA+WqbNzC45S4UzPxvp1fFJ1rvSGU0bPvdd35VLmXG8g==
+  version "6.0.4"
+  resolved "https://registry.yarnpkg.com/@types/sinonjs__fake-timers/-/sinonjs__fake-timers-6.0.4.tgz#0ecc1b9259b76598ef01942f547904ce61a6a77d"
+  integrity sha512-IFQTJARgMUBF+xVd2b+hIgXWrZEjND3vJtRCvIelcFB5SIXfjV4bOHbHJ0eXKh+0COrBRc8MqteKAz/j88rE0A==
 
 "@types/sonic-boom@*":
   version "0.7.0"
@@ -2320,9 +2320,9 @@ fast-redact@^2.0.0:
   integrity sha512-0LkHpTLyadJavq9sRzzyqIoMZemWli77K2/MGOkafrR64B9ItrvZ9aT+jluvNDsv0YEHjSNhlMBtbokuoqii4A==
 
 fast-safe-stringify@^2.0.7:
-  version "2.0.8"
-  resolved "https://registry.yarnpkg.com/fast-safe-stringify/-/fast-safe-stringify-2.0.8.tgz#dc2af48c46cf712b683e849b2bbd446b32de936f"
-  integrity sha512-lXatBjf3WPjmWD6DpIZxkeSsCOwqI0maYMpgDlx8g4U2qi4lbjA9oH/HD2a87G+KfsUmo5WbJFmqBZlPxtptag==
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/fast-safe-stringify/-/fast-safe-stringify-2.1.1.tgz#c406a83b6e70d9e35ce3b30a81141df30aeba884"
+  integrity sha512-W+KJc2dmILlPplD/H4K9l9LcAHAfPtP6BY84uVLXQ6Evcz9Lcg33Y2z1IVblT6xdY54PXYVHEv+0Wpq8Io6zkA==
 
 figgy-pudding@^3.5.1:
   version "3.5.2"
