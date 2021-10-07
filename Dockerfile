@@ -6,6 +6,7 @@ ENV PATH /corredor/node_modules/.bin:$PATH
 # https://github.com/grpc/grpc/blob/master/doc/environment_variables.md
 ENV GRPC_VERBOSITY=ERROR
 
+ENV CORREDOR_ADDR=0.0.0.0:80
 ENV CORREDOR_ENVIRONMENT=prod
 ENV CORREDOR_LOG_PRETTY=false
 ENV CORREDOR_LOG_LEVEL=info
@@ -15,7 +16,6 @@ ENV CORREDOR_SCRIPTS_AUTO_UPDATE_DEPENDENCIES=false
 ENV CORREDOR_EXT_SERVER_SCRIPTS_WATCH=false
 ENV CORREDOR_EXT_CLIENT_SCRIPTS_WATCH=false
 ENV CORREDOR_EXT_SEARCH_PATHS=/corredor/usr/*:/corredor/usr
-
 # This assumes that container will be part of the docker-compose setup were corteza is
 # ran under "server" service and can be directly accessed via internal docker network
 ENV CORREDOR_EXEC_CSERVERS_API_BASEURL_TEMPLATE "http://server/api/{service}"
