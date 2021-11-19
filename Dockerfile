@@ -1,4 +1,4 @@
-FROM node:12.14-alpine
+FROM node:fermium-bullseye-slim
 
 ENV PATH /corredor/node_modules/.bin:$PATH
 
@@ -22,7 +22,7 @@ ENV CORREDOR_EXEC_CSERVERS_API_BASEURL_TEMPLATE "http://server/api/{service}"
 
 WORKDIR /corredor
 
-RUN apk update && apk add --no-cache git
+RUN apt-get update && apt-get -y install git
 
 COPY package.json ./
 COPY yarn.lock ./
