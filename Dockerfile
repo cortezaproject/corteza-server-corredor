@@ -40,3 +40,4 @@ VOLUME /corredor/certs
 HEALTHCHECK --interval=30s --start-period=1m --timeout=30s --retries=3 CMD nc -z -v localhost 80
 
 CMD ["ts-node", "src/server.ts"]
+
