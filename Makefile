@@ -22,10 +22,6 @@ test:
 	$(YARN) lint
 	$(YARN) test:unit
 
-build:
-	modclean --run --no-progress --error-halt
-#	$(YARN) build
-
 release:
 	@ mkdir -p .tmp/$(APP)
 #	@ cp -r $(RELEASE_EXTRA_FILES) $(BUILD_DEST_DIR) node_modules .tmp/$(APP)/
@@ -33,7 +29,7 @@ release:
 	@ tar -C .tmp -czf $(RELEASE_NAME) $(APP)
 
 upload: $(RELEASE_PKEY)
-	@ echo "put *.tar.gz" | sftp -q -i $(RELEASE_PKEY) $(RELEASE_SFTP_URI)
+	@ echo "put *.tar.gz" | sftp -q -o "StrictHostKeyChecking no" -i $(RELEASE_PKEY) $(RELEASE_SFTP_URI)
 	@ rm -f $(RELEASE_PKEY)
 
 $(RELEASE_PKEY):

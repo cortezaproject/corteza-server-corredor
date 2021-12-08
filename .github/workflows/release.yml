@@ -3,7 +3,7 @@ name: release
 on:
   push:
     tags:
-      - '**'
+      - '202?.?.*'
 
 
 jobs:
@@ -24,29 +24,30 @@ jobs:
       - run: make dep
       - run: make test
 
-  release-any:
-    runs-on: ubuntu-latest
-    needs:
-      - test
-    env:
-      RELEASE_SFTP_KEY: ${{ secrets.RELEASE_SFTP_KEY }}
-      RELEASE_SFTP_URI: ${{ secrets.RELEASE_SFTP_URI }}
-    steps:
-      - run: echo "BUILD_VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '12'
-      - uses: actions/cache@v2
-        if: ${{ !env.ACT }}
-        with:
-          path: ~/.npm
-          key: ${{ runner.OS }}-node-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: ${{ runner.OS }}-node-
-      - run: yarn global add modclean
-      - run: make build release
-      - run: make upload
-        if: ${{ !env.ACT }}
+#  # broken at the moment;
+#  release-any:
+#    runs-on: ubuntu-latest
+#    needs:
+#      - test
+#    env:
+#      RELEASE_SFTP_KEY: ${{ secrets.RELEASE_SFTP_KEY }}
+#      RELEASE_SFTP_URI: ${{ secrets.RELEASE_SFTP_URI }}
+#    steps:
+#      - run: echo "BUILD_VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+#      - uses: actions/checkout@v2
+#      - uses: actions/setup-node@v2
+#        with:
+#          node-version: '12'
+#      - uses: actions/cache@v2
+#        if: ${{ !env.ACT }}
+#        with:
+#          path: ~/.npm
+#          key: ${{ runner.OS }}-node-${{ hashFiles('**/yarn.lock') }}
+#          restore-keys: ${{ runner.OS }}-node-
+#      - run: yarn global add modclean
+#      - run: make dep release
+#      - run: make upload
+#        if: ${{ !env.ACT }}
 
   release-docker:
     runs-on: ubuntu-latest
