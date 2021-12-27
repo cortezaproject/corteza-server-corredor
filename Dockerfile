@@ -22,7 +22,7 @@ ENV CORREDOR_EXEC_CSERVERS_API_BASEURL_TEMPLATE "http://server/api/{service}"
 
 WORKDIR /corredor
 
-RUN apt-get update && apt-get -y install git
+RUN apt-get update && apt-get -y install git netcat
 
 COPY package.json ./
 COPY yarn.lock ./
