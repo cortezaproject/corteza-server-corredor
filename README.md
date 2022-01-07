@@ -20,9 +20,9 @@ It loads and processes provided automation scripts and serves them to the Cortez
 Corteza Corredor and Corteza server communicate via gRPC with two services: server scripts with list and exec procedures; client scripts with list and bundle procedures.
 See [protobuf service definition](https://github.com/cortezaproject/corteza-protobuf) for details.
 
-Refer to the [Integrator Guide/Automation scripts](https://docs.cortezaproject.org/corteza-docs/2021.6/integrator-guide/automation-scripts/index.html) for insight on how to work with automation scripts.
+Refer to the [Integrator Guide/Automation scripts](https://docs.cortezaproject.org/corteza-docs/2021.9/integrator-guide/automation/automation-scripts/index.html) for insight on how to work with automation scripts.
 
-[Corteza Workflows](https://docs.cortezaproject.org/corteza-docs/2021.6/integrator-guide/workflows/index.html) provide an alternative approach to automation by defining a flexible and intuitive simplified BPMN diagram editor.
+[Corteza Workflows](https://docs.cortezaproject.org/corteza-docs/2021.9/integrator-guide/automation/workflows/index.html) provide an alternative approach to automation by defining a flexible and intuitive simplified BPMN diagram editor.
 
 <br />
 
@@ -83,7 +83,7 @@ Refer to the [Integrator Guide](https://docs.cortezaproject.org/corteza-docs/202
 Quick references:
 
 * [Corteza Compose configuration](https://docs.cortezaproject.org/corteza-docs/2021.9/integrator-guide/compose-configuration/index.html)
-* automation using [workflows](https://docs.cortezaproject.org/corteza-docs/2021.9/integrator-guide/automation/workflows/index.html) and [automation scripts](https://docs.cortezaproject.org/corteza-docs/2021.9/integrator-guide/automation-scripts/index.html)
+* automation using [workflows](https://docs.cortezaproject.org/corteza-docs/2021.9/integrator-guide/automation/workflows/index.html) and [automation scripts](https://docs.cortezaproject.org/corteza-docs/2021.9/integrator-guide/automation/automation-scripts/index.html)
 * [using the REST API](https://docs.cortezaproject.org/corteza-docs/2021.9/integrator-guide/accessing-corteza/index.html),
 
 ## Contributing
