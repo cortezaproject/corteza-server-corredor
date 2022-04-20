@@ -93,10 +93,10 @@
     lodash "^4.17.19"
     to-fast-properties "^2.0.0"
 
-"@cortezaproject/corteza-js@^2021.9.9":
-  version "2021.9.9"
-  resolved "https://registry.yarnpkg.com/@cortezaproject/corteza-js/-/corteza-js-2021.9.9.tgz#bffc0e9a637ccec40d6f54ef58a28b7774aaa25e"
-  integrity sha512-yWWeq2+FPUFW98DIvp6eLV1MNcNFoxoCHEEDtLIqYszN9s9P8ST20GHyh6C0rQOtXEim6tbwz+LdL9t0bhuT3A==
+"@cortezaproject/corteza-js@^2021.9.10":
+  version "2021.9.10"
+  resolved "https://registry.yarnpkg.com/@cortezaproject/corteza-js/-/corteza-js-2021.9.10.tgz#4196f34cf8550edfa749eb104bdeef455e86cce5"
+  integrity sha512-DwE/V+Cccre8Ln9VmdtLQXbaQZc7K6WxPHwXmHv+OEm1+8AsVb6JUndRksTrm+hJ5WYPML67lv7woQ7cyu0nVw==
   dependencies:
     axios "^0.21.1"
     chart.js "2.9.3"
