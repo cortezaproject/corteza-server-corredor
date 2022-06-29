@@ -1,7 +1,7 @@
 {
   "name": "corteza-server-corredor",
   "description": "Corteza Automation Script Runner",
-  "version": "2022.3.3",
+  "version": "2022.3.4-rc.1",
   "license": "Apache-2.0",
   "contributors": [
     "Denis Arh <denis.arh@crust.tech>"
@@ -18,7 +18,7 @@
     "cdeps": "yarn upgrade @cortezaproject/corteza-js https://github.com/cortezaproject/corteza-protobuf#develop"
   },
   "dependencies": {
-    "@cortezaproject/corteza-js": "^2022.3.0",
+    "@cortezaproject/corteza-js": "^2022.3.4-rc.1",
     "@cortezaproject/corteza-protobuf": "https://github.com/cortezaproject/corteza-protobuf#develop",
     "@grpc/proto-loader": "^0.5.1",
     "@istanbuljs/nyc-config-typescript": "^0.1.3",
@@ -64,7 +64,7 @@
   },
   "resolutions": {
     "**/**/yargs-parser": "^13.1.2",
-    "**/**/moment": "2.25.3"
+    "**/**/moment": "2.29.2"
   },
   "devDependencies": {
     "source-map-support": "^0.5.16",
