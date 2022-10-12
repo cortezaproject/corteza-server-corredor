@@ -18,8 +18,8 @@ function p (source: string): Promise<Partial<Script>> {
 
 const errExpDefExp = 'expecting default export'
 const errExpObjAsDefExp = 'expecting object as default export'
-const errTrigDefMis = 'triggers definition missing'
-const errNoTrigDef = 'no triggers defined'
+const errTrigDefMis = 'triggers or iterator definition missing'
+const errNoTrigDef = 'triggers not defined'
 const errExecFunMis = 'exec function missing'
 
 describe(__filename, () => {

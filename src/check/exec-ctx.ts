@@ -11,9 +11,15 @@ export default function (): void {
   log.debug(csCtx.system, 'configuring cServer system API')
   log.debug(csCtx.compose, 'configuring cServer compose API')
 
-  const versionEndpoint = csCtx.system.apiBaseURL
-    .replace('api/system', 'version')
-    .replace('system', 'version')
+  let versionEndpoint = ''
+  if (csCtx.system.apiBaseURL) {
+    versionEndpoint = csCtx.system.apiBaseURL
+      .replace('api/system', 'version')
+      .replace('system', 'version')
+  } else {
+    log.error('Could not auto configure Corredor. Please, configure you Corteza API base URL by setting CORREDOR_EXEC_CSERVERS_API_HOST and/or CORREDOR_EXEC_CSERVERS_API_BASEURL_TEMPLATE env variables')
+    throw new Error('Cannot run Corredor due to misconfiguration')
+  }
 
   axios
     .get(versionEndpoint)
