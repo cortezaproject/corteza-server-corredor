@@ -126,7 +126,7 @@ export default function Handler (h: Service, logger: BaseLogger): object {
       // global console replacement,
       // will allow us to catch console.* calls and return them to the caller
       const logBuffer = new LogToArray()
-      const scriptLogger = pino({}, logBuffer)
+      const scriptLogger = pino({ browser: logBuffer })
 
       // Cast some of the common argument types
       // from plain javascript object to proper classes
