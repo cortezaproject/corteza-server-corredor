@@ -31,7 +31,7 @@
     "@types/webpack": "^4.41.0",
     "@typescript-eslint/eslint-plugin": "2.16.0",
     "@typescript-eslint/parser": "2.16.0",
-    "axios": "^0.21.2",
+    "axios": "^0.28.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "dotenv": "8.2.0",
