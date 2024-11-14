@@ -67,7 +67,7 @@ function discoverFrontendBaseURL (): string {
 
 export const env = (e.CORREDOR_ENVIRONMENT ?? e.CORREDOR_ENV ?? e.NODE_ENV ?? 'prod').trim().toLowerCase()
 
-export const isDevelopment = env.indexOf('dev') === 0
+export const isDevelopment = env.startsWith('dev')
 export const isProduction = !isDevelopment
 
 const certPath = e.CORREDOR_SERVER_CERTIFICATES_PATH ?? '/certs'
