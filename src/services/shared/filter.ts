@@ -25,7 +25,7 @@ export default function (f: ListFilter): {(Script): boolean} {
       const tt = (item.triggers || []).filter(({ resourceTypes, eventTypes }: TriggerFilterArgs) => {
         if (f.resourceType && f.resourceType.length > 0) {
           // Filter by resource
-          if (!resourceTypes || resourceTypes.indexOf(f.resourceType) === -1) {
+          if (!resourceTypes || !resourceTypes.includes(f.resourceType)) {
             // No resources found on trigger
             return false
           }
@@ -33,7 +33,7 @@ export default function (f: ListFilter): {(Script): boolean} {
 
         if (f.eventTypes && f.eventTypes.length > 0) {
           // Filter by events
-          if (!eventTypes || f.eventTypes.find(fe => (eventTypes.indexOf(fe) > -1)) === undefined) {
+          if (!eventTypes || f.eventTypes.find(fe => eventTypes.includes(fe)) === undefined) {
             return false
           }
         }
@@ -54,7 +54,7 @@ export default function (f: ListFilter): {(Script): boolean} {
 
       // search query terms
       for (const t of f.query.split(' ')) {
-        if (str.indexOf(t) > -1) {
+        if (str.includes(t)) {
           return true
         }
       }
