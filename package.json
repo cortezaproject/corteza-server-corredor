@@ -56,7 +56,7 @@
     "nyc": "^14.1.1",
     "pino": "^5.16.0",
     "pino-pretty": "^3.5.0",
-    "serialize-javascript": "^3.1.0",
+    "serialize-javascript": "^6.0.2",
     "sinon": "7.4.1",
     "ts-node-dev": "^1.0.0",
     "typescript": "^3.7.5",
