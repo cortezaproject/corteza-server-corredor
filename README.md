@@ -20,9 +20,9 @@ It loads and processes provided automation scripts and serves them to the Cortez
 Corteza Corredor and Corteza server communicate via gRPC with two services: server scripts with list and exec procedures; client scripts with list and bundle procedures.
 See [protobuf service definition](https://github.com/cortezaproject/corteza-protobuf) for details.
 
-Refer to the [Integrator Guide/Automation scripts](https://docs.cortezaproject.org/corteza-docs/2022.3/integrator-guide/automation/automation-scripts/index.html) for insight on how to work with automation scripts.
+Refer to the [Integrator Guide/Automation scripts](https://docs.cortezaproject.org/corteza-docs/2024.9/integrator-guide/automation/automation-scripts/index.html) for insight on how to work with automation scripts.
 
-[Corteza Workflows](https://docs.cortezaproject.org/corteza-docs/2022.3/integrator-guide/automation/workflows/index.html) provide an alternative approach to automation by defining a flexible and intuitive simplified BPMN diagram editor.
+[Corteza Workflows](https://docs.cortezaproject.org/corteza-docs/2024.9/integrator-guide/automation/workflows/index.html) provide an alternative approach to automation by defining a flexible and intuitive simplified BPMN diagram editor.
 
 <br />
 
@@ -51,45 +51,45 @@ You can check out Corteza online by creating an account on our community instanc
 
 ## Deploying Corteza
 
-Refer to the [DevOps guide](https://docs.cortezaproject.org/corteza-docs/2022.3/devops-guide/index.html) for a complete guide on how to get Corteza up and running.
+Refer to the [DevOps guide](https://docs.cortezaproject.org/corteza-docs/2024.9/devops-guide/index.html) for a complete guide on how to get Corteza up and running.
 Additionally, we've provided some [video instructions](https://forum.cortezaproject.org/t/videos-on-how-to-set-up-corteza/91).
 
 Quick references:
 
-* [data backup and restore](https://docs.cortezaproject.org/corteza-docs/2022.3/devops-guide/maintenance/backups.html)
-* [troubleshooting](https://docs.cortezaproject.org/corteza-docs/2022.3/devops-guide/troubleshooting/index.html)
-* [setting up an email relay](https://docs.cortezaproject.org/corteza-docs/2022.3/devops-guide/email-relay.html)
-* [setting up sink routes](https://docs.cortezaproject.org/corteza-docs/2022.3/devops-guide/sink-route.html)
+* [data backup and restore](https://docs.cortezaproject.org/corteza-docs/2024.9/devops-guide/maintenance/backups.html)
+* [troubleshooting](https://docs.cortezaproject.org/corteza-docs/2024.9/devops-guide/troubleshooting/index.html)
+* [setting up an email relay](https://docs.cortezaproject.org/corteza-docs/2024.9/devops-guide/email-relay.html)
+* [setting up sink routes](https://docs.cortezaproject.org/corteza-docs/2024.9/devops-guide/sink-route.html)
 
 ## Upgrading Corteza
 
 [![Latest Version Card](https://img.shields.io/github/v/tag/cortezaproject/corteza-server-corredor?label=latest%20stable%20version)](https://img.shields.io/github/v/tag/cortezaproject/corteza-server-corredor?label=latest%20stable%20version)
 
-Refer to the [changelog](https://docs.cortezaproject.org/corteza-docs/2022.3/changelog/index.html) and the [upgrade guide](https://docs.cortezaproject.org/corteza-docs/2022.3/devops-guide/upgrade/index.html) to upgrade your Corteza instance.
+Refer to the [changelog](https://docs.cortezaproject.org/corteza-docs/2024.9/changelog/index.html) and the [upgrade guide](https://docs.cortezaproject.org/corteza-docs/2024.9/devops-guide/upgrade/index.html) to upgrade your Corteza instance.
 
 ## Using Corteza
 
-Refer to the [End-User Guide](https://docs.cortezaproject.org/corteza-docs/2022.3/end-user-guide/index.html) to learn the built-in applications and features from the end-user perspective.
+Refer to the [End-User Guide](https://docs.cortezaproject.org/corteza-docs/2024.9/end-user-guide/index.html) to learn the built-in applications and features from the end-user perspective.
 
 Quick references:
 
-* [Corteza CRM](https://docs.cortezaproject.org/corteza-docs/2022.3/end-user-guide/crm/index.html)
-* [Corteza Case Management](https://docs.cortezaproject.org/corteza-docs/2022.3/end-user-guide/case-management/index.html)
+* [Corteza CRM](https://docs.cortezaproject.org/corteza-docs/2024.9/end-user-guide/crm/index.html)
+* [Corteza Case Management](https://docs.cortezaproject.org/corteza-docs/2024.9/end-user-guide/case-management/index.html)
 
 ## Create with Corteza
 
-Refer to the [Integrator Guide](https://docs.cortezaproject.org/corteza-docs/2022.3/integrator-guide/index.html) to learn how you can build on the core features to create virtually anything.
+Refer to the [Integrator Guide](https://docs.cortezaproject.org/corteza-docs/2024.9/integrator-guide/index.html) to learn how you can build on the core features to create virtually anything.
 
 Quick references:
 
-* [Corteza Compose configuration](https://docs.cortezaproject.org/corteza-docs/2022.3/integrator-guide/compose-configuration/index.html)
-* automation using [workflows](https://docs.cortezaproject.org/corteza-docs/2022.3/integrator-guide/automation/workflows/index.html) and [automation scripts](https://docs.cortezaproject.org/corteza-docs/2022.3/integrator-guide/automation/automation-scripts/index.html)
-* [using the REST API](https://docs.cortezaproject.org/corteza-docs/2022.3/integrator-guide/accessing-corteza/index.html),
+* [Corteza Compose configuration](https://docs.cortezaproject.org/corteza-docs/2024.9/integrator-guide/compose-configuration/index.html)
+* automation using [workflows](https://docs.cortezaproject.org/corteza-docs/2024.9/integrator-guide/automation/workflows/index.html) and [automation scripts](https://docs.cortezaproject.org/corteza-docs/2024.9/integrator-guide/automation/automation-scripts/index.html)
+* [using the REST API](https://docs.cortezaproject.org/corteza-docs/2024.9/integrator-guide/accessing-corteza/index.html),
 
 ## Contributing
 
 <!-- @todo -->
-<!-- Refer to the [Developer Guide/Corteza Server Corredor](https://docs.cortezaproject.org/corteza-docs/2022.3/developer-guide/corteza-server-corredor/index.html) document for details regarding the [development setup](https://docs.cortezaproject.org/corteza-docs/2022.3/developer-guide/corteza-server-corredor/index.html#_development_setup), the [project structure](https://docs.cortezaproject.org/corteza-docs/2022.3/developer-guide/corteza-server-corredor/structure.html), and the feature insight documents. -->
+<!-- Refer to the [Developer Guide/Corteza Server Corredor](https://docs.cortezaproject.org/corteza-docs/2024.9/developer-guide/corteza-server-corredor/index.html) document for details regarding the [development setup](https://docs.cortezaproject.org/corteza-docs/2024.9/developer-guide/corteza-server-corredor/index.html#_development_setup), the [project structure](https://docs.cortezaproject.org/corteza-docs/2024.9/developer-guide/corteza-server-corredor/structure.html), and the feature insight documents. -->
 
 Refer to the [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines and code of conduct.
 
