@@ -1,11 +1,11 @@
-import { BaseLogger } from 'pino'
+import { Logger } from 'pino'
 import watch from 'node-watch'
-import glob from 'glob'
+import { glob } from 'glob'
 import path from 'path'
 import { spawnSync } from 'child_process'
 
 interface CtorArgs {
-  logger: BaseLogger;
+  logger: Logger;
   searchPaths: string[];
 }
 
@@ -16,11 +16,11 @@ interface WatchCallback {
 /**
  * Utility function for flatting w/ Array.reduce
  */
-const flatten = (r, p): string => r.concat(p)
+const flatten = (r: string[], p: string[]): string[] => r.concat(p)
 
 export default class Dependencies {
   protected searchPaths: string[] = [];
-  protected readonly log: BaseLogger;
+  protected readonly log: Logger;
 
   constructor ({ logger, searchPaths }: CtorArgs) {
     this.searchPaths = searchPaths

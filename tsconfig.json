@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es2017",
+    "target": "es2020",
     "lib": [
-      "es2017",
+      "es2020",
       "esnext.asynciterable"
     ],
     "typeRoots": [
@@ -20,13 +20,21 @@
     "outDir": "./dist",
     "allowJs": true,
     "noEmit": false,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true
   },
-
   "include": [
     "./src/**/*"
   ],
-
   "exclude": [
     "./src/**/*.test.ts",
     "node_modules",

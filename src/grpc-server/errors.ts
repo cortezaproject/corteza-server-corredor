@@ -1,6 +1,6 @@
-import gRPC from 'grpc'
+import * as grpc from '@grpc/grpc-js'
 import * as Sentry from '@sentry/node'
-import { BaseLogger } from 'pino'
+import { Logger } from 'pino'
 
 // Defines the structure of our API stack trace entries
 interface APIStackTrace {
@@ -36,17 +36,19 @@ export function ParseStackArr (stack: Array<APIStackTrace>): string[] {
 }
 
 /**
- * Handle exceptions and prepare gRPC error payload
+ * Handle exceptions and prepare grpc error payload
  */
-export function HandleException (log: BaseLogger, err: APIError, done: gRPC.sendUnaryData<null>, code: gRPC.status = gRPC.status.ABORTED): void {
+export function HandleException (log: Logger, err: APIError, done: grpc.sendUnaryData<null>, code: grpc.status = grpc.status.ABORTED): void {
   const { name, message, stack } = err
-  const grpcErr: gRPC.ServiceError = {
+  const grpcErr: grpc.ServiceError = {
     code,
     name,
     message,
+    details: '',
+    metadata: new grpc.Metadata()
   }
 
-  if (code !== gRPC.status.ABORTED) {
+  if (code !== grpc.status.ABORTED) {
     // Capture exception with sentry
     // but only for non-aborted codes
     Sentry.captureException(err)
@@ -55,7 +57,7 @@ export function HandleException (log: BaseLogger, err: APIError, done: gRPC.send
     log.debug({ stack, code }, message)
 
     if (stack) {
-      const metadata = new gRPC.Metadata()
+      const metadata = new grpc.Metadata()
       if (typeof stack === 'string') {
         ParseStackStr(stack).forEach(f => metadata.add('stack', f))
       } else if (Array.isArray(stack)) {

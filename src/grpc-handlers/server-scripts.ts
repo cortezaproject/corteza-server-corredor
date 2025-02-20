@@ -1,5 +1,5 @@
-import grpc from 'grpc'
-import pino, { BaseLogger } from 'pino'
+import * as grpc from '@grpc/grpc-js'
+import pino, { Logger } from 'pino'
 import { HandleException } from '../grpc-server'
 import Service from '../services/server-scripts'
 import { LogToArray } from '../scripts/log-to-array'
@@ -89,7 +89,7 @@ export function encodeExecResult (args: object): KV {
   return enc
 }
 
-export default function Handler (h: Service, logger: BaseLogger): object {
+export default function Handler (h: Service, logger: Logger): object {
   logger = logger.child({ name: 'grpc.server-scripts' })
 
   return {
@@ -102,7 +102,7 @@ export default function Handler (h: Service, logger: BaseLogger): object {
       const [requestId] = metadata.get('x-request-id')
       const log = logger.child({ rpc: 'Exec', script: name, requestId })
 
-      Sentry.configureScope(scope => {
+      Sentry.withScope(scope => {
         if (requestId) {
           scope.setTag('requestId', requestId.toString())
         }

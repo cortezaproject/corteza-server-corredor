@@ -1,6 +1,6 @@
 import MakeFilterFn from './shared/filter'
 import { corredor as exec } from '@cortezaproject/corteza-js'
-import { BaseLogger } from 'pino'
+import { Logger } from 'pino'
 import watch from 'node-watch'
 import { debounce } from 'lodash'
 import { Script } from '../types'
@@ -15,7 +15,7 @@ interface ListFilter {
 }
 
 interface CtorArgs {
-  logger: BaseLogger;
+  logger: Logger;
   config: exec.Config;
   loader?: Loader;
 }
@@ -26,7 +26,7 @@ interface CtorArgs {
 export default class ServerScripts {
   protected scripts: Script[] = [];
   protected readonly config: exec.Config;
-  protected readonly log: BaseLogger;
+  protected readonly log: Logger;
   protected readonly loader?: Loader;
 
   /**
@@ -82,7 +82,7 @@ export default class ServerScripts {
    * @param args Arguments for the script
    * @param log Exec logger to capture and proxy all log.* and console.* calls
    */
-  async exec (name: string, args: exec.BaseArgs, log: BaseLogger): Promise<object> {
+  async exec (name: string, args: exec.BaseArgs, log: Logger): Promise<object> {
     return exec.Exec(
       this.getExecutable(name),
       args,
@@ -110,10 +110,11 @@ export default class ServerScripts {
   async process (): Promise<void> {
     if (!this.loader) {
       this.log.debug('no loader: processing disabled')
+      return
     }
 
     this.log.info({ searchPaths: this.loader.searchPaths }, 'reloading server scripts')
-    const isValid = (s: Script): boolean => s.errors.length === 0
+    const isValid = (s: Script): boolean => s.errors?.length === 0
 
     this.loader.scripts()
       .then(scripts => {
@@ -123,7 +124,7 @@ export default class ServerScripts {
         scripts
           .filter(s => !isValid(s))
           .forEach(({ src, errors }) => {
-            errors.forEach(error => {
+            errors?.forEach(error => {
               this.log.warn({ src }, 'script error: %s', error)
             })
           })
@@ -147,7 +148,7 @@ export default class ServerScripts {
   watch (): void {
     this.log.info('initializing watcher')
     process.on('SIGINT', watch(
-      this.loader.basePaths(),
+      this.loader?.basePaths() ?? [],
       {
         persistent: false,
         recursive: true,
@@ -161,7 +162,7 @@ export default class ServerScripts {
     ).close)
   }
 
-  protected require (src): Script {
+  protected require (src: string): Script {
     delete require.cache[require.resolve(src)]
     try {
       return require(src).default

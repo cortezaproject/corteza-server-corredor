@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import glob from 'glob'
+import { glob } from 'glob'
 import { File, FileType } from './types'
 import { Script } from '../types'
 import ScriptParser from '../scripts/parser'

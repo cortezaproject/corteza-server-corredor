@@ -1,10 +1,15 @@
 import pino from 'pino'
-import { logger } from './config'
+import { logger as loggerConfig } from './config'
+
+const transport = pino.transport({
+  target: 'pino-pretty',
+  options: {
+    colorize: true,
+  },
+})
 
 export default pino({
-  // see https://getpino.io/#/docs/api?id=options
-  enabled: true,
+  enabled: loggerConfig.enabled,
   base: null,
-  prettyPrint: false,
-  ...logger,
-})
+  level: loggerConfig.level,
+}, loggerConfig.prettyPrint ? transport : undefined)

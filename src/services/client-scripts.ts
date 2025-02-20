@@ -3,7 +3,7 @@ import fs from 'fs'
 import path from 'path'
 import * as config from '../config'
 import { clientScripts as clientScriptsBundler } from '../bundler'
-import { BaseLogger } from 'pino'
+import { Logger } from 'pino'
 import Loader, { CommonPath } from '../loader'
 import watch from 'node-watch'
 import { debounce } from 'lodash'
@@ -19,7 +19,7 @@ interface ListFilter {
 }
 
 interface CtorArgs {
-  logger: BaseLogger;
+  logger: Logger;
   config: Config;
   loader: Loader;
 }
@@ -36,7 +36,7 @@ interface Config {
 export default class ClientScripts {
   private scripts: Script[] = []
   private readonly config: Config
-  protected readonly log: BaseLogger;
+  protected readonly log: Logger;
   protected readonly loader: Loader;
 
   /**
@@ -96,7 +96,7 @@ export default class ClientScripts {
     this.log.info({ searchPaths: this.loader.searchPaths }, 'reloading client scripts')
 
     const scripts = await this.loader.scripts()
-    const isValid = (s: Script): boolean => s.errors.length === 0
+    const isValid = (s: Script): boolean => s.errors?.length === 0
     const vScripts = scripts.filter(isValid)
 
     // Make bundles out of all valid scripts
@@ -128,7 +128,7 @@ export default class ClientScripts {
     scripts
       .filter(s => !isValid(s))
       .forEach(({ src, errors }) => {
-        errors.forEach(error => {
+        errors?.forEach(error => {
           this.log.warn({ src }, error)
         })
       })

@@ -55,7 +55,7 @@ function discoverApiBaseURL (service: string): string|undefined {
  * @returns {string|undefined}
  */
 function discoverFrontendBaseURL (): string {
-  return undefined ??
+  return (
     // Try to get this from the backend provision variable
     e.PROVISION_SETTINGS_AUTH_FRONTEND_URL_BASE ??
 
@@ -63,6 +63,7 @@ function discoverFrontendBaseURL (): string {
     `https://${e.DOMAIN || e.HOSTNAME || e.HOST || 'local.cortezaproject.org'}`
       // If we've recycled hostname for the API somehow, let's cut it off
       .replace('api.', '')
+  )
 }
 
 export const env = (e.CORREDOR_ENVIRONMENT ?? e.CORREDOR_ENV ?? e.NODE_ENV ?? 'prod').trim().toLowerCase()
@@ -150,8 +151,8 @@ export const execContext = {
 }
 
 export const bundler = {
-  outputPath: path.resolve(e.CORREDOR_BUNDER_OUTPUT_PATH ?? '/tmp/corredor/bundler-dist'),
-  enabled: isTrue(e.CORREDOR_BUNDER_ENABLED) ?? true,
+  outputPath: path.resolve(e.CORREDOR_BUNDLER_OUTPUT_PATH ?? '/tmp/corredor/bundler-dist'),
+  enabled: isTrue(e.CORREDOR_BUNDLER_ENABLED) ?? true,
 }
 
 const extensionsSearchPaths = (e.CORREDOR_EXT_SEARCH_PATHS ?? [path.join('usr'), path.join('usr', '*')].join(':'))

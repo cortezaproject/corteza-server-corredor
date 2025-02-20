@@ -1,5 +1,5 @@
 import path from 'path'
-import grpc from 'grpc'
+import * as grpc from '@grpc/grpc-js'
 import * as protoLoader from '@grpc/proto-loader'
 
 export function LoadDefinitions (protobuf: string): Promise<grpc.GrpcObject> {

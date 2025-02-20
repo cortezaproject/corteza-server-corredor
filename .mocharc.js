@@ -1,8 +1,6 @@
 module.exports = {
   require: [
-    'esm',
-    'ts-node/register',
-    'source-map-support/register',
+    'tsx/cjs'
   ],
   'full-trace': true,
   bail: true,

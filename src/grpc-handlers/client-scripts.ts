@@ -1,5 +1,5 @@
-import grpc from 'grpc'
-import { BaseLogger } from 'pino'
+import * as grpc from '@grpc/grpc-js'
+import { Logger } from 'pino'
 import { HandleException } from '../grpc-server'
 import Service from '../services/client-scripts'
 import IsModifiedSince from './shared/is-modified-since'
@@ -34,7 +34,7 @@ interface ListResponse {
   scripts: unknown[];
 }
 
-export default function Handler (h: Service, logger: BaseLogger): object {
+export default function Handler (h: Service, logger: Logger): object {
   logger = logger.child({ name: 'grpc.client-scripts' })
 
   return {

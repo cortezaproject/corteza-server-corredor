@@ -1,6 +1,6 @@
 import * as fs from 'fs'
-import grpc from 'grpc'
-import { BaseLogger } from 'pino'
+import * as grpc from '@grpc/grpc-js'
+import { Logger } from 'pino'
 
 interface ServerConfig {
   addr: string;
@@ -17,7 +17,7 @@ export type ServiceDefinition = Map<grpc.ServiceDefinition<unknown>, unknown>
 /**
  * Initializes the server
  */
-export function Start ({ addr, certificates }: ServerConfig, logger: BaseLogger, services: ServiceDefinition): void {
+export function Start ({ addr, certificates }: ServerConfig, logger: Logger, services: ServiceDefinition): void {
   const server = new grpc.Server({
     // setting this to 16mB
     // @todo should be configurable
@@ -45,7 +45,7 @@ export function Start ({ addr, certificates }: ServerConfig, logger: BaseLogger,
   process.on('SIGTERM', handle)
 
   // Allow registration of servies
-  services.forEach((implementation, service) => server.addService(service, implementation))
+  services.forEach((implementation, service) => server.addService(service, implementation as grpc.UntypedServiceImplementation))
 
   let security = grpc.ServerCredentials.createInsecure()
 
@@ -64,11 +64,12 @@ export function Start ({ addr, certificates }: ServerConfig, logger: BaseLogger,
     )
   }
 
-  if (server.bind(addr, security) === 0) {
-    log.error(`could not bind to ${addr}`)
-    return
-  }
+  server.bindAsync(addr, security, (err, port) => {
+    if (err) {
+      log.error(`could not bind to ${addr}: ${err}`)
+      return
+    }
 
-  log.info(`server running at ${addr}`)
-  server.start()
+    log.info(`server running at ${addr} (port ${port})`)
+  })
 }

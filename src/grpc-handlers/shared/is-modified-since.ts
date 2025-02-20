@@ -1,4 +1,4 @@
-import grpc from 'grpc'
+import * as grpc from '@grpc/grpc-js'
 
 /**
  * Compares if-modified-since value from grpc headers (metadata) with the given date
