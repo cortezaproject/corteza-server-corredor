@@ -74,8 +74,7 @@ export default class Loader {
 
             // filename w/o search-path prefix
             // we're using this to remove duplicates and for script identification
-            ref:
-              path.sep + src.substring(base.length - this.required.length - 1),
+            ref: path.normalize(src.substring(base.length - this.required.length - 1)),
 
             updatedAt:
               fs.statSync(src).mtime,
