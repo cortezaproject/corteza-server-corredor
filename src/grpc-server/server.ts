@@ -54,9 +54,7 @@ export function Start ({ addr, certificates }: ServerConfig, logger: Logger, ser
       fs.readFileSync(certificates.ca),
       [
         {
-          // eslint-disable-next-line @typescript-eslint/camelcase
           cert_chain: fs.readFileSync(certificates.public),
-          // eslint-disable-next-line @typescript-eslint/camelcase
           private_key: fs.readFileSync(certificates.private),
         },
       ],

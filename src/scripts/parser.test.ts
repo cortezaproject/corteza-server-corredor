@@ -1,9 +1,6 @@
-/* eslint-disable no-unused-expressions,@typescript-eslint/no-empty-function,@typescript-eslint/ban-ts-ignore */
-
 import { describe, it } from 'mocha'
 import * as chai from 'chai'
 import SourceParser from './parser'
-// @ts-ignore
 import chaiAsPromised from 'chai-as-promised'
 import { Script } from '../types'
 import { Trigger } from './trigger'

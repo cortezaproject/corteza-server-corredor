@@ -1,4 +1,4 @@
-FROM node:fermium-bullseye-slim
+FROM node:22
 
 ENV PATH /corredor/node_modules/.bin:$PATH
 
@@ -22,7 +22,7 @@ ENV CORREDOR_EXEC_CSERVERS_API_BASEURL_TEMPLATE "http://server/api/{service}"
 
 WORKDIR /corredor
 
-RUN apt-get update && apt-get -y install git netcat
+RUN apt-get update && apt-get -y install git
 
 COPY package.json ./
 COPY yarn.lock ./

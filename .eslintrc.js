@@ -1,18 +1,19 @@
 module.exports = {
-  root: false,
+  root: true,
   env: {
     node: true,
     es6: true,
     mocha: true,
   },
   extends: [
-    'standard',
+    'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
   ],
     rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'comma-dangle': [ 'error', 'always-multiline' ],
+    '@typescript-eslint/no-require-imports': 'off',
   },
   parser: '@typescript-eslint/parser',
   plugins: [

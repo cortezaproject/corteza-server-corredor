@@ -43,7 +43,7 @@ function BootLoader (outputPath: string, ss: Array<Script>): string {
  *
  * @constructor
  */
-function Pack (entry, context, outputPath): Promise<string> {
+function Pack (entry: string, context: string, outputPath: string): Promise<string> {
   return new Promise((resolve) => {
     const type = 'server-scripts'
     const cfg: webpack.Configuration = {
@@ -59,14 +59,14 @@ function Pack (entry, context, outputPath): Promise<string> {
       },
     }
 
-    webpack(cfg).run((err: Error) => {
+    webpack(cfg).run((err: Error | null) => {
       if (err) return console.error(err)
       resolve(`${outputPath}/${type}.js`)
     })
   })
 }
 
-function Load (path): Map<string, Partial<Script>> {
+function Load (path: string): Map<string, Partial<Script>> {
   delete require.cache[require.resolve(path)]
   return require(path).default
 }

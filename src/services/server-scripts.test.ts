@@ -1,10 +1,7 @@
 import { describe, it } from 'mocha'
 import { expect } from 'chai'
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
 import pino from 'pino'
-// ^ for some peculiar reason, IDE is not happy with this import
 import ServerScripts from './server-scripts'
 import { Trigger } from '../scripts/trigger'
 

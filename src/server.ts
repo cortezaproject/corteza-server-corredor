@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-ignore */
-
 import path from 'path'
 import logger from './logger'
 import * as config from './config'
@@ -80,7 +78,7 @@ gRPCServer
   .then(corredor => {
     const serviceDefinitions: gRPCServer.ServiceDefinition = new Map()
     serviceDefinitions.set(
-      // @ts-ignore
+      // @ts-expect-error service is defined
       corredor.ServerScripts.service,
       ServerScriptsHandler(
         serverScriptsService,
@@ -89,7 +87,7 @@ gRPCServer
     )
 
     serviceDefinitions.set(
-      // @ts-ignore
+      // @ts-expect-error service is defined
       corredor.ClientScripts.service,
       ClientScriptsHandler(
         clientScriptsService,
@@ -106,7 +104,9 @@ gRPCServer
 
 try {
   Promise.all([
+    // @ts-expect-error service is defined
     serverScriptsService.process(),
+    // @ts-expect-error service is defined
     clientScriptsService.process(),
   ])
 

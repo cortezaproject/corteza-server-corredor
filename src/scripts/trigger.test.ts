@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-expressions,@typescript-eslint/no-empty-function,@typescript-eslint/ban-ts-ignore */
-
 import { describe, it } from 'mocha'
 import { expect } from 'chai'
 import Make, { Trigger } from './trigger'

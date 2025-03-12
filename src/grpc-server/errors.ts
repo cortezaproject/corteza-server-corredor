@@ -45,7 +45,7 @@ export function HandleException (log: Logger, err: APIError, done: grpc.sendUnar
     name,
     message,
     details: '',
-    metadata: new grpc.Metadata()
+    metadata: new grpc.Metadata(),
   }
 
   if (code !== grpc.status.ABORTED) {
