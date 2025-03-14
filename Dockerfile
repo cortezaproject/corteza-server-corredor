@@ -1,6 +1,6 @@
-FROM node:22
+FROM node:22-slim
 
-ENV PATH /corredor/node_modules/.bin:$PATH
+ENV PATH=/corredor/node_modules/.bin:$PATH
 
 # GRPC's env-vars
 # https://github.com/grpc/grpc/blob/master/doc/environment_variables.md
@@ -18,7 +18,7 @@ ENV CORREDOR_EXT_CLIENT_SCRIPTS_WATCH=false
 ENV CORREDOR_EXT_SEARCH_PATHS=/corredor/usr/*:/corredor/usr
 # This assumes that container will be part of the docker-compose setup were corteza is
 # ran under "server" service and can be directly accessed via internal docker network
-ENV CORREDOR_EXEC_CSERVERS_API_BASEURL_TEMPLATE "http://server/api/{service}"
+ENV CORREDOR_EXEC_CSERVERS_API_BASEURL_TEMPLATE="http://server/api/{service}"
 
 WORKDIR /corredor
 
@@ -40,4 +40,3 @@ VOLUME /corredor/certs
 HEALTHCHECK --interval=30s --start-period=1m --timeout=30s --retries=3 CMD nc -z -v localhost 80
 
 CMD ["tsx", "src/server.ts"]
-
