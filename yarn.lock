@@ -2,12 +2,12 @@
 # yarn lockfile v1
 
 
-"@cortezaproject/corteza-js@^2024.9.2-dev.2":
-  version "2024.9.2-dev.2"
-  resolved "https://registry.yarnpkg.com/@cortezaproject/corteza-js/-/corteza-js-2024.9.2-dev.2.tgz#236792571cf8393db4af53facdbde09c33677b3f"
-  integrity sha512-QjNc0Ob/exmUCAxMBBIqX9RRO9OcR7f6iXgCfJc2GwXiuENg6oI1W+dXSRG4ccv41YcNMHoegZlCGiKdFGAeAg==
+"@cortezaproject/corteza-js@^2024.9.2-rc.1":
+  version "2024.9.2-rc.1"
+  resolved "https://registry.yarnpkg.com/@cortezaproject/corteza-js/-/corteza-js-2024.9.2-rc.1.tgz#e5bd79f8cc433faef6882a4c73b2fbeb7818c39b"
+  integrity sha512-zzL+IQx7nIW83dSRcVELx6el4cLIB+Z1L11lmJZgaYw/jGXRvdmEnwq0Y6vFECD6d6z2q1Cm6CErj82ivFmTSA==
   dependencies:
-    axios "^1.7.9"
+    axios "^1.8.3"
     hex-rgb "^5.0.0"
     lodash "^4.17.21"
     minimalist "^1.0.0"
@@ -1289,15 +1289,6 @@ available-typed-arrays@^1.0.7:
   integrity sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==
   dependencies:
     possible-typed-array-names "^1.0.0"
-
-axios@^1.7.9:
-  version "1.7.9"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-1.7.9.tgz#d7d071380c132a24accda1b2cfc1535b79ec650a"
-  integrity sha512-LhLcE7Hbiryz8oMDdDptSrWowmB4Bl6RCt6sIJKpRB4XtVf0iEgewX3au/pJqm+Py1kCASkb/FFKjxQaLtxJvw==
-  dependencies:
-    follow-redirects "^1.15.6"
-    form-data "^4.0.0"
-    proxy-from-env "^1.1.0"
 
 axios@^1.8.3:
   version "1.8.3"
