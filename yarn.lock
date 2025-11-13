@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@cortezaproject/corteza-js@^2024.9.4":
-  version "2024.9.4"
-  resolved "https://registry.yarnpkg.com/@cortezaproject/corteza-js/-/corteza-js-2024.9.4.tgz#aead31fb277335d3367cdbb411587518d4960673"
-  integrity sha512-7crNvtlU9Va/Axcd6J3BpSYyK2oSXPorB1B0Npnnzs5jYYiQ5QhJTEMmcrbupJpZuMUftBSWccQEBF9P4oVrGg==
+"@cortezaproject/corteza-js@^2024.9.6":
+  version "2024.9.6"
+  resolved "https://registry.yarnpkg.com/@cortezaproject/corteza-js/-/corteza-js-2024.9.6.tgz#0ff2cfc2f7bce83476b6f8d6bb3fcbdf716b289a"
+  integrity sha512-8cLpBC1ZcFQu1GcDziIJ7T6r12f4I4q20hWXQ/mWAqxcmvRvkUGV9VyGKSiKiPZn7CpqS5nXapC8xcrGi+0NYw==
   dependencies:
     axios "^1.8.3"
     hex-rgb "^5.0.0"
