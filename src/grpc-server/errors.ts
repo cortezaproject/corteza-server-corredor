@@ -44,7 +44,8 @@ export function HandleException (log: Logger, err: APIError, done: grpc.sendUnar
     code,
     name,
     message,
-    details: '',
+    // the status text the client receives
+    details: message ?? String(err),
     metadata: new grpc.Metadata(),
   }
 
