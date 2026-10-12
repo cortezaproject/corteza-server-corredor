@@ -92,6 +92,12 @@ function Pack (name: string, entry: string, context: string, outputPath: string,
     },
     // browser versions of the Node built-ins that webpack 4 bundled by itself
     plugins: [new NodePolyfillPlugin()],
+    module: {
+      rules: [
+        // the polyfills resolve to package directories, which a strict ES module cannot import
+        { test: /\.m?js$/, resolve: { fullySpecified: false } },
+      ],
+    },
   }
 
   return new Promise(resolve => {
